@@ -5,12 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Phone extends Model
+class doctorExperience extends Model
 {
     use HasFactory;
-
-    public function user()
+    public function Doctor()
     {
-        return $this->belongsTo('App\Models\User','');
+        return $this->belongsTo(Doctor::class, 'doctorId');
     }
 }
