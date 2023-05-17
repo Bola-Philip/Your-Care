@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Sample extends Model
 {
     use HasFactory;
-    public function ()
+    public function Doctor()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->belongsTo(Doctor::class, 'doctorId');
     }
     public function Patient()
     {

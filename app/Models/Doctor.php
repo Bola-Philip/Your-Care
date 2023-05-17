@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Doctor extends Model
 {
     use HasFactory;
-    public function ()
+    public function Sample()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->hasMany(Sample::class, 'doctorId');
     }
     public function workTime()
     {
@@ -24,17 +24,17 @@ class Doctor extends Model
     {
         return $this->hasMany(doctorExperience::class, 'doctorId');
     }
-    public function ()
+    public function Report()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->hasMany(Report::class, 'doctorId');
     }
-    public function ()
+    public function bookingRequest()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->hasMany(bookingRequest::class, 'doctorId');
     }
-    public function ()
+    public function Department()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->belongsTo(Department::class, 'departmentId');
     }
 
 }

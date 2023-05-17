@@ -10,14 +10,14 @@ class Report extends Model
     use HasFactory;
     public function Patient()
     {
-        return $this->hasMany(Patient::class, 'patientId');
+        return $this->belongsTo(Patient::class, 'patientId');
     }
     public function Doctor()
     {
-        return $this->hasMany(Doctor::class, 'doctorId');
+        return $this->belongsTo(Doctor::class, 'doctorId');
     }
-    public function ()
+    public function Form()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->hasOne(doctorExperience::class, 'formId');
     }
 }

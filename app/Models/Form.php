@@ -10,6 +10,6 @@ class Form extends Model
     use HasFactory;
     public function Report()
     {
-        return $this->belongsTo(Report::class, '');
+        return $this->belongsTo(Report::class, 'formId');
     }
 }
