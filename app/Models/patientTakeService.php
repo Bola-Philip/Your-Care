@@ -2,22 +2,34 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class patientTakeService extends Model
+class PatientTakeService extends Model
 {
-    use HasFactory;
-    public function Doctor()
+    protected $table = 'patient_take_services';
+
+    public $timestamps = false;
+
+    protected $primaryKey = [
+        'id',
+        'booking_id',
+        'service_id',
+
+    ];
+
+    protected $fillable = [
+        'booking_id',
+        'service_id',
+        'cost',
+    ];
+
+    public function bookingRequest()
     {
-        return $this->belongsTo(Doctor::class, 'doctorId');
+        return $this->belongsTo(BookingRequest::class, 'booking_id', 'id');
     }
-    public function Patient()
-    {
-        return $this->belongsTo(Patient::class, 'patientId');
-    }
+
     public function centerService()
     {
-        return $this->hasMany(doctorExperience::class, 'serviceId');
+        return $this->belongsTo(CenterService::class, 'service_id', 'id');
     }
 }

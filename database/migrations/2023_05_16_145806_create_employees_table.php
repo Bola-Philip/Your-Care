@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id')->nullable();
-            $table->string('image', 100)->nullable();
-            $table->string('name', 100);
-            $table->string('username', 100)->unique();
-            $table->string('phone', 100)->nullable();
-            $table->string('email', 100)->nullable();
-            $table->string('ssn', 100);
+            $table->unsignedBigInteger('center_id');
+            $table->string('image')->nullable();
+            $table->string('name');
+            $table->string('username')->unique();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('ssn');
             $table->double('salary_per_hour');
             $table->double('total_salary')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
             $table->timestamp('birth_date')->nullable();
-            $table->string('gender', 100)->nullable();
-            $table->string('nationality', 100)->nullable();
-            $table->string('address', 100)->nullable();
-            $table->string('country', 100)->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('province', 100)->nullable();
-            $table->string('zip_code', 100)->nullable();
+            $table->string('gender')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('address')->nullable();
+            $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('zip_code')->nullable();
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers');

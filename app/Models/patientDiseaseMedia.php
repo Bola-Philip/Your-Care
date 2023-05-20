@@ -10,6 +10,6 @@ class patientDiseaseMedia extends Model
     use HasFactory;
     public function patientDisease()
     {
-        return $this->belongsTo(patientDisease::class, 'diseaseId');
+        return $this->belongsTo(patientDisease::class, 'disease_id');
     }
 }
