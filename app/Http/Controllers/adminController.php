@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class adminController extends Controller
 {
+    use GeneralTrait;
     public function __construct()
     {
         $this->middleware('auth:admin', ['except' => ['login','register']]);
@@ -16,45 +18,49 @@ class adminController extends Controller
     {
         $credentials = request()->only('email', 'password');
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        if (! $token = auth('admin')->attempt($credentials)) {
+            return $this->returnError('401','Unauthorized');
         }
 
-        return $this->respondWithToken($token);
+        return $this->returnData('token',$token,'Here Is Your Token');
     }
     public function register(Request $request)
     {
         $admin = Admin::create([
+            'center_id' => $request->center_id,
+            'username' => $request->username,
             'name' => $request->name,
+            'phone' => $request->phone,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'center_id' => $request->center_id,
+            'permission' => $request->permission,
         ]);
 
-        $token = auth()->login($admin);
+        $token = auth('admin')->login($admin);
 
-        return response()->json(['token' => $token]);
+        return $this->returnData('token',$token,'Here Is Your Token');
     }
-    public function me()
+    public function myData()
     {
-        return response()->json(auth()->user());
+        $data = auth('admin')->user();
+        return $this->returnData('data',$data,'Here Is Your Data');
     }
     public function logout()
     {
-        auth()->logout();
+        auth('admin')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->returnSuccessMessage('Successfully logged out');
     }
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken(auth('admin')->refresh());
     }
     protected function respondWithToken($token)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth('admin')->factory()->getTTL() * 60
         ]);
     }
 }
