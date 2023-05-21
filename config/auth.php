@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'admin',
         'passwords' => 'users',
     ],
 
@@ -41,9 +41,25 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
+        'admin' => [
             'driver' => 'jwt',
-            'provider' => 'users',
+            'provider' => 'admins',
+        ],
+        'doctor' => [
+            'driver' => 'jwt',
+            'provider' => 'doctors',
+        ],
+        'patient' => [
+            'driver' => 'jwt',
+            'provider' => 'patients',
+        ],
+        'lab' => [
+            'driver' => 'jwt',
+            'provider' => 'labs',
+        ],
+        'pharmacy' => [
+            'driver' => 'jwt',
+            'provider' => 'pharmacies',
         ],
     ],
 
@@ -68,6 +84,26 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
+        ],
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+        'doctors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Doctor::class,
+        ],
+        'patients' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Patient::class,
+        ],
+        'labs' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Lab::class,
+        ],
+        'pharmacies' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Pharmacy::class,
         ],
 
         // 'users' => [

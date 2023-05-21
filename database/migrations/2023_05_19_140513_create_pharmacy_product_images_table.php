@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePharmacyProductImageTable extends Migration
+class CreatePharmacyProductImagesTable extends Migration
 {
     public function up()
     {
@@ -14,7 +14,7 @@ class CreatePharmacyProductImageTable extends Migration
             $table->string('image_path')->nullable();
             $table->timestamps();
 
-            $table->foreign('product_id')->references('id')->on('pharmacy_products');
+            $table->foreign('pharmacy_product_id')->references('id')->on('pharmacy_products');
         });
     }
 

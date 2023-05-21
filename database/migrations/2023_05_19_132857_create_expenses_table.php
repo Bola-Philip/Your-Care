@@ -14,7 +14,7 @@ class CreateExpensesTable extends Migration
             $table->unsignedBigInteger('center_id');
             $table->string('title')->nullable();
             $table->string('expense_description')->nullable();
-            $table->timestamps('real_time');
+            $table->timestamps();
             $table->double('expense_value')->nullable();
             $table->string('accounting_code')->nullable();
 

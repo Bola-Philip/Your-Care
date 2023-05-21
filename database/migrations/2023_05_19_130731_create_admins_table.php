@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAdminTable extends Migration
+class CreateAdminsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -19,7 +19,7 @@ class CreateAdminTable extends Migration
             $table->string('username')->nullable();
             $table->string('name')->nullable();
             $table->integer('phone')->nullable();
-            $table->integer('email')->nullable();
+            $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->string('permission')->nullable();
             $table->timestamps();
