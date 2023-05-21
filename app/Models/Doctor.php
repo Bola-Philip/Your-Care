@@ -36,5 +36,8 @@ class Doctor extends Model
     {
         return $this->belongsTo(Department::class, 'departmentId');
     }
+    public function patient(){
+        return $this->belongsToMany(Patient::class)->withPivot('bookingRequests');
+    }
 
 }

@@ -32,4 +32,10 @@ class Patient extends Model
     {
         return $this->hasMany(patientResult::class, 'patientId');
     }
+    public function centerService(){
+        return $this->belongsToMany(CenterService::class)->withPivot('patient_take_services');
+    }
+    public function doctor(){
+        return $this->belongsToMany(Doctor::class)->withPivot('bookingRequests');
+    }
 }

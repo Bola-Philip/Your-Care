@@ -19,4 +19,7 @@ class CenterService extends Model
     {
         return $this->hasMany(Patient::class, 'center_service_id');
     }
+    public function patient(){
+        return $this->belongsToMany(Patient::class)->withPivot('patient_take_services');
+    }
 }
