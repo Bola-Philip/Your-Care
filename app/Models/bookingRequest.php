@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class bookingRequest extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'bookingRequests';
 
     public function doctor()
     {

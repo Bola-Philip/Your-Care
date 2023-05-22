@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sample extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'samples';
     public function Doctor()
     {
         return $this->belongsTo(Doctor::class, 'doctorId');

@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'forms';
     public function Report()
     {
         return $this->belongsTo(Report::class, 'formId');

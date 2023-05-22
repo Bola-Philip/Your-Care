@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'employees';
     public function Center()
     {
         return $this->belongsTo(Center::class, 'centerId');

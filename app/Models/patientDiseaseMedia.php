@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class patientDiseaseMedia extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'patientDiseaseMedia';
     public function patientDisease()
     {
         return $this->belongsTo(patientDisease::class, 'disease_id');

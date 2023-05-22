@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'replies';
     public function Samples()
     {
         return $this->hasMany(Sample::class, 'replyId');

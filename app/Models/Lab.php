@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lab extends Model
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'labs';
     public function Sample()
     {
         return $this->hasMany(Sample::class, 'labId');

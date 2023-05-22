@@ -15,13 +15,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+Route::group(['middleware' => 'api', 'prefix' => 'admin'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\adminController@login')->withoutMiddleware('checkToken');
-    Route::post('register', 'App\Http\Controllers\adminController@register')->withoutMiddleware('checkToken');
+    Route::post('login', 'App\Http\Controllers\adminController@login');
+    Route::post('register', 'App\Http\Controllers\adminController@register');
     Route::post('logout', 'App\Http\Controllers\adminController@logout');
     Route::post('refresh', 'App\Http\Controllers\adminController@refresh');
     Route::post('myData', 'App\Http\Controllers\adminController@myData');
+
+});
+
+
+Route::group(['middleware' => 'api', 'prefix' => 'doctor'], function ($router) {
+
+    Route::post('login', 'App\Http\Controllers\doctorController@login');
+    Route::post('register', 'App\Http\Controllers\doctorController@register');//->withoutMiddleware('checkToken');
+    Route::post('logout', 'App\Http\Controllers\doctorController@logout');
+    Route::post('refresh', 'App\Http\Controllers\doctorController@refresh');
+    Route::post('myData', 'App\Http\Controllers\doctorController@myData');
 
 });
 

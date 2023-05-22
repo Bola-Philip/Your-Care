@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Doctor extends Model
+class Doctor extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    protected $guarded = [];
+    protected $table = 'doctors';
     public function Sample()
     {
         return $this->hasMany(Sample::class, 'doctorId');
@@ -39,5 +41,12 @@ class Doctor extends Model
     public function patient(){
         return $this->belongsToMany(Patient::class)->withPivot('bookingRequests');
     }
-
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
