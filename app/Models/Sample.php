@@ -9,20 +9,27 @@ class Sample extends Model
 {
     protected $guarded = [];
     protected $table = 'samples';
-    public function Doctor()
+
+    protected $fillable = [
+        'lab_id',
+        'doctor_id',
+        'patient_id',
+        'reply_id'
+    ];
+    public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'doctorId');
+        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
-    public function Patient()
+    public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patientId');
+        return $this->belongsTo(Patient::class, 'patient_id');
     }
-    public function Lab()
+    public function lab()
     {
-        return $this->belongsTo(Lab::class, 'labId');
+        return $this->belongsTo(Lab::class, 'lab-id');
     }
-    public function Reply()
+    public function reply()
     {
-        return $this->belongsTo(Reply::class, 'replyId');
+        return $this->hasOne(Reply::class, 'sample_id', 'reply_id');
     }
 }

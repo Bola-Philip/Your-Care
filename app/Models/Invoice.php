@@ -6,12 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    protected $primaryKey = [
-        'id',
-        'client_id',
-        'patient_id',
-        'doctor_id',
-    ];
+    protected $table = 'invoices';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'center_id',

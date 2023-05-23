@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('patientResults', function (Blueprint $table) {
             $table->id();
-            $table->string('labName', 100);
-            $table->string('labPhone', 250);
-            $table->string('result', 250);
-            $table->timestamp('createdAt')->nullable();
+            $table->unsignedInteger('patient_id');
+            $table->string('lab_name');
+            $table->string('lab_phone');
+            $table->string('result');
+            $table->timestamp('created_at');
+
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+
         });
     }
 

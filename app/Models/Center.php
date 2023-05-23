@@ -33,27 +33,27 @@ class Center extends Model
      * @var array
      */
     protected $fillable = [
+        'logo_path',
         'name',
         'username',
-        'logo_path',
-        'password',
         'email',
+        'password',
+        'country',
+        'subscriptionType',
+        'subscriptionPeriod',
         'formalEmail',
         'phone',
         'formalPhone',
         'website',
         'address1',
         'address2',
-        'country',
         'state',
         'province',
         'zipCod',
-        'subscriptionType',
-        'subscriptionPeriod',
         'facebook',
         'instagram',
         'twitter',
-        'snapcaht',
+        'snapchat',
         'youtube',
     ];
 
@@ -71,14 +71,54 @@ class Center extends Model
      */
     public function admins()
     {
-        return $this->hasMany(Admin::class, 'centerId');
+        return $this->hasMany(Admin::class, 'center_id');
     }
-
-    /**
-     * Get the clients for the center.
-     */
+    public function departments()
+    {
+        return $this->hasMany(Department::class, 'center_id');
+    }
+    public function centerServices()
+    {
+        return $this->hasMany(centerServices::class, 'center_id');
+    }
+    public function doctors()
+    {
+        return $this->hasMany(Doctor::class, 'center_id');
+    }
+    public function employees()
+    {
+        return $this->hasMany(Employee::class, 'center_id');
+    }
+    public function patients()
+    {
+        return $this->hasMany(Patient::class, 'center_id');
+    }
+    public function insuranceCompanies()
+    {
+        return $this->hasMany(InsuranceCompany::class, 'center_id');
+    }
     public function clients()
     {
-        return $this->hasMany(Client::class, 'centerId');
+        return $this->hasMany(Client::class, 'center_id');
+    }
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'center_id');
+    }
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'center_id');
+    }
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'center_id');
+    }
+    public function labs()
+    {
+        return $this->hasMany(Lab::class, 'center_id');
+    }
+    public function pharmacies()
+    {
+        return $this->hasMany(Pharmacy::class, 'center_id');
     }
 }

@@ -13,25 +13,26 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('centerId')->nullable();
-            $table->unsignedBigInteger('insuranceCompanyId')->nullable();
-            $table->string('image', 100)->nullable();
-            $table->string('name', 100);
-            $table->string('userName', 100)->nullable();
-            $table->timestamp('birthDate');
-            $table->string('sSN', 100)->nullable();
-            $table->integer('phone')->nullable();
-            $table->string('email', 100)->nullable();
-            $table->string('address', 100)->nullable();
-            $table->string('length', 100)->nullable();
-            $table->string('weight', 100)->nullable();
-            $table->string('bloodType', 100)->nullable();
-            $table->string('gender', 4)->nullable();
-            $table->string('nationality', 10)->nullable();
+            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('insurance_company_id')->nullable();
+            $table->string('image')->nullable();
+            $table->string('name')->nullable();
+            $table->string('username');
+            $table->timestamp('birth_date')->nullable();
+            $table->string('ssn')->nullable();
+            $table->string('phone');
+            $table->string('email');
+            $table->string('password');
+            $table->string('address')->nullable();
+            $table->string('length')->nullable();
+            $table->string('weight')->nullable();
+            $table->string('bloodType')->nullable();
+            $table->string('gender')->nullable();
+            $table->string('nationality');
             $table->timestamps();
 
-            $table->foreign('centerId')->references('id')->on('centers');
-            $table->foreign('insuranceCompanyId')->references('id')->on('insurance_companies');
+            $table->foreign('center_id')->references('id')->on('centers');
+            $table->foreign('insurance_company_id')->references('id')->on('insurance_companies');
         });
     }
 

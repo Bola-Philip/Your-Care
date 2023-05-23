@@ -9,8 +9,13 @@ class Reply extends Model
 {
     protected $guarded = [];
     protected $table = 'replies';
-    public function Samples()
+
+    protected $fillable =[
+        'sample_id',
+        'result'
+    ];
+    public function sample()
     {
-        return $this->hasMany(Sample::class, 'replyId');
+        return $this->belongsTo(Sample::class, 'reply_id', 'sample_id');
     }
 }

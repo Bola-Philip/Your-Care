@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClientService extends Model
 {
+    protected $table = 'client_services';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'center_id',
         'client_id',
         'title',
         'description',

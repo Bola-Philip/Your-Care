@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ExpenseMedia extends Model
 {
     protected $primaryKey = 'id';
-
+    protected $table ='expense_media';
     protected $fillable = [
         'expense_id',
         'media_path',

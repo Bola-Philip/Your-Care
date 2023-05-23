@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Department extends Model
 {    protected $primaryKey = 'id';
 
-    protected $fillable = ['image_path', 'center_id', 'name', 'description'];
+    protected $fillable = ['center_id', 'image_path', 'name', 'description'];
 
     public function center()
     {

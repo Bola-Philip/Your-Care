@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class InsuranceCompany extends Model
 {
     protected $primaryKey = 'id';
-
+    protected $table = 'insurance_companies';
     protected $fillable = [
         'center_id',
         'logo_path',

@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('samples', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('lab_id');
-            $table->unsignedBigInteger('doctor_id')->nullable();
-            $table->unsignedBigInteger('patient_id')->nullable();
+            $table->unsignedBigInteger('doctor_id');
+            $table->unsignedBigInteger('patient_id');
             $table->unsignedBigInteger('reply_id')->nullable();
             $table->timestamp('created_at')->useCurrent();
 

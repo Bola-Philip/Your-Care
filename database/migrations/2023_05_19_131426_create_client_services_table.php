@@ -9,7 +9,6 @@ class CreateClientServicesTable extends Migration
     {
         Schema::create('client_services', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
-            $table->unsignedBigInteger('center_id');
             $table->unsignedBigInteger('client_id');
             $table->string('title')->nullable();
             $table->string('description')->nullable();
@@ -18,7 +17,6 @@ class CreateClientServicesTable extends Migration
             $table->boolean('paid')->default(0);
             $table->timestamps();
             // Add foreign key constraints if needed
-            $table->foreign('center_id')->references('id')->on('centers');
             $table->foreign('client_id')->references('id')->on('clients');
         });
     }

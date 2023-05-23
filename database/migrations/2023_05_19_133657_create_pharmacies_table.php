@@ -12,11 +12,11 @@ class CreatePharmaciesTable extends Migration
             $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('center_id');
             $table->string('name')->nullable();
-            $table->string('username')->nullable();
-            $table->string('password')->nullable();
-            $table->string('email')->nullable();
+            $table->string('username');
+            $table->string('password');
+            $table->string('email');
             $table->string('work_email')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('phone');
             $table->string('work_phone')->nullable();
             $table->string('website')->nullable();
             $table->string('address')->nullable();
@@ -27,7 +27,7 @@ class CreatePharmaciesTable extends Migration
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('twitter')->nullable();
-            $table->string('snapcaht')->nullable();
+            $table->string('snapchat')->nullable();
             $table->string('youtube')->nullable();
             $table->timestamps();
 

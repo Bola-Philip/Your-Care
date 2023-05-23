@@ -8,7 +8,6 @@ class WorkTime extends Model
 {
     protected $primaryKey = ['id', 'doctor_id', 'employee_id'];
     protected $fillable = [
-        'center_id',
         'doctor_id',
         'employee_id',
         'type',

@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('replies', function (Blueprint $table) {
-            $table->id();
-            $table->string('result', 100);
-            $table->timestamp('createdAt')->nullable();
-            $table->timestamps();
+            $table->unsignedBigInteger('id');
+            $table->unsignedBigInteger('sample_id');
+            $table->string('result');
+            $table->timestamp('created_at');
+
+            $table->foreign('sample_id')->references('id')->on('samples')->onDelete('cascade');
         });
     }
 

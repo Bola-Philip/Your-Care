@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('labs', function (Blueprint $table) {
-            $table->id();
+            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('center_id');
-            $table->string('image', 100)->nullable();
-            $table->string('name', 100);
-            $table->string('user_name', 100);
+            $table->string('image')->nullable();
+            $table->string('name')->nullable();
+            $table->string('user_name');
+            $table->string('password');
             $table->integer('phone');
             $table->integer('email');
-            $table->string('website', 100)->nullable();
-            $table->string('password', 100);
-            $table->string('address', 100);
+            $table->string('website')->nullable();
+            $table->string('address')->nullable();
 
             $table->foreign('center_id')->references('id')->on('centers');
             $table->timestamps();

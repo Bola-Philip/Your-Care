@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Form extends Model
 {
-    protected $guarded = [];
     protected $table = 'forms';
-    public function Report()
+    protected $primaryKey ='id';
+
+    protected $fillable = [
+        'title'
+    ];
+    protected $guarded = [];
+
+    public function reports()
     {
-        return $this->belongsTo(Report::class, 'formId');
+        return $this->hasMany(Report::class, 'form_id');
     }
 }

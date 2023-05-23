@@ -12,13 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reports', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('center_id')->constrained();
-            $table->foreignId('doctor_id')->constrained();
-            $table->foreignId('patient_id')->constrained();
-            $table->foreignId('form_id')->constrained();
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('updated_at')->nullable();
+            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('doctor_id');
+            $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('form_id');
+            $table->timestamps('created_at');
+
+            $table->foreign('center_id')->references('id')->on('samples')->onDelete('cascade');
+            $table->foreign('doctor_id')->references('id')->on('samples')->onDelete('cascade');
+            $table->foreign('patient_id')->references('id')->on('samples')->onDelete('cascade');
+            $table->foreign('form_id')->references('id')->on('samples')->onDelete('cascade');
         });
     }
 

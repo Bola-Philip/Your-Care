@@ -12,33 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('doctors', function (Blueprint $table) {
-            $table->id();
-            $table->integer('centerId')->unsigned()->nullable();
-            $table->integer('departmentId')->unsigned()->nullable();
-            $table->string('image', 100)->nullable();
-            $table->string('userName', 100)->nullable();
-            $table->string('name', 100)->nullable();
-            $table->string('sSN', 100)->nullable();
-            $table->string('jobDescription', 100)->nullable();
-            $table->string('abstract', 100)->nullable();
-            $table->string('fullBrief', 250)->nullable();
-            $table->integer('jobId')->nullable();
-            $table->timestamp('birthDate')->nullable();
-            $table->integer('experianceYears')->nullable();
+            $table->unsignedBigInteger('id');
+            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('department_id')->nullable();
+            $table->string('image')->nullable();
+            $table->string('username')->nullable();
+            $table->string('name')->nullable();
+            $table->string('ssn')->nullable();
             $table->integer('phone')->nullable();
-            $table->integer('phoneWorkId')->nullable();
+            $table->integer('work_phone')->nullable();
             $table->integer('email')->nullable();
-            $table->string('password', 100)->nullable();
-            $table->integer('emailWorkId')->nullable();
-            $table->string('address', 100)->nullable();
+            $table->string('password')->nullable();
+            $table->integer('work_email')->nullable();
+            $table->string('job_description')->nullable();
+            $table->string('abstract')->nullable();
+            $table->string('full_brief', 250)->nullable();
+            $table->integer('job_id')->nullable();
+            $table->timestamp('birth_date')->nullable();
+            $table->integer('experience_years')->nullable();
+            $table->string('address')->nullable();
             $table->double('salary')->nullable();
-            $table->string('gender', 100)->nullable();
-            $table->string('nationality', 100)->nullable();
+            $table->string('gender')->nullable();
+            $table->string('nationality')->nullable();
             $table->timestamps();
 
-            $table->foreign('centerId')->references('id')->on('centers')->onDelete('cascade');
-            $table->foreign('departmentId')->references('id')->on('departments')->onDelete('cascade');
-            $table->foreign('jobId')->references('id')->on('jobs')->onDelete('cascade');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
     }
 

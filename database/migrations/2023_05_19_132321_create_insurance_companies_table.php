@@ -30,6 +30,7 @@ class CreateInsuranceCompaniesTable extends Migration
             $table->string('snapchat')->nullable();
             $table->string('youtube')->nullable();
             $table->timestamps();
+
             $table->foreign('center_id')->references('id')->on('centers');
         });
     }

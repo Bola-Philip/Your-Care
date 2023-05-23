@@ -9,7 +9,6 @@ class CreateInvoicedServicesTable extends Migration
     public function up()
     {
         Schema::create('invoiced_services', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('invoice_id');
             $table->unsignedBigInteger('client_service_id')->nullable();
             $table->unsignedBigInteger('center_service_id')->nullable();

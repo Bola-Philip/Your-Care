@@ -5,18 +5,40 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class bookingRequest extends Model
+class BookingRequest extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
+
     protected $table = 'bookingRequests';
 
-    public function doctor()
+    protected $fillable = [
+        'center_id',
+        'patient_id',
+        'doctor_id',
+        'title',
+        'service_description',
+        'start_at',
+        'finish_at',
+        'rating',
+    ];
+
+    public function center()
     {
-        return $this->belongsTo(Doctor::class, 'doctorId');
+        return $this->belongsTo(Center::class, 'center_id','id');
     }
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patientId');
+        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+    }
+
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+    }
+
+    public function patientTakeServices()
+    {
+        return $this->hasMany(PatientTakeService::class, 'booking_id');
     }
 }

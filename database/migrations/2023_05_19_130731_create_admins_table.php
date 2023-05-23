@@ -16,12 +16,12 @@ class CreateAdminsTable extends Migration
         Schema::create('admins', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
             $table->unsignedBigInteger('center_id');
-            $table->string('username')->nullable();
-            $table->string('name')->nullable();
-            $table->integer('phone')->nullable();
-            $table->string('email')->nullable();
-            $table->string('password')->nullable();
-            $table->string('permission')->nullable();
+            $table->string('username');
+            $table->string('name');
+            $table->integer('phone');
+            $table->string('email');
+            $table->string('password');
+            $table->string('permission');
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers');

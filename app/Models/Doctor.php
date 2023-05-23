@@ -2,44 +2,70 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
-class Doctor extends Authenticatable implements JWTSubject
+class Doctor extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
     protected $table = 'doctors';
-    public function Sample()
+    protected $primaryKey='id';
+    protected $fillable = [
+        'center_id',
+        'department_id',
+        'image',
+        'username',
+        'name',
+        'ssn',
+        'phone',
+        'work_phone',
+        'email',
+        'password',
+        'work_email',
+        'job_description',
+        'abstract',
+        'full_brief',
+        'job_id',
+        'birth_date',
+        'experience_years',
+        'address',
+        'salary',
+        'gender',
+        'nationality',
+    ];
+    public function center()
     {
-        return $this->hasMany(Sample::class, 'doctorId');
+        return $this->belongsTo(Center::class, 'center_id');
     }
-    public function workTime()
+    public function department()
     {
-        return $this->hasMany(workTime::class , 'doctorId');
+        return $this->belongsTo(Department::class, 'department_id');
     }
-    public function patientTakeService()
+    public function doctorExperiences()
     {
-        return $this->hasMany(patientTakeService::class, 'doctorId');
+        return $this->hasMany(DoctorExperience::class, 'doctor_id');
     }
-    public function doctorExperience()
+    public function workTimes()
     {
-        return $this->hasMany(doctorExperience::class, 'doctorId');
+        return $this->hasMany(WorkTime::class, 'doctor_id');
     }
-    public function Report()
+    public function bookingRequests()
     {
-        return $this->hasMany(Report::class, 'doctorId');
+        return $this->hasMany(BookingRequest::class, 'doctor_id');
     }
-    public function bookingRequest()
+    public function samples()
     {
-        return $this->hasMany(bookingRequest::class, 'doctorId');
+        return $this->hasMany(Sample::class, 'doctor_id');
     }
-    public function Department()
+    public function reports()
     {
-        return $this->belongsTo(Department::class, 'departmentId');
+        return $this->hasMany(Report::class, 'doctor_id');
     }
-    public function patient(){
-        return $this->belongsToMany(Patient::class)->withPivot('bookingRequests');
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'doctor_id');
     }
     public function getJWTIdentifier()
     {
@@ -49,4 +75,7 @@ class Doctor extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    // public function patient(){
+    //     return $this->belongsToMany(Patient::class)->withPivot('bookingRequests');
+    // }
 }

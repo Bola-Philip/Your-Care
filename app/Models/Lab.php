@@ -7,10 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lab extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
     protected $table = 'labs';
-    public function Sample()
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'center_id',
+        'image',
+        'name',
+        'user_name',
+        'password',
+        'phone',
+        'email',
+        'website',
+        'address',
+    ];
+
+    public function center()
     {
-        return $this->hasMany(Sample::class, 'labId');
+        return $this->belongsTo(Center::class, 'center_id');
+    }
+
+    public function samples()
+    {
+        return $this->hasMany(Sample::class, 'lab_id');
     }
 }

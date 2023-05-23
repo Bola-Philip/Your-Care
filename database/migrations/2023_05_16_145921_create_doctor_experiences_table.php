@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('doctorExperiences', function (Blueprint $table) {
-            $table->id();
-            $table->string('exName', 100);
-            $table->string('workPlaceName', 100);
-            $table->string('workPlaceCountry', 100);
-            $table->timestamp('startedAt');
-            $table->timestamp('finishedAt')->nullable();
-            $table->boolean('stillWorks')->default(false);
-            $table->timestamp('createdAt');
+            $table->unsignedBigInteger('id');
+            $table->unsignedBigInteger('doctor_id');
+            $table->string('experience_name');
+            $table->string('work_place_name');
+            $table->string('work_place_country');
+            $table->timestamp('started_at');
+            $table->timestamp('finished_at')->nullable();
+            $table->boolean('still_works')->default(false);
+            $table->timestamp('created_at');
 
-            $table->unsignedBigInteger('doctorId');
-            $table->foreign('doctorId')->references('id')->on('doctors');
+            $table->foreign('doctor_id')->references('id')->on('doctors');
         });
     }
 

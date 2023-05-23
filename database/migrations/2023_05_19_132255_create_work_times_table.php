@@ -10,15 +10,13 @@ class CreateWorkTimesTable extends Migration
     {
         Schema::create('work_times', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
-            $table->unsignedBigInteger('center_id');
             $table->unsignedBigInteger('doctor_id');
             $table->unsignedBigInteger('employee_id');
-            $table->string('type')->nullable();
+            $table->string('type');
             $table->timestamp('start_at')->nullable();
             $table->timestamp('end_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
             $table->foreign('doctor_id')->references('id')->on('doctors');
             $table->foreign('employee_id')->references('id')->on('employees');
         });

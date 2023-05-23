@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
+    protected $table ='expenses';
     protected $primaryKey = 'id';
-
     protected $fillable = [
         'center_id',
         'client_id',

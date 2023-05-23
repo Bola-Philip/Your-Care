@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('patientDiseaseMedia', function (Blueprint $table) {
-            $table->increments('diseaseId');
-            $table->string('result', 100);
-            $table->timestamp('detectionDate');
+            $table->unsignedBigInteger('id');
+            $table->unsignedBigInteger('disease_id');
+            $table->string('media_path');
+            $table->timestamp('detection_date');
             $table->timestamps();
 
-            $table->foreign('diseaseId')->references('diseaseId')->on('patientDisease')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('disease_id')->references('id')->on('patientDisease')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

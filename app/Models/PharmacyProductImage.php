@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PharmacyProductImage extends Model
 {
+    protected $table = 'pharmacy_product_images';
     protected $primaryKey = 'id';
 
     protected $fillable = [

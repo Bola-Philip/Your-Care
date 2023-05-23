@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class InvoicedService extends Model
 {
+    protected $table ='invoiced_services';
     protected $primaryKey = [
-        'id', 'center_id',
-        'client_id',
-        'patient_id',
-        'doctor_id',
+        'invoice_id',
+        'client_service_id',
+        'center_service_id',
     ];
 
     protected $fillable = [

@@ -7,18 +7,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
+
     protected $table = 'reports';
-    public function Patient()
+    protected $primaryKey = ['doctor_id', 'patient_id', 'created_at'];
+    protected $fillable = [
+        'center_id',
+        'doctor_id',
+        'patient_id',
+        'form_id',
+        // 'created_at',
+    ];
+
+    public function center()
     {
-        return $this->belongsTo(Patient::class, 'patientId');
+        return $this->belongsTo(Center::class, 'center_id');
     }
-    public function Doctor()
+
+    public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'doctorId');
+        return $this->belongsTo(Doctor::class, 'doctor_id');
     }
-    public function Form()
+
+    public function patient()
     {
-        return $this->hasOne(doctorExperience::class, 'formId');
+        return $this->belongsTo(Patient::class, 'patient_id');
+    }
+
+    public function form()
+    {
+        return $this->belongsTo(Form::class, 'form_id');
     }
 }

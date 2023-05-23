@@ -5,12 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class patientDiseaseMedia extends Model
+class PatientDiseaseMedia extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
     protected $table = 'patientDiseaseMedia';
-    public function patientDisease()
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'disease_id',
+        'media_path',
+        'detection_date',
+    ];
+
+    public function disease()
     {
-        return $this->belongsTo(patientDisease::class, 'disease_id');
-    }
-}
+        return $this->belongsTo(PatientDisease::class, 'disease_id');
+    }}

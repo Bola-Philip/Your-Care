@@ -7,36 +7,62 @@ use Illuminate\Database\Eloquent\Model;
 
 class Patient extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
     protected $table = 'patients';
+    protected $fillable = [
+        'center_id',
+        'insurance_company_id',
+        'image',
+        'name',
+        'username',
+        'birth_date',
+        'ssn',
+        'phone',
+        'email',
+        'password',
+        'address',
+        'length',
+        'weight',
+        'bloodType',
+        'gender',
+        'nationality',
+    ];
+
+    public function center()
+    {
+        return $this->belongsTo(Center::class, 'center_id');
+    }
+
     public function insuranceCompany()
     {
-        return $this->belongsTo(insuranceCompany::class, 'insuranceCompanyId');
+        return $this->belongsTo(InsuranceCompany::class, 'insurance_company_id');
     }
-    public function Sample()
+
+    public function patientDiseases()
     {
-        return $this->hasMany(Sample::class, 'patientId');
+        return $this->hasMany(PatientDisease::class, 'patient_id');
     }
-    public function patientTakeService()
+
+    public function patientResults()
     {
-        return $this->hasMany(patientTakeService::class, 'patientId');
+        return $this->hasMany(PatientResult::class, 'patient_id');
     }
-    public function patientDisease()
+
+    public function samples()
     {
-        return $this->hasMany(patientDisease::class, 'patientId');
+        return $this->hasMany(Sample::class, 'patient_id');
     }
-    public function bookingRequest()
+
+    public function bookingRequests()
     {
-        return $this->hasMany(bookingRequest::class, 'patientId');
+        return $this->hasMany(BookingRequest::class, 'patient_id');
     }
-    public function patientResult()
+
+    public function invoices()
     {
-        return $this->hasMany(patientResult::class, 'patientId');
+        return $this->hasMany(Invoice::class, 'patient_id');
     }
-    public function centerService(){
-        return $this->belongsToMany(CenterService::class)->withPivot('patient_take_services');
-    }
-    public function doctor(){
-        return $this->belongsToMany(Doctor::class)->withPivot('bookingRequests');
-    }
+    // public function doctor(){
+    //     return $this->belongsToMany(Doctor::class)->withPivot('bookingRequests');
+    // }
 }

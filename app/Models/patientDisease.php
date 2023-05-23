@@ -5,16 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class patientDisease extends Model
+class PatientDisease extends Model
 {
-    protected $guarded = [];
+    use HasFactory;
     protected $table = 'patientDiseases';
-    public function Patient()
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'patient_id',
+        'disease_title',
+        'disease_description',
+    ];
+
+    public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patientId',);
+        return $this->belongsTo(Patient::class, 'patient_id');
     }
-    public function patientDiseaseMedia()
+    public function diseaseMedia()
     {
-        return $this->hasMany(patientDiseaseMedia::class, 'diseaseId');
+        return $this->hasMany(PatientDisease::class, 'disease_id');
     }
 }

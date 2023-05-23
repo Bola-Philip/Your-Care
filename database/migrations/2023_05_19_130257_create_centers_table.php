@@ -14,27 +14,27 @@ class CreateCentersTable extends Migration
     {
         Schema::create('centers', function (Blueprint $table) {
             $table->unsignedBigInteger('id');
-            $table->string('name')->nullable();
-            $table->string('username')->nullable();
             $table->string('logo_path')->nullable();
-            $table->string('password')->nullable();
-            $table->string('email')->nullable();
-            $table->string('formalEmail')->nullable();
+            $table->string('name');
+            $table->string('username');
+            $table->string('email');
+            $table->string('password');
+            $table->string('country');
+            $table->string('subscription_type');
+            $table->string('subscription_period');
+            $table->string('formal_email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('formalPhone')->nullable();
+            $table->string('formal_phone')->nullable();
             $table->string('website')->nullable();
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();
-            $table->string('country')->nullable();
             $table->string('state')->nullable();
             $table->string('province')->nullable();
             $table->string('zipCod')->nullable();
-            $table->string('subscriptionType')->nullable();
-            $table->string('subscriptionPeriod')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('twitter')->nullable();
-            $table->string('snapcaht')->nullable();
+            $table->string('snapchat')->nullable();
             $table->string('youtube')->nullable();
             $table->timestamps();
         });

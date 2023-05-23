@@ -17,9 +17,14 @@ class CenterService extends Model
 
     public function patients()
     {
-        return $this->hasMany(Patient::class, 'center_service_id');
+        return $this->hasMany(PatientTakeService::class, 'service_id');
     }
-    public function patient(){
-        return $this->belongsToMany(Patient::class)->withPivot('patient_take_services');
+    public function invoices()
+    {
+        return $this->hasMany(InvoicedService::class, 'center_service_id');
     }
+
+    // public function patient(){
+    //     return $this->belongsToMany(Patient::class)->withPivot('patient_take_services');
+    // }
 }
