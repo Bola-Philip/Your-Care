@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('ssn')->nullable();
             $table->integer('phone')->nullable();
             $table->integer('work_phone')->nullable();
-            $table->integer('email')->nullable();
+            $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->integer('work_email')->nullable();
             $table->string('job_description')->nullable();
