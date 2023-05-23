@@ -9,7 +9,7 @@ class CreateExpenseMediaTable extends Migration
     public function up()
     {
         Schema::create('expense_media', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('expense_id');
             $table->string('media_path')->nullable();
             $table->timestamps();

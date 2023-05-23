@@ -2,21 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-
-class Lab extends Authenticatable implements JWTSubject
+class Lab extends Model
 {
     use HasFactory;
     protected $table = 'labs';
     protected $primaryKey = 'id';
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'image',
         'name',
-        'username',
+        'user_name',
         'password',
         'phone',
         'email',
@@ -32,13 +32,5 @@ class Lab extends Authenticatable implements JWTSubject
     public function samples()
     {
         return $this->hasMany(Sample::class, 'lab_id');
-    }
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-    public function getJWTCustomClaims()
-    {
-        return [];
     }
 }

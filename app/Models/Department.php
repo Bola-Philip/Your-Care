@@ -5,9 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
-{    protected $primaryKey = 'id';
+{
+    protected $table = 'departments';
+    protected $primaryKey = 'id';
 
-    protected $fillable = ['center_id', 'image_path', 'name', 'description'];
+    protected $guarded = [
+        'center_id',
+        'image_path',
+        'name',
+        'description'
+    ];
 
     public function center()
     {

@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class CenterService extends Model
 {
+    protected $table = 'center_services';
     protected $primaryKey = 'id';
-    protected $guarded = [];
-    protected $fillable = ['center_id', 'name', 'description', 'price'];
+
+    protected $guarded = ['center_id', 'name', 'description', 'price'];
 
     public function center()
     {

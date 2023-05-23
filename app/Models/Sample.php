@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sample extends Model
 {
-    protected $guarded = [];
     protected $table = 'samples';
+    protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'lab_id',
         'doctor_id',
         'patient_id',

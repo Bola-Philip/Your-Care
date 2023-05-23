@@ -8,7 +8,8 @@ class ExpenseMedia extends Model
 {
     protected $primaryKey = 'id';
     protected $table ='expense_media';
-    protected $fillable = [
+
+    protected $guarded = [
         'expense_id',
         'media_path',
     ];

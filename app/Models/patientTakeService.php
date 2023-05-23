@@ -7,17 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class PatientTakeService extends Model
 {
     protected $table = 'patient_take_services';
+    protected $primaryKey = 'id';
 
-    public $timestamps = false;
-
-    protected $primaryKey = [
-        'id',
-        'booking_id',
-        'service_id',
-
-    ];
-
-    protected $fillable = [
+    protected $guarded = [
         'booking_id',
         'service_id',
         'cost',

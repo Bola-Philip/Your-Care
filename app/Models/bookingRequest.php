@@ -9,9 +9,10 @@ class BookingRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'bookingRequests';
+    protected $table = 'booking_requests';
+    protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'center_id',
         'patient_id',
         'doctor_id',

@@ -9,7 +9,7 @@ class Client extends Model
     protected $table = 'clients';
     protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'first_name',
         'last_name',
         'company_name',

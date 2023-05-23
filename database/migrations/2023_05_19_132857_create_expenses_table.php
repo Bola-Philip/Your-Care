@@ -9,7 +9,7 @@ class CreateExpensesTable extends Migration
     public function up()
     {
         Schema::create('expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('center_id');
             $table->string('title')->nullable();

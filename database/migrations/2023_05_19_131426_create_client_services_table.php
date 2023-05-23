@@ -8,7 +8,7 @@ class CreateClientServicesTable extends Migration
     public function up()
     {
         Schema::create('client_services', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('client_id');
             $table->string('title')->nullable();
             $table->string('description')->nullable();

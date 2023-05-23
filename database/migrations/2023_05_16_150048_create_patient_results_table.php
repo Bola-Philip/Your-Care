@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('lab_name');
             $table->string('lab_phone');
             $table->string('result');
-            $table->timestamp('created_at');
+            $table->timestamps();
 
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
 

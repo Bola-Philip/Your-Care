@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-class Doctor extends Authenticatable implements JWTSubject
+class Doctor extends Model
 {
     use HasFactory;
     protected $table = 'doctors';
     protected $primaryKey='id';
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'department_id',
         'image',

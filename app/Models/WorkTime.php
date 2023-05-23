@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorkTime extends Model
 {
-    protected $primaryKey = ['id', 'doctor_id', 'employee_id'];
-    protected $fillable = [
+    protected $table = 'work_times';
+    protected $primaryKey = [
+        'id',
+        'doctor_id',
+        'employee_id'
+    ];
+    protected $guarded = [
         'doctor_id',
         'employee_id',
         'type',
