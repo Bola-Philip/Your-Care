@@ -13,7 +13,7 @@ class CreateCentersTable extends Migration
     public function up()
     {
         Schema::create('centers', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->string('logo_path')->nullable();
             $table->string('name');
             $table->string('username');

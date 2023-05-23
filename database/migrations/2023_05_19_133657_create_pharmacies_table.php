@@ -9,7 +9,7 @@ class CreatePharmaciesTable extends Migration
     public function up()
     {
         Schema::create('pharmacies', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('center_id');
             $table->string('name')->nullable();
             $table->string('username');

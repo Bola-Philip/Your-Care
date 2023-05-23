@@ -12,19 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('labs', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('center_id');
             $table->string('image')->nullable();
             $table->string('name')->nullable();
             $table->string('user_name');
             $table->string('password');
-            $table->integer('phone');
-            $table->integer('email');
+            $table->string('phone');
+            $table->string('email');
             $table->string('website')->nullable();
             $table->string('address')->nullable();
+            $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers');
-            $table->timestamps();
         });
     }
 

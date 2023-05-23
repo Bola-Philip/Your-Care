@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('doctorExperiences', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('doctor_id');
             $table->string('experience_name');
             $table->string('work_place_name');
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('started_at');
             $table->timestamp('finished_at')->nullable();
             $table->boolean('still_works')->default(false);
-            $table->timestamp('created_at');
+            $table->timestamps();
 
             $table->foreign('doctor_id')->references('id')->on('doctors');
         });

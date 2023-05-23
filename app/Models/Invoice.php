@@ -9,7 +9,7 @@ class Invoice extends Model
     protected $table = 'invoices';
     protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'center_id',
         'client_id',
         'patient_id',

@@ -9,7 +9,8 @@ class Expense extends Model
 {
     protected $table ='expenses';
     protected $primaryKey = 'id';
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'client_id',
         'title',

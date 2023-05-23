@@ -12,17 +12,17 @@ class doctorController extends Controller
     use GeneralTrait;
     public function __construct()
     {
-        $this->middleware('auth:doctor', ['except' => ['login','register']]);
+        $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
     }
     public function login()
     {
         $credentials = request()->only('email', 'password');
 
-        if (! $token = auth('doctor')->attempt($credentials)) {
-            return $this->returnError('401','Unauthorized');
+        if (!$token = auth('doctor')->attempt($credentials)) {
+            return $this->returnError('401', 'Unauthorized');
         }
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+        return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function register(Request $request)
     {
@@ -52,12 +52,12 @@ class doctorController extends Controller
 
         $token = auth('doctor')->login($doctor);
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+        return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function myData()
     {
         $data = auth('doctor')->user();
-        return $this->returnData('data',$data,'Here Is Your Data');
+        return $this->returnData('data', $data, 'Here Is Your Data');
     }
     public function logout()
     {
@@ -77,5 +77,4 @@ class doctorController extends Controller
             'expires_in' => auth('doctor')->factory()->getTTL() * 60
         ]);
     }
-
 }

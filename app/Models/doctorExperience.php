@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DoctorExperience extends Model
 {
     use HasFactory;
-    protected $table = 'doctorExperience';
+    protected $table = 'doctor_experience';
     protected $primaryKey = 'id';
-    protected $fillable = [
+
+    protected $guarded = [
         'doctor_id',
         'experience_name',
         'work_place_name',

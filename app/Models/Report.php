@@ -11,12 +11,13 @@ class Report extends Model
 
     protected $table = 'reports';
     protected $primaryKey = ['doctor_id', 'patient_id', 'created_at'];
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'doctor_id',
         'patient_id',
         'form_id',
-        // 'created_at',
+        'created_at',
     ];
 
     public function center()

@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 class Lab extends Model
 {
     use HasFactory;
     protected $table = 'labs';
     protected $primaryKey = 'id';
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'image',
         'name',

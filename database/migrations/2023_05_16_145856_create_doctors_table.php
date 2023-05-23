@@ -12,18 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('doctors', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('center_id');
             $table->unsignedBigInteger('department_id')->nullable();
             $table->string('image')->nullable();
             $table->string('username')->nullable();
             $table->string('name')->nullable();
             $table->string('ssn')->nullable();
-            $table->integer('phone')->nullable();
-            $table->integer('work_phone')->nullable();
-            $table->integer('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('work_phone')->nullable();
+            $table->string('email')->nullable();
             $table->string('password')->nullable();
-            $table->integer('work_email')->nullable();
+            $table->string('work_email')->nullable();
             $table->string('job_description')->nullable();
             $table->string('abstract')->nullable();
             $table->string('full_brief', 250)->nullable();

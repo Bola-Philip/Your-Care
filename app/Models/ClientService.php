@@ -9,7 +9,7 @@ class ClientService extends Model
     protected $table = 'client_services';
     protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'client_id',
         'title',
         'description',
@@ -26,5 +26,9 @@ class ClientService extends Model
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
+    }
+    public function invoices()
+    {
+        return $this->hasMany(InvoicedService::class, 'client_service_id');
     }
 }
