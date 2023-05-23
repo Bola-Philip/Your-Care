@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
-    protected $guarded = [];
     protected $table = 'replies';
+    protected $primaryKey = 'id';
 
-    protected $fillable =[
+    protected $guarded =[
         'sample_id',
         'result'
     ];

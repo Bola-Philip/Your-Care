@@ -9,9 +9,10 @@ class BookingRequest extends Model
 {
     use HasFactory;
 
-    protected $table = 'bookingRequests';
+    protected $table = 'booking_requests';
+    protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'center_id',
         'patient_id',
         'doctor_id',
@@ -26,16 +27,24 @@ class BookingRequest extends Model
     {
         return $this->belongsTo(Center::class, 'center_id','id');
     }
-
     public function patient()
     {
-        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+        return $this->belongsTo(Patient::class);
     }
 
     public function doctor()
     {
-        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+        return $this->belongsTo(Doctor::class);
     }
+    // public function patient()
+    // {
+    //     return $this->belongsTo(Patient::class, 'patient_id', 'id');
+    // }
+
+    // public function doctor()
+    // {
+    //     return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+    // }
 
     public function patientTakeServices()
     {

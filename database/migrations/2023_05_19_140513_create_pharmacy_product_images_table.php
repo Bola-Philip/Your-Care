@@ -9,7 +9,7 @@ class CreatePharmacyProductImagesTable extends Migration
     public function up()
     {
         Schema::create('pharmacy_product_images', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('pharmacy_product_id');
             $table->string('image_path')->nullable();
             $table->timestamps();

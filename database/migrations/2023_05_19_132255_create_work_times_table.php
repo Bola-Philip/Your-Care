@@ -9,7 +9,7 @@ class CreateWorkTimesTable extends Migration
     public function up()
     {
         Schema::create('work_times', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('doctor_id');
             $table->unsignedBigInteger('employee_id');
             $table->string('type');

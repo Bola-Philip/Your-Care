@@ -9,7 +9,7 @@ class CreateInsuranceCompaniesTable extends Migration
     public function up()
     {
         Schema::create('insurance_companies', function (Blueprint $table) {
-            $table->unsignedBigInteger('id');
+            $table->id();
             $table->unsignedBigInteger('center_id');
             $table->string('logo_path')->nullable();
             $table->string('name')->nullable();

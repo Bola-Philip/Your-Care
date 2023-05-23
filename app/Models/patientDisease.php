@@ -8,10 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PatientDisease extends Model
 {
     use HasFactory;
-    protected $table = 'patientDiseases';
+    protected $table = 'patient_diseases';
     protected $primaryKey = 'id';
 
-    protected $fillable = [
+    protected $guarded = [
         'patient_id',
         'disease_title',
         'disease_description',

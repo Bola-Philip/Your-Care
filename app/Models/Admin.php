@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -9,9 +10,9 @@ class Admin extends Authenticatable implements JWTSubject
 {
 
     protected $table = 'admins';
-
     protected $primaryKey = 'id';
-    protected $fillable = [
+
+    protected $guarded = [
         'center_id',
         'username',
         'name',
