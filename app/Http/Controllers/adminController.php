@@ -12,7 +12,6 @@ class adminController extends Controller
     use GeneralTrait;
     public function __construct()
     {
-        $this->middleware('auth:admin', ['except' => ['login','register']]);
     }
     public function login()
     {

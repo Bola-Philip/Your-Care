@@ -12,7 +12,10 @@ class doctorController extends Controller
     use GeneralTrait;
     public function __construct()
     {
+<<<<<<< HEAD
         $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
+=======
+>>>>>>> a8eb674a9fb9e367d5f4b4af4902e707f8822d5e
     }
     public function login()
     {
@@ -27,23 +30,23 @@ class doctorController extends Controller
     public function register(Request $request)
     {
         $doctor = Doctor::create([
-            'centerId' => $request->centerId,
-            'departmentId' => $request->departmentId,
+            'center_id' => $request->center_id,
+            'department_id' => $request->department_id,
             'image' => $request->image,
-            'userName' => $request->userName,
+            'username' => $request->username,
             'name' => $request->name,
-            'sSN' => $request->sSN,
-            'jobDescription' => $request->jobDescription,
-            'abstract' => $request->abstract,
-            'fullBrief' => $request->fullBrief,
-            'jobId' => $request->jobId,
-            'birthDate' => $request->birthDate,
-            'experianceYears' => $request->experianceYears,
+            'ssn' => $request->ssn,
             'phone' => $request->phone,
-            'phoneWorkId' => $request->phoneWorkId,
-            'email' => $request->email->email,
+            'work_phone' => $request->work_phone,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
-            'emailWorkId' => $request->emailWorkId,
+            'work_email' => $request->work_email,
+            'job_description' => $request->job_description,
+            'abstract' => $request->abstract,
+            'full_brief' => $request->full_brief,
+            'job_id' => $request->job_id,
+            'birth_date' => $request->birth_date,
+            'experience_years' => $request->experience_years,
             'address' => $request->address,
             'salary' => $request->salary,
             'gender' => $request->gender,
