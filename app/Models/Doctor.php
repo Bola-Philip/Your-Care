@@ -52,10 +52,14 @@ class Doctor extends Model
     {
         return $this->hasMany(WorkTime::class, 'doctor_id');
     }
-    public function bookingRequests()
+    public function patients()
     {
-        return $this->hasMany(BookingRequest::class, 'doctor_id');
+        return $this->hasManyThrough(Patient::class, BookingRequest::class, 'doctor_id', 'id', 'id', 'patient_id');
     }
+    // public function bookingRequests()
+    // {
+    //     return $this->hasMany(BookingRequest::class, 'doctor_id');
+    // }
     public function samples()
     {
         return $this->hasMany(Sample::class, 'doctor_id');

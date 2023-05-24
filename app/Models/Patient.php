@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class Patient extends Model
 {
     use HasFactory;
@@ -55,12 +56,14 @@ class Patient extends Model
     {
         return $this->hasMany(Sample::class, 'patient_id');
     }
-
+    public function doctors()
+    {
+        return $this->hasManyThrough(Doctor::class, BookingRequest::class, 'patient_id', 'id', 'id', 'doctor_id');
+    }
     public function bookingRequests()
     {
         return $this->hasMany(BookingRequest::class, 'patient_id');
     }
-
     public function invoices()
     {
         return $this->hasMany(Invoice::class, 'patient_id');
