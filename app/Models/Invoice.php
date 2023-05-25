@@ -9,18 +9,7 @@ class Invoice extends Model
     protected $table = 'invoices';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'client_id',
-        'patient_id',
-        'doctor_id',
-        'payment_due',
-        'title',
-        'total_value',
-        'discount',
-        'tax',
-        'message',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

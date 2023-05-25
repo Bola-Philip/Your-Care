@@ -11,11 +11,7 @@ class PatientDiseaseMedia extends Model
     protected $table = 'patient_disease_media';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'disease_id',
-        'media_path',
-        'detection_date',
-    ];
+    protected $guarded = [];
 
     public function disease()
     {

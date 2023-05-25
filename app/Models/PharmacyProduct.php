@@ -9,14 +9,7 @@ class PharmacyProduct extends Model
     protected $table = 'pharmacy_products';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'pharmacy_id',
-        'name',
-        'description',
-        'details',
-        'price',
-        'amount',
-    ];
+    protected $guarded = [];
 
     public function pharmacy()
     {

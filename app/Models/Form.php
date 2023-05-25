@@ -10,9 +10,7 @@ class Form extends Model
     protected $table = 'forms';
     protected $primaryKey ='id';
 
-    protected $guarded = [
-        'title'
-    ];
+    protected $guarded = [];
 
     public function reports()
     {

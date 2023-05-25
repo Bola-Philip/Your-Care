@@ -11,15 +11,7 @@ class DoctorExperience extends Model
     protected $table = 'doctor_experience';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'doctor_id',
-        'experience_name',
-        'work_place_name',
-        'work_place_country',
-        'started_at',
-        'finished_at',
-        'still_works',
-    ];
+    protected $guarded = [];
 
     public function doctor()
     {

@@ -9,12 +9,7 @@ class Department extends Model
     protected $table = 'departments';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'image_path',
-        'name',
-        'description'
-    ];
+    protected $guarded = [];
 
     public function center()
     {

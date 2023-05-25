@@ -13,11 +13,7 @@ class InvoicedService extends Model
         'center_service_id',
     ];
 
-    protected $guarded = [
-        'invoice_id',
-        'client_service_id',
-        'center_service_id',
-    ];
+    protected $guarded = [];
 
     public function invoice()
     {

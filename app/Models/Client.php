@@ -9,17 +9,7 @@ class Client extends Model
     protected $table = 'clients';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'first_name',
-        'last_name',
-        'company_name',
-        'phone',
-        'phone_description',
-        'email',
-        'company_address',
-        'city',
-        'country',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

@@ -13,29 +13,7 @@ class Doctor extends Model
     protected $table = 'doctors';
     protected $primaryKey='id';
 
-    protected $guarded = [
-        'center_id',
-        'department_id',
-        'image',
-        'username',
-        'name',
-        'ssn',
-        'phone',
-        'work_phone',
-        'email',
-        'password',
-        'work_email',
-        'job_description',
-        'abstract',
-        'full_brief',
-        'job_id',
-        'birth_date',
-        'experience_years',
-        'address',
-        'salary',
-        'gender',
-        'nationality',
-    ];
+    protected $guarded = [];
     public function center()
     {
         return $this->belongsTo(Center::class, 'center_id');

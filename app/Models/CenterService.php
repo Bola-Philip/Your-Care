@@ -9,7 +9,7 @@ class CenterService extends Model
     protected $table = 'center_services';
     protected $primaryKey = 'id';
 
-    protected $guarded = ['center_id', 'name', 'description', 'price'];
+    protected $guarded = [];
 
     public function center()
     {

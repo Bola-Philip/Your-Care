@@ -11,12 +11,7 @@ class PatientResult extends Model
     protected $table = 'patient_results';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'patient_id',
-        'lab_name',
-        'lab_phone',
-        'result'
-    ];
+    protected $guarded = [];
 
     public function patient()
     {
