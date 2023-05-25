@@ -12,16 +12,7 @@ class BookingRequest extends Model
     protected $table = 'booking_requests';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'patient_id',
-        'doctor_id',
-        'title',
-        'service_description',
-        'start_at',
-        'finish_at',
-        'rating',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

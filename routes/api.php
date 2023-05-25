@@ -43,6 +43,9 @@ Route::group(['middleware' => ['api','auth:patient'], 'prefix' => 'patient'], fu
     Route::post('logout', 'App\Http\Controllers\patientController@logout');
     Route::post('refresh', 'App\Http\Controllers\patientController@refresh');
     Route::post('myData', 'App\Http\Controllers\patientController@myData');
+    Route::post('edit', 'App\Http\Controllers\patientController@edit');
+    Route::post('bookingRequest/{doctor_id}', 'App\Http\Controllers\patientController@bookingRequest');
+    Route::post('myReport', 'App\Http\Controllers\patientController@myReport');
 
 });
 
