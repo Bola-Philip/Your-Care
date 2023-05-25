@@ -25,16 +25,19 @@ class BookingRequest extends Model
 
     public function center()
     {
-        return $this->belongsTo(Center::class, 'center_id','id');
+        return $this->belongsTo(Center::class, 'center_id', 'id');
     }
     public function patient()
     {
         return $this->belongsTo(Patient::class);
     }
-
     public function doctor()
     {
         return $this->belongsTo(Doctor::class);
+    }
+    public function services()
+    {
+        return $this->hasManyThrough(CenterService::class, patientTakeServices::class, 'booking_id', 'id', 'id', 'service_id');
     }
     // public function patient()
     // {

@@ -12,10 +12,7 @@ class doctorController extends Controller
     use GeneralTrait;
     public function __construct()
     {
-<<<<<<< HEAD
         $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
-=======
->>>>>>> a8eb674a9fb9e367d5f4b4af4902e707f8822d5e
     }
     public function login()
     {

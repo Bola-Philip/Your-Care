@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExpenseMedia extends Model
 {
-    protected $primaryKey = 'id';
     protected $table ='expense_media';
+    protected $primaryKey = 'id';
 
     protected $guarded = [
         'expense_id',

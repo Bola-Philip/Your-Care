@@ -41,12 +41,14 @@ class Patient extends Model
     {
         return $this->belongsTo(InsuranceCompany::class, 'insurance_company_id');
     }
-    public function centerServices()
-    {
-        return $this->hasManyThrough(CenterService::class, BookingRequest::class, 'patient_id', 'id', 'id', 'center_service_id')
-                    ->leftJoin('patient_take_services', 'booking_requests.id', '=', 'patient_take_services.booking_id')
-                    ->select('center_services.*', 'patient_take_services.quantity as quantity');
-    }
+    // public function services()
+    // {
+    //     return $this->hasManyThrough(PatientTakeService::class, BookingRequest::class, 'patient_id', 'id', 'id', 'center_service_id')
+    //     ->leftJoin('patient_take_services', 'booking_requests.id', '=', 'patient_take_services.booking_id')
+    //     ->leftJoin('center_services', 'patient_take_services.service_id', '=', 'patient_take_services.id')
+    //     ->select('center_services.*');
+    //                 // , 'patient_take_services.quantity as quantity'
+    // }
     public function patientDiseases()
     {
         return $this->hasMany(PatientDisease::class, 'patient_id');
@@ -68,6 +70,15 @@ class Patient extends Model
     public function bookingRequests()
     {
         return $this->hasMany(BookingRequest::class, 'patient_id');
+    }
+    public function services()
+    {
+        return $this->bookingRequests()->services();
+        // return $this->hasManyThrough(PatientTakeService::class, BookingRequest::class, 'patient_id', 'id', 'id', 'center_service_id')
+        // ->leftJoin('patient_take_services', 'booking_requests.id', '=', 'patient_take_services.booking_id')
+        // ->leftJoin('center_services', 'patient_take_services.service_id', '=', 'patient_take_services.id')
+        // ->select('center_services.*');
+                    // , 'patient_take_services.quantity as quantity'
     }
     public function invoices()
     {
