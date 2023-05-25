@@ -12,30 +12,7 @@ class Center extends Model
     protected $primaryKey = 'id';
 
     public $timestamps = true;
-    protected $guarded = [
-        'logo_path',
-        'name',
-        'username',
-        'email',
-        'password',
-        'country',
-        'subscriptionType',
-        'subscriptionPeriod',
-        'formalEmail',
-        'phone',
-        'formalPhone',
-        'website',
-        'address1',
-        'address2',
-        'state',
-        'province',
-        'zipCod',
-        'facebook',
-        'instagram',
-        'twitter',
-        'snapchat',
-        'youtube',
-    ];
+    protected $guarded = [];
 
     protected $hidden = [
         'password',

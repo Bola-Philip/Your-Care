@@ -10,14 +10,7 @@ class Expense extends Model
     protected $table ='expenses';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'client_id',
-        'title',
-        'expense_description',
-        'expense_value',
-        'accounting_code',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

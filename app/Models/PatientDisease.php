@@ -11,11 +11,7 @@ class PatientDisease extends Model
     protected $table = 'patient_diseases';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'patient_id',
-        'disease_title',
-        'disease_description',
-    ];
+    protected $guarded = [];
 
     public function patient()
     {

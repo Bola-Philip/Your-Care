@@ -10,10 +10,7 @@ class Reply extends Model
     protected $table = 'replies';
     protected $primaryKey = 'id';
 
-    protected $guarded =[
-        'sample_id',
-        'result'
-    ];
+    protected $guarded =[];
     public function sample()
     {
         return $this->belongsTo(Sample::class, 'reply_id', 'sample_id');

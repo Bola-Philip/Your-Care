@@ -12,29 +12,23 @@ class BookingRequest extends Model
     protected $table = 'booking_requests';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'patient_id',
-        'doctor_id',
-        'title',
-        'service_description',
-        'start_at',
-        'finish_at',
-        'rating',
-    ];
+    protected $guarded = [];
 
     public function center()
     {
-        return $this->belongsTo(Center::class, 'center_id','id');
+        return $this->belongsTo(Center::class, 'center_id', 'id');
     }
     public function patient()
     {
         return $this->belongsTo(Patient::class);
     }
-
     public function doctor()
     {
         return $this->belongsTo(Doctor::class);
+    }
+    public function services()
+    {
+        return $this->hasManyThrough(CenterService::class, patientTakeServices::class, 'booking_id', 'id', 'id', 'service_id');
     }
     // public function patient()
     // {

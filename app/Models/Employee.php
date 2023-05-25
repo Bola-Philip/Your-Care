@@ -11,26 +11,7 @@ class Employee extends Model
     protected $table='employees';
     protected $primaryKey='id';
 
-    protected $guarded = [
-        'center_id',
-        'department_id',
-        'image',
-        'name',
-        'username',
-        'phone',
-        'email',
-        'ssn',
-        'salary_per_hour',
-        'total_salary',
-        'birth_date',
-        'gender',
-        'nationality',
-        'address',
-        'country',
-        'city',
-        'province',
-        'zip_code',
-    ];
+    protected $guarded = [];
 
     public function center()
     {
