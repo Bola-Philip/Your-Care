@@ -12,13 +12,7 @@ class WorkTime extends Model
         'doctor_id',
         'employee_id'
     ];
-    protected $guarded = [
-        'doctor_id',
-        'employee_id',
-        'type',
-        'start_at',
-        'end_at',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

@@ -9,14 +9,7 @@ class ClientService extends Model
     protected $table = 'client_services';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'client_id',
-        'title',
-        'description',
-        'cost',
-        'notes',
-        'paid',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

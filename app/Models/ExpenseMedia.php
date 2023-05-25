@@ -9,10 +9,7 @@ class ExpenseMedia extends Model
     protected $table ='expense_media';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'expense_id',
-        'media_path',
-    ];
+    protected $guarded = [];
 
     public function expense()
     {

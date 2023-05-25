@@ -9,11 +9,7 @@ class PatientTakeService extends Model
     protected $table = 'patient_take_services';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'booking_id',
-        'service_id',
-        'cost',
-    ];
+    protected $guarded = [];
 
     public function bookingRequest()
     {

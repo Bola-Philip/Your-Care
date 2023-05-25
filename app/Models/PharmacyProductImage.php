@@ -9,10 +9,7 @@ class PharmacyProductImage extends Model
     protected $table = 'pharmacy_product_images';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'pharmacy_product_id',
-        'image_path',
-    ];
+    protected $guarded = [];
 
     public function pharmacyProduct()
     {

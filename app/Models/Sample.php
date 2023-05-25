@@ -10,12 +10,7 @@ class Sample extends Model
     protected $table = 'samples';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'lab_id',
-        'doctor_id',
-        'patient_id',
-        'reply_id'
-    ];
+    protected $guarded = [];
     public function doctor()
     {
         return $this->belongsTo(Doctor::class, 'doctor_id');

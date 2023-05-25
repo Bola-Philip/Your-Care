@@ -12,17 +12,7 @@ class Lab extends Model
     protected $table = 'labs';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'image',
-        'name',
-        'user_name',
-        'password',
-        'phone',
-        'email',
-        'website',
-        'address',
-    ];
+    protected $guarded = [];
 
     public function center()
     {

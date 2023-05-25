@@ -10,27 +10,7 @@ class Pharmacy extends Model
     protected $table = 'pharmacies';
     protected $primaryKey = 'id';
 
-    protected $guarded = [
-        'center_id',
-        'name',
-        'username',
-        'password',
-        'email',
-        'work_email',
-        'phone',
-        'work_phone',
-        'website',
-        'address',
-        'country',
-        'state',
-        'province',
-        'zipCod',
-        'facebook',
-        'instagram',
-        'twitter',
-        'snapchat',
-        'youtube',
-    ];
+    protected $guarded = [];
 
     public function center()
     {
