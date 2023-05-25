@@ -41,7 +41,12 @@ class Patient extends Model
     {
         return $this->belongsTo(InsuranceCompany::class, 'insurance_company_id');
     }
-
+    public function centerServices()
+    {
+        return $this->hasManyThrough(CenterService::class, BookingRequest::class, 'patient_id', 'id', 'id', 'center_service_id')
+                    ->leftJoin('patient_take_services', 'booking_requests.id', '=', 'patient_take_services.booking_id')
+                    ->select('center_services.*', 'patient_take_services.quantity as quantity');
+    }
     public function patientDiseases()
     {
         return $this->hasMany(PatientDisease::class, 'patient_id');
