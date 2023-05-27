@@ -13,7 +13,24 @@ class Patient extends Model
     protected $table = 'patients';
     protected $primaryKey = 'id';
 
-    protected $guarded = [];
+    protected $guarded = [
+        'center_id',
+        'insurance_company_id',
+        'image',
+        'name',
+        'username',
+        'birth_date',
+        'ssn',
+        'phone',
+        'email',
+        'password',
+        'address',
+        'length',
+        'weight',
+        'bloodType',
+        'gender',
+        'nationality',
+    ];
 
     public function center()
     {
