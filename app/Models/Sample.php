@@ -21,10 +21,10 @@ class Sample extends Model
     }
     public function lab()
     {
-        return $this->belongsTo(Lab::class, 'lab-id');
+        return $this->belongsTo(Lab::class, 'lab_id');
     }
     public function reply()
     {
-        return $this->hasOne(Reply::class, 'sample_id', 'reply_id');
+        return $this->belongsTo(Reply::class, 'reply_id');
     }
 }

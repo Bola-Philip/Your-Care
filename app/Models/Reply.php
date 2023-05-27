@@ -13,6 +13,6 @@ class Reply extends Model
     protected $guarded =[];
     public function sample()
     {
-        return $this->belongsTo(Sample::class, 'reply_id', 'sample_id');
+        return $this->hasOne(Sample::class, 'reply_id');
     }
 }
