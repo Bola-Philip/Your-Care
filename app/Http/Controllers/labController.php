@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lab;
-use App\Models\Pharmacy;
+use App\Models\Reply;
 use App\Traits\GeneralTrait;
+use App\Traits\imageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class labController extends Controller
 {
     use GeneralTrait;
+    use imageTrait;
     public function __construct()
     {
     }
@@ -26,10 +28,12 @@ class labController extends Controller
     }
     public function register(Request $request)
     {
+        $lab_image = $this->saveImage($request->image,'images/labs');
+
         $lab = Lab::create([
 
             'center_id' => $request->center_id,
-            'image' => $request->image,
+            'image' => $lab_image,
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
@@ -66,5 +70,38 @@ class labController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth('lab')->factory()->getTTL() * 60
         ]);
+    }
+    public function edit(Request $request)
+    {
+        $lab_image = $this->saveImage($request->image,'images/labs');
+
+        $lab_id = auth('lab')->user()->id;
+        $lab = Lab::find($lab_id);
+        $lab->update([
+            'center_id' => $request->center_id,
+            'image' => $lab_image,
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'website' => $request->website,
+            'address' => $request->address,
+        ]);
+
+        return $this->returnSuccessMessage('Successfully Updated');
+
+    }
+
+    public function ourReply(Request $request)
+    {
+        $result_image_file = $this->saveImage($request->result,'images/replies');
+
+        Reply::create([
+            'sample_id' => $request->sample_id,
+            'result' => $result_image_file,
+        ]);
+        return $this->returnSuccessMessage('Successfully Replied');
+
     }
 }

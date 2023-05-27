@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Traits\GeneralTrait;
+use App\Traits\imageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class doctorController extends Controller
 {
     use GeneralTrait;
+    use imageTrait;
     public function __construct()
     {
         $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
@@ -26,10 +28,12 @@ class doctorController extends Controller
     }
     public function register(Request $request)
     {
+        $doctor_image = $this->saveImage($request->image,'images/doctors');
+
         $doctor = Doctor::create([
             'center_id' => $request->center_id,
             'department_id' => $request->department_id,
-            'image' => $request->image,
+            'image' => $doctor_image,
             'username' => $request->username,
             'name' => $request->name,
             'ssn' => $request->ssn,

@@ -66,5 +66,7 @@ Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function (
     Route::post('logout', 'App\Http\Controllers\labController@logout');
     Route::post('refresh', 'App\Http\Controllers\labController@refresh');
     Route::post('myData', 'App\Http\Controllers\labController@myData');
+    Route::post('edit', 'App\Http\Controllers\labController@edit');
+    Route::post('ourReply', 'App\Http\Controllers\labController@ourReply');
 
 });
