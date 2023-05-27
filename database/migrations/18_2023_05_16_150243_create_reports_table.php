@@ -18,10 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger('form_id');
             $table->timestamp('created_at');
 
-            $table->foreign('center_id')->references('id')->on('samples')->onDelete('cascade');
-            $table->foreign('doctor_id')->references('id')->on('samples')->onDelete('cascade');
-            $table->foreign('patient_id')->references('id')->on('samples')->onDelete('cascade');
-            $table->foreign('form_id')->references('id')->on('samples')->onDelete('cascade');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+            $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade');
         });
     }
 
