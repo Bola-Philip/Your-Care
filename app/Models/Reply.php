@@ -10,9 +10,13 @@ class Reply extends Model
     protected $table = 'replies';
     protected $primaryKey = 'id';
 
-    protected $guarded =[];
+    protected $guarded = [];
     public function sample()
     {
         return $this->hasOne(Sample::class, 'reply_id');
+    }
+    public function lab()
+    {
+        return $this->sample()->lab();
     }
 }
