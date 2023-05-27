@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class Lab extends Model
 {
     use HasFactory;
@@ -22,5 +23,9 @@ class Lab extends Model
     public function samples()
     {
         return $this->hasMany(Sample::class, 'lab_id');
+    }
+    public function replies()
+    {
+        return $this->hasManyThrough(Replies::class, Sample::class, 'lab_id', 'id', 'id', 'reply_id');
     }
 }

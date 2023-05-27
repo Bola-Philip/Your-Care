@@ -13,11 +13,9 @@ return new class extends Migration
     {
         Schema::create('replies', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sample_id');
             $table->string('result');
             $table->timestamp('created_at');
 
-            $table->foreign('sample_id')->references('id')->on('samples')->onDelete('cascade');
         });
     }
 

@@ -16,11 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('lab_id');
             $table->unsignedBigInteger('doctor_id');
             $table->unsignedBigInteger('patient_id');
+            $table->unsignedBigInteger('reply_id');
             $table->timestamps();
 
             $table->foreign('lab_id')->references('id')->on('labs')->onDelete('cascade');
-            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete(null);
-            $table->foreign('patient_id')->references('id')->on('patients')->onDelete(null);
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('cascade');
+            $table->foreign('reply_id')->references('id')->on('replies')->onDelete('cascade');
         });
     }
 
