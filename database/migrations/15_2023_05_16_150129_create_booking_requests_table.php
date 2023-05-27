@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bookingRequests', function (Blueprint $table) {
+        Schema::create('booking_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('center_id');
             $table->unsignedBigInteger('patient_id');
@@ -19,11 +19,11 @@ return new class extends Migration
             $table->string('title');
             $table->string('service_description');
             $table->timestamp('start_at');
-            $table->timestamp('finish_at');
+            $table->timestamp('finish_at')->nullable();
             $table->integer('rating')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('patients');
+            $table->foreign('center_id')->references('id')->on('centers');
             $table->foreign('patient_id')->references('id')->on('patients');
             $table->foreign('doctor_id')->references('id')->on('doctors');
         });

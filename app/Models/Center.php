@@ -26,6 +26,10 @@ class Center extends Model
     {
         return $this->hasMany(Department::class, 'center_id');
     }
+    public function bookingRequests()
+    {
+        return $this->hasMany(BookingRequestR::class, 'center_id');
+    }
     public function centerServices()
     {
         return $this->hasMany(centerServices::class, 'center_id');

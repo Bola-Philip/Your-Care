@@ -4,16 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDepartmentsTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('center_services', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('center_id');
-            $table->string('image_path')->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
+            $table->double('price')->nullable();
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers');
@@ -22,6 +22,6 @@ class CreateDepartmentsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('center_services');
     }
-}
+};
