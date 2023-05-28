@@ -56,6 +56,9 @@ Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], 
     Route::post('logout', 'App\Http\Controllers\pharmacyController@logout');
     Route::post('refresh', 'App\Http\Controllers\pharmacyController@refresh');
     Route::post('myData', 'App\Http\Controllers\pharmacyController@myData');
+    Route::post('edit', 'App\Http\Controllers\pharmacyController@edit');
+    Route::post('addProducts', 'App\Http\Controllers\pharmacyController@addProducts');
+    Route::post('addProductImages', 'App\Http\Controllers\pharmacyController@addProductImages');
 
 });
 
