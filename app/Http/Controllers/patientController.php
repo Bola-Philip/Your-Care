@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
-use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\Report;
 use App\Traits\GeneralTrait;
 use App\Traits\imageTrait;
 use Illuminate\Http\Request;

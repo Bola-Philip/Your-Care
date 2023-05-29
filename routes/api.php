@@ -33,6 +33,8 @@ Route::group(['middleware' => ['api','auth:doctor'], 'prefix' => 'doctor'], func
     Route::post('logout', 'App\Http\Controllers\doctorController@logout');
     Route::post('refresh', 'App\Http\Controllers\doctorController@refresh');
     Route::post('myData', 'App\Http\Controllers\doctorController@myData');
+    Route::post('report', 'App\Http\Controllers\doctorController@report');
+    Route::post('patientTakeService', 'App\Http\Controllers\doctorController@patientTakeService');
 
 });
 

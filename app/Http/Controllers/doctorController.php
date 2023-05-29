@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\PatientTakeService;
+use App\Models\Report;
 use App\Traits\GeneralTrait;
 use App\Traits\imageTrait;
 use Illuminate\Http\Request;
@@ -81,4 +83,28 @@ class doctorController extends Controller
             'expires_in' => auth('doctor')->factory()->getTTL() * 60
         ]);
     }
+
+    public function report(Request $request)
+    {
+        Report::create([
+            'center_id' => auth('doctor')->user()->center_id,
+            'doctor_id' => auth('doctor')->user()->id,
+            'patient_id' => $request->patient_id,
+            'form_id' => $request->form_id,
+        ]);
+        return $this->returnSuccessMessage('Successfully Reported');
+
+    }
+    public function patientTakeService(Request $request)
+    {
+        PatientTakeService::create([
+            'booking_id' => $request->booking_id,
+            'service_id' => $request->service_id,
+            'cost' => $request->cost,
+            'date' => $request->date,
+        ]);
+        return $this->returnSuccessMessage('Success');
+
+    }
+
 }
