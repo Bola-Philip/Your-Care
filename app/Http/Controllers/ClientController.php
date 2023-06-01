@@ -6,7 +6,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\FuncCall;
 
-class clientController extends Controller
+class ClientController extends Controller
 {
     public function create()
     {
