@@ -16,8 +16,8 @@ use App\Http\Controllers\clientController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::controller('clientController')->group(function(){
-    Route::get('new', 'create')->name('client.create');
+Route::controller(DashController::class)->group(function(){
+    Route::post('new', 'create')->name('client.create');
     Route::post('save', 'store')->name('client.store');
     Route::post('edit', 'edit')->name('client.edit');
     Route::post('update', 'update')->name('client.update');
