@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\clientController;
+use App\Http\Controllers\ClientController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,7 +16,7 @@ use App\Http\Controllers\clientController;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::controller(clientController::class)->group(function(){
+Route::controller(ClientController::class)->group(function(){
     Route::post('new', 'create')->name('client.create');
     Route::post('save', 'store')->name('client.store');
     Route::post('edit', 'edit')->name('client.edit');
