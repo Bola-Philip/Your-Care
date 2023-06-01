@@ -22,9 +22,14 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('phone_description')->nullable();
             $table->string('email')->nullable();
-            $table->string('company_address')->nullable();
-            $table->string('city')->nullable();
+            $table->string('email_description')->nullable();
+            $table->string('address')->nullable();
+            $table->string('address2')->nullable();
+            $table->string('web_site')->nullable();
             $table->string('country')->nullable();
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('zip_code')->nullable();
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers');
