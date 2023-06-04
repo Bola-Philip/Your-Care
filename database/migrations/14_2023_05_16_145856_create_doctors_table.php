@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('abstract')->nullable();
             $table->string('full_brief', 250)->nullable();
             $table->integer('job_id')->nullable();
+            $table->string('signature')->nullable();
             $table->timestamp('birth_date')->nullable();
             $table->integer('experience_years')->nullable();
             $table->string('address')->nullable();
