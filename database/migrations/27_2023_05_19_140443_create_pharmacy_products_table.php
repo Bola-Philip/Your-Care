@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('amount')->nullable();
             $table->timestamps();
 
-            $table->foreign('pharmacy_id')->references('id')->on('pharmacies');
+            $table->foreign('pharmacy_id')->references('id')->on('pharmacies')->onDelete('cascade');
         });
     }
 

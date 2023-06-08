@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('booking_requests', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
-            $table->unsignedBigInteger('patient_id');
-            $table->unsignedBigInteger('doctor_id');
+            $table->unsignedBigInteger('center_id')->nullable();
+            $table->unsignedBigInteger('patient_id')->nullable();
+            $table->unsignedBigInteger('doctor_id')->nullable();
             $table->string('title');
             $table->string('service_description');
             $table->timestamp('start_at');
@@ -23,9 +23,9 @@ return new class extends Migration
             $table->integer('rating')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
-            $table->foreign('patient_id')->references('id')->on('patients');
-            $table->foreign('doctor_id')->references('id')->on('doctors');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('set null');
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('set null');
         });
     }
 

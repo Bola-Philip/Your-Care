@@ -22,10 +22,10 @@ return new class extends Migration
             $table->string('tax')->nullable();
             $table->string('message')->nullable();
 
-            $table->foreign('center_id')->references('id')->on('centers');
-            $table->foreign('client_id')->references('id')->on('clients');
-            $table->foreign('patient_id')->references('id')->on('patients');
-            $table->foreign('doctor_id')->references('id')->on('doctors');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('set null');
+            $table->foreign('patient_id')->references('id')->on('patients')->onDelete('set null');
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('set null');
         });
     }
 

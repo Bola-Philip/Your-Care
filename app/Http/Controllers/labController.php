@@ -7,6 +7,7 @@ use App\Models\Pharmacy;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class labController extends Controller
 {
@@ -18,36 +19,54 @@ class labController extends Controller
     {
         $credentials = request()->only('email', 'password');
 
-        if (! $token = auth('lab')->attempt($credentials)) {
+        if (!$token = auth('lab')->attempt($credentials)) {
             return \response()->json($token);
         }
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+        return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function register(Request $request)
     {
-        $lab = Lab::create([
+        try {
+            $rules = [
+                "email" => "required|string|unique:labs",
+                "password" => "required|string",
+            ];
+            $validator = Validator::make($request->all(), $rules);
 
-            'center_id' => $request->center_id,
-            'image' => $request->image,
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'website' => $request->website,
-            'address' => $request->address,
+            if ($validator->fails()) {
+                $code = $this->returnCodeAccordingToInput($validator);
+                return $this->returnValidationError($code, $validator);
+            } else {
+                $lab = Lab::create([
+                    'center_id' => $request->center_id,
+                    'image_path' => $request->image_path,
+                    'name' => $request->name,
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'phone' => $request->phone,
+                    'website' => $request->website,
+                    'address' => $request->address,
 
-        ]);
+                ]);
 
-        $token = auth('lab')->login($lab);
+                $token = auth('lab')->login($lab);
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+                return $this->returnData('token', $token, 'Here Is Your Token');
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
     public function myData()
     {
         $data = auth('lab')->user();
-        return $this->returnData('data',$data,'Here Is Your Data');
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('lab')->refresh());
     }
     public function logout()
     {
@@ -55,15 +74,11 @@ class labController extends Controller
 
         return $this->returnSuccessMessage('Successfully logged out');
     }
-    public function refresh()
-    {
-        return $this->respondWithToken(auth('lab')->refresh());
-    }
+
     protected function respondWithToken($token)
     {
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
             'expires_in' => auth('lab')->factory()->getTTL() * 60
         ]);
     }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('pharmacies', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('center_id')->nullable();
             $table->string('name')->nullable();
             $table->string('username');
             $table->string('password');
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('youtube')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
         });
     }
 

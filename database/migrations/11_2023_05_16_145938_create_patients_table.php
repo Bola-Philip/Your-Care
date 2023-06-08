@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('center_id')->nullable();
             $table->unsignedBigInteger('insurance_company_id')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image_path')->nullable();
             $table->string('name')->nullable();
             $table->string('username');
             $table->timestamp('birth_date')->nullable();
@@ -32,8 +32,8 @@ return new class extends Migration
             $table->string('nationality');
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
-            $table->foreign('insurance_company_id')->references('id')->on('insurance_companies');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('set null');
+            $table->foreign('insurance_company_id')->references('id')->on('insurance_companies')->onDelete('set null');
         });
     }
 

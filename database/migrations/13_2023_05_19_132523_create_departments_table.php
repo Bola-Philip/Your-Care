@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
         });
     }
 

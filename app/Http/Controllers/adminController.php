@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class adminController extends Controller
 {
@@ -17,32 +18,47 @@ class adminController extends Controller
     {
         $credentials = request()->only('email', 'password');
 
-        if (! $token = auth('admin')->attempt($credentials)) {
-            return $this->returnError('401','Unauthorized');
+        if (!$token = auth('admin')->attempt($credentials)) {
+            return $this->returnError('401', 'Unauthorized');
         }
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+        return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function register(Request $request)
     {
-        $admin = Admin::create([
-            'center_id' => $request->center_id,
-            'username' => $request->username,
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'permission' => $request->permission,
-        ]);
+        try {
+            $rules = [
+                "email" => "required|string|unique:admins",
+                "password" => "required|string",
+            ];
+            $validator = Validator::make($request->all(), $rules);
 
-        $token = auth('admin')->login($admin);
+            if ($validator->fails()) {
+                $code = $this->returnCodeAccordingToInput($validator);
+                return $this->returnValidationError($code, $validator);
+            } else {
+                $admin = Admin::create([
+                    'center_id' => $request->center_id,
+                    'username' => $request->username,
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'permission' => $request->permission,
+                ]);
 
-        return $this->returnData('token',$token,'Here Is Your Token');
+                $token = auth('admin')->login($admin);
+
+                return $this->returnData('token', $token, 'Here Is Your Token');
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
     public function myData()
     {
         $data = auth('admin')->user();
-        return $this->returnData('data',$data,'Here Is Your Data');
+        return $this->returnData('data', $data, 'Here Is Your Data');
     }
     public function logout()
     {
@@ -58,7 +74,6 @@ class adminController extends Controller
     {
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
             'expires_in' => auth('admin')->factory()->getTTL() * 60
         ]);
     }

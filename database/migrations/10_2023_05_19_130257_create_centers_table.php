@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('address2')->nullable();
             $table->string('state')->nullable();
             $table->string('province')->nullable();
-            $table->string('zipCod')->nullable();
+            $table->string('zip_code')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('twitter')->nullable();

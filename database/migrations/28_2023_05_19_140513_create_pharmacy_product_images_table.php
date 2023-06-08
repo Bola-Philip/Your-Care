@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('image_path')->nullable();
             $table->timestamps();
 
-            $table->foreign('pharmacy_product_id')->references('id')->on('pharmacy_products');
+            $table->foreign('pharmacy_product_id')->references('id')->on('pharmacy_products')->onDelete('cascade');
         });
     }
 

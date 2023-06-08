@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Models\Doctor;
+use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class doctorController extends Controller
+class EmployeeController extends Controller
 {
     use GeneralTrait;
     public function __construct()
     {
-        $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
+        $this->middleware('auth:nurse', ['except' => ['login', 'register']]);
     }
     public function register(Request $request)
     {
         $rules = [
-            "email" => "required|string|unique:doctors",
+            "email" => "required|string|unique:employees",
             "password" => "required|string",
-
         ];
         $validator = Validator::make($request->all(), $rules);
 
@@ -29,32 +29,28 @@ class doctorController extends Controller
             return $this->returnValidationError($code, $validator);
         } else {
             try {
-                $doctor = Doctor::create([
+                $nurse = Employee::create([
                     'center_id' => $request->center_id,
                     'department_id' => $request->department_id,
                     'image_path' => $request->image_path,
                     'username' => $request->username,
                     'name' => $request->name,
-                    'specialty' => $request->specialty,
-                    'ssn' => $request->ssn,
-                    'phone' => $request->phone,
-                    'work_phone' => $request->work_phone,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
-                    'work_email' => $request->work_email,
-                    'job_description' => $request->job_description,
-                    'abstract' => $request->abstract,
-                    'full_brief' => $request->full_brief,
-                    'job_id' => $request->job_id,
-                    'birth_date' => $request->birth_date,
-                    'experience_years' => $request->experience_years,
+                    'ssn' => $request->ssn,
+                    'phone' => $request->phone,
+                    'salary_per_hour' => $request->salary_per_hour,
+                    'total_salary' => $request->total_salary,
                     'address' => $request->address,
-                    'salary' => $request->salary,
+                    'country' => $request->country,
+                    'province' => $request->province,
+                    'city' => $request->city,
+                    'zip_code' => $request->zip_code,
                     'gender' => $request->gender,
                     'nationality' => $request->nationality,
                 ]);
 
-                $token = auth('doctor')->login($doctor);
+                $token = auth('nurse')->login($nurse);
 
                 return $this->returnData('token', $token, 'Here Is Your Token');
             } catch (\Throwable $ex) {
@@ -66,31 +62,31 @@ class doctorController extends Controller
     {
         $credentials = request()->only('email', 'password');
 
-        if (!$token = auth('doctor')->attempt($credentials)) {
+        if (!$token = auth('nurse')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
         return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function myData()
     {
-        $data = auth('doctor')->user();
+        $data = auth('nurse')->user();
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
     public function logout()
     {
-        auth('doctor')->logout();
+        auth('nurse')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
     }
     public function refresh()
     {
-        return $this->respondWithToken(auth('doctor')->refresh());
+        return $this->respondWithToken(auth('nurse')->refresh());
     }
     protected function respondWithToken($token)
     {
         return response()->json([
             'access_token' => $token,
-            'expires_in' => auth('doctor')->factory()->getTTL() * 60
+            'expires_in' => auth('nurse')->factory()->getTTL() * 60
         ]);
     }
 }
