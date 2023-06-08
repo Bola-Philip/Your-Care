@@ -187,7 +187,7 @@ class CenterController extends Controller
     {
         try {
             $department = Department::create([
-                'center_id' => $reqeust->center_id,
+                'center_id' => $request->center_id,
                 'name' => $request->name,
                 'image_path' => $request->image_path,
                 'description' => $request->description,
