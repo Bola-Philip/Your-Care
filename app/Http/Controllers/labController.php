@@ -102,6 +102,7 @@ class labController extends Controller
             'address' => $request->address,
         ]);
 
+
         return $this->returnSuccessMessage('Successfully Updated');
 
     }

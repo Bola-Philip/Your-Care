@@ -17,7 +17,6 @@ class doctorController extends Controller
     use imageTrait;
     public function __construct()
     {
-        $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
     }
     public function register(Request $request)
     {
@@ -100,7 +99,7 @@ class doctorController extends Controller
         ]);
     }
 
-    public function report(Request $request)
+    public function addReport(Request $request)
     {
         Report::create([
             'center_id' => auth('doctor')->user()->center_id,
@@ -121,6 +120,11 @@ class doctorController extends Controller
         ]);
         return $this->returnSuccessMessage('Success');
 
+    }
+
+    public function showReports()
+    {
+        return Report::with('form')->get();
     }
 
 }

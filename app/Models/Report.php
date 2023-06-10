@@ -10,7 +10,6 @@ class Report extends Model
     use HasFactory;
 
     protected $table = 'reports';
-    protected $primaryKey = ['doctor_id', 'patient_id', 'created_at'];
 
     protected $guarded = [];
 
