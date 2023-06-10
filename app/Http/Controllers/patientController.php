@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingRequest;
-use App\Models\Doctor;
 use App\Models\Patient;
-use App\Models\Report;
 use App\Traits\GeneralTrait;
+use App\Traits\imageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class patientController extends Controller
 {
     use GeneralTrait;
+    use imageTrait;
     public function __construct()
     {
     }
@@ -30,6 +30,7 @@ class patientController extends Controller
     }
     public function register(Request $request)
     {
+        $patient_image = $this->saveImage($request->image,'images/patients');
         try {
             $rules = [
                 "email" => "required|string|unique:patients",
@@ -44,7 +45,7 @@ class patientController extends Controller
                 $patient = Patient::create([
                     'center_id' => $request->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image_path' => $request->image_path,
+                    'image_path' => $patient_image ,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -58,7 +59,6 @@ class patientController extends Controller
                     'bloodType' => $request->bloodType,
                     'gender' => $request->gender,
                     'nationality' => $request->nationality,
-
                 ]);
 
                 $token = auth('patient')->login($patient);
@@ -78,12 +78,15 @@ class patientController extends Controller
 
     public function edit(Request $request)
     {
+        $patient_image = $this->saveImage($request->image,'images/patients');
+
+
         $patient_id = auth('patient')->user()->id;
         $patient = Patient::find($patient_id);
         $patient->update([
             'center_id' => $request->center_id,
             'insurance_company_id' => $request->insurance_company_id,
-            'image' => $request->image,
+            'image' => $patient_image,
             'name' => $request->name,
             'username' => $request->username,
             'birth_date' => $request->birth_date,
