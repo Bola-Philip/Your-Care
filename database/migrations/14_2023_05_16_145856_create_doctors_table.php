@@ -13,21 +13,23 @@ return new class extends Migration
     {
         Schema::create('doctors', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('center_id')->nullable();
             $table->unsignedBigInteger('department_id')->nullable();
-            $table->string('image')->nullable();
+            $table->string('image_path')->nullable();
             $table->string('username')->nullable();
             $table->string('name')->nullable();
             $table->string('ssn')->nullable();
             $table->string('phone')->nullable();
             $table->string('work_phone')->nullable();
-            $table->string('email')->nullable();
-            $table->string('password')->nullable();
+            $table->string('email');
+            $table->string('specialty');
+            $table->string('password');
             $table->string('work_email')->nullable();
             $table->string('job_description')->nullable();
             $table->string('abstract')->nullable();
             $table->string('full_brief', 250)->nullable();
             $table->integer('job_id')->nullable();
+            $table->string('signature')->nullable();
             $table->timestamp('birth_date')->nullable();
             $table->integer('experience_years')->nullable();
             $table->string('address')->nullable();

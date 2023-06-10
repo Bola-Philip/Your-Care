@@ -9,6 +9,7 @@ use App\Traits\GeneralTrait;
 use App\Traits\imageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class doctorController extends Controller
 {
@@ -18,6 +19,54 @@ class doctorController extends Controller
     {
         $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
     }
+    public function register(Request $request)
+    {
+        $rules = [
+            "email" => "required|string|unique:doctors",
+            "password" => "required|string",
+
+        ];
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            $code = $this->returnCodeAccordingToInput($validator);
+            return $this->returnValidationError($code, $validator);
+        } else {
+            try {
+                    $doctor_image = $this->saveImage($request->image,'images/doctors');
+                $doctor = Doctor::create([
+                    'center_id' => $request->center_id,
+                    'department_id' => $request->department_id,
+                    'image_path' => $doctor_image,
+                    'username' => $request->username,
+                    'name' => $request->name,
+                    'specialty' => $request->specialty,
+                    'ssn' => $request->ssn,
+                    'phone' => $request->phone,
+                    'work_phone' => $request->work_phone,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'work_email' => $request->work_email,
+                    'job_description' => $request->job_description,
+                    'abstract' => $request->abstract,
+                    'full_brief' => $request->full_brief,
+                    'job_id' => $request->job_id,
+                    'birth_date' => $request->birth_date,
+                    'experience_years' => $request->experience_years,
+                    'address' => $request->address,
+                    'salary' => $request->salary,
+                    'gender' => $request->gender,
+                    'nationality' => $request->nationality,
+                ]);
+
+                $token = auth('doctor')->login($doctor);
+
+                return $this->returnData('token', $token, 'Here Is Your Token');
+            } catch (\Throwable $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+    }
     public function login()
     {
         $credentials = request()->only('email', 'password');
@@ -25,41 +74,9 @@ class doctorController extends Controller
         if (!$token = auth('doctor')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-
         return $this->returnData('token', $token, 'Here Is Your Token');
     }
-    public function register(Request $request)
-    {
-        $doctor_image = $this->saveImage($request->image,'images/doctors');
 
-        $doctor = Doctor::create([
-            'center_id' => $request->center_id,
-            'department_id' => $request->department_id,
-            'image' => $doctor_image,
-            'username' => $request->username,
-            'name' => $request->name,
-            'ssn' => $request->ssn,
-            'phone' => $request->phone,
-            'work_phone' => $request->work_phone,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'work_email' => $request->work_email,
-            'job_description' => $request->job_description,
-            'abstract' => $request->abstract,
-            'full_brief' => $request->full_brief,
-            'job_id' => $request->job_id,
-            'birth_date' => $request->birth_date,
-            'experience_years' => $request->experience_years,
-            'address' => $request->address,
-            'salary' => $request->salary,
-            'gender' => $request->gender,
-            'nationality' => $request->nationality,
-        ]);
-
-        $token = auth('doctor')->login($doctor);
-
-        return $this->returnData('token', $token, 'Here Is Your Token');
-    }
     public function myData()
     {
         $data = auth('doctor')->user();
@@ -79,7 +96,6 @@ class doctorController extends Controller
     {
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
             'expires_in' => auth('doctor')->factory()->getTTL() * 60
         ]);
     }

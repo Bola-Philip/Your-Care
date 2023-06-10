@@ -17,8 +17,8 @@ return new class extends Migration
             $table->timestamp('end_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('doctor_id')->references('id')->on('doctors');
-            $table->foreign('employee_id')->references('id')->on('employees');
+            $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
         });
     }
 

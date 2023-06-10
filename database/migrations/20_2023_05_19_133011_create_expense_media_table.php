@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('media_path')->nullable();
             $table->timestamps();
 
-            $table->foreign('expense_id')->references('id')->on('expenses');
+            $table->foreign('expense_id')->references('id')->on('expenses')->onDelete('cascade');
         });
     }
 

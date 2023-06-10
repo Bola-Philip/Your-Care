@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('insurance_companies', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
+            $table->unsignedBigInteger('center_id')->nullable();
             $table->string('logo_path')->nullable();
             $table->string('name')->nullable();
             $table->string('description')->nullable();
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('youtube')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('set null');
         });
     }
 

@@ -49,6 +49,10 @@ return [
             'driver' => 'jwt',
             'provider' => 'doctors',
         ],
+        'nurse' => [
+            'driver' => 'jwt',
+            'provider' => 'nurses',
+        ],
         'patient' => [
             'driver' => 'jwt',
             'provider' => 'patients',
@@ -92,6 +96,10 @@ return [
         'doctors' => [
             'driver' => 'eloquent',
             'model' => App\Models\Doctor::class,
+        ],
+        'nurses' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Employee::class,
         ],
         'patients' => [
             'driver' => 'eloquent',

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('labs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('center_id');
-            $table->string('image')->nullable();
+            $table->unsignedBigInteger('center_id')->nullable();
+            $table->string('image_path')->nullable();
             $table->string('name')->nullable();
-            $table->string('user_name');
+            $table->string('username');
             $table->string('password');
             $table->string('phone');
             $table->string('email');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->timestamps();
 
-            $table->foreign('center_id')->references('id')->on('centers');
+            $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
         });
     }
 

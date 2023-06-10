@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\clientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -15,19 +14,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/login', function () {
+    echo 'some thing went wrong';
+});
 
-Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin'], function ($router) {
+Route::group(['middleware' => ['api', 'auth:admin'], 'prefix' => 'admin'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\adminController@login')->withoutMiddleware('auth:admin');
-    Route::post('register', 'App\Http\Controllers\adminController@register')->withoutMiddleware('auth:admin');
+    Route::post('login', 'App\Http\Controllers\adminController@login')->name('login')->withoutMiddleware('auth:admin');
+    Route::post('add', 'App\Http\Controllers\adminController@register')->withoutMiddleware('auth:admin');
     Route::post('logout', 'App\Http\Controllers\adminController@logout');
     Route::post('refresh', 'App\Http\Controllers\adminController@refresh');
     Route::post('myData', 'App\Http\Controllers\adminController@myData');
-
 });
 
 
-Route::group(['middleware' => ['api','auth:doctor'], 'prefix' => 'doctor'], function ($router) {
+Route::group(['middleware' => ['api', 'auth:doctor'], 'prefix' => 'doctor'], function ($router) {
 
     Route::post('login', 'App\Http\Controllers\doctorController@login')->withoutMiddleware('auth:doctor');;
     Route::post('register', 'App\Http\Controllers\doctorController@register')->withoutMiddleware('auth:doctor');
@@ -36,10 +37,19 @@ Route::group(['middleware' => ['api','auth:doctor'], 'prefix' => 'doctor'], func
     Route::post('myData', 'App\Http\Controllers\doctorController@myData');
     Route::post('report', 'App\Http\Controllers\doctorController@report');
     Route::post('patientTakeService', 'App\Http\Controllers\doctorController@patientTakeService');
-
 });
 
-Route::group(['middleware' => ['api','auth:patient'], 'prefix' => 'patient'], function ($router) {
+Route::group(['middleware' => ['api', 'auth:nurse'], 'prefix' => 'nurse'], function ($router) {
+
+    Route::post('login', 'App\Http\Controllers\Api\EmployeeController@login')->withoutMiddleware('auth:nurse');;
+    Route::post('register', 'App\Http\Controllers\Api\EmployeeController@register')->withoutMiddleware('auth:nurse');
+    Route::post('logout', 'App\Http\Controllers\Api\EmployeeController@logout');
+    Route::post('refresh', 'App\Http\Controllers\Api\EmployeeController@refresh');
+    Route::post('myData', 'App\Http\Controllers\Api\EmployeeController@myData');
+    Route::post('login', 'App\Http\Controllers\Api\EmployeeController@login')->withoutMiddleware('auth:nurse');;
+    Route::post('register', 'App\Http\Controllers\Api\EmployeeController@register')->withoutMiddleware('auth:nurse');
+});
+Route::group(['middleware' => ['api', 'auth:patient'], 'prefix' => 'patient'], function ($router) {
 
     Route::post('login', 'App\Http\Controllers\patientController@login')->withoutMiddleware('auth:patient');
     Route::post('register', 'App\Http\Controllers\patientController@register')->withoutMiddleware('auth:patient');
@@ -49,10 +59,9 @@ Route::group(['middleware' => ['api','auth:patient'], 'prefix' => 'patient'], fu
     Route::post('edit', 'App\Http\Controllers\patientController@edit');
     Route::post('bookingRequest/{doctor_id}', 'App\Http\Controllers\patientController@bookingRequest');
     Route::post('myReport', 'App\Http\Controllers\patientController@myReport');
-
 });
 
-Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], function ($router) {
+Route::group(['middleware' => ['api', 'auth:pharmacy'], 'prefix' => 'pharmacy'], function ($router) {
 
     Route::post('login', 'App\Http\Controllers\pharmacyController@login')->withoutMiddleware('auth:pharmacy');
     Route::post('register', 'App\Http\Controllers\pharmacyController@register')->withoutMiddleware('auth:pharmacy');
@@ -62,10 +71,9 @@ Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], 
     Route::post('edit', 'App\Http\Controllers\pharmacyController@edit');
     Route::post('addProducts', 'App\Http\Controllers\pharmacyController@addProducts');
     Route::post('addProductImages', 'App\Http\Controllers\pharmacyController@addProductImages');
-
 });
 
-Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function ($router) {
+Route::group(['middleware' => ['api', 'auth:lab'], 'prefix' => 'lab'], function ($router) {
 
     Route::post('login', 'App\Http\Controllers\labController@login')->withoutMiddleware('auth:lab');
     Route::post('register', 'App\Http\Controllers\labController@register')->withoutMiddleware('auth:lab');
@@ -74,5 +82,4 @@ Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function (
     Route::post('myData', 'App\Http\Controllers\labController@myData');
     Route::post('edit', 'App\Http\Controllers\labController@edit');
     Route::post('ourReply', 'App\Http\Controllers\labController@ourReply');
-
 });

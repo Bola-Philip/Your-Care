@@ -15,8 +15,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('invoice_id')->references('id')->on('invoices');
-            $table->foreign('client_service_id')->references('id')->on('client_services');
-            $table->foreign('center_service_id')->references('id')->on('center_services');
+            $table->foreign('client_service_id')->references('id')->on('client_services')->onDelete('cascade');
+            $table->foreign('center_service_id')->references('id')->on('center_services')->onDelete('set null');
         });
     }
 

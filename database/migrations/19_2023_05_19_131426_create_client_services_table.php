@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('paid')->default(0);
             $table->timestamps();
             // Add foreign key constraints if needed
-            $table->foreign('client_id')->references('id')->on('clients');
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
     }
 
