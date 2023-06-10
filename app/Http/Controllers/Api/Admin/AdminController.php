@@ -23,6 +23,7 @@ class AdminController extends Controller
             return $this->returnError('401', 'Unauthorized');
         }
 
+
         return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function register(Request $request)
@@ -48,6 +49,7 @@ class AdminController extends Controller
                     'permission' => $request->permission,
                 ]);
 
+                // $token = auth('admin')->user();
                 $token = auth('admin')->login($admin);
 
                 return $this->returnData('token', $token, 'Here Is Your Token');
