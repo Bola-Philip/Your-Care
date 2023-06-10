@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class adminController extends Controller
+class AdminController extends Controller
 {
     use GeneralTrait;
     public function __construct()

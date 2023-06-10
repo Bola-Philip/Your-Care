@@ -1,16 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\InsuranceCompany;
 use App\Traits\GeneralTrait;
+use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Validator;
 
 class InsuranceCompanyController extends Controller
 {
     use GeneralTrait;
+    use ImageTrait;
+
     public function store(Request $request)
     {
         try {
@@ -23,9 +26,12 @@ class InsuranceCompanyController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+                if ($request->logo)
+                    $logo = $this->saveImage($request->logo, 'images/logo/insurances');
+                else $logo = 0;
                 $insurance = InsuranceCompany::create([
                     'center_id' => $request->center_id,
-                    'logo_path' => $request->logo_path,
+                    'logo_path' => $logo,
                     'name' => $request->name,
                     'description' => $request->description,
                     'email' => $request->email,

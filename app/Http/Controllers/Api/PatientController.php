@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\BookingRequest;
 use App\Models\Patient;
 use App\Traits\GeneralTrait;
-use App\Traits\imageTrait;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class patientController extends Controller
+class PatientController extends Controller
 {
     use GeneralTrait;
-    use imageTrait;
+    use ImageTrait;
     public function __construct()
     {
     }
@@ -30,7 +31,7 @@ class patientController extends Controller
     }
     public function register(Request $request)
     {
-        $patient_image = $this->saveImage($request->image,'images/patients');
+        $patient_image = $this->saveImage($request->image, 'images/patients');
         try {
             $rules = [
                 "email" => "required|string|unique:patients",
@@ -42,10 +43,13 @@ class patientController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+                if ($request->image)
+                    $patient_image = $this->saveImage($request->image, 'images/patients');
+                else $patient_image = 0;
                 $patient = Patient::create([
                     'center_id' => $request->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image_path' => $patient_image ,
+                    'image_path' => $patient_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -78,7 +82,7 @@ class patientController extends Controller
 
     public function edit(Request $request)
     {
-        $patient_image = $this->saveImage($request->image,'images/patients');
+        $patient_image = $this->saveImage($request->image, 'images/patients');
 
 
         $patient_id = auth('patient')->user()->id;

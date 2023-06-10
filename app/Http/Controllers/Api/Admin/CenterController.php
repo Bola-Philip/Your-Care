@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Admin;
 
-use App\Traits\GeneralTrait;
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
-use Illuminate\Http\Request;
 use App\Models\Center;
+use App\Models\Admin;
+use App\Traits\GeneralTrait;
+use App\Traits\ImageTrait;
+use Illuminate\Http\Request;
 use App\Models\Department;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Validator;
 class CenterController extends Controller
 {
     use GeneralTrait;
-
+    use ImageTrait;
     public function store(Request $request)
     {
         try {
@@ -34,8 +35,11 @@ class CenterController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+                // if($request->logo)
+                $logo = $this->saveImage($request->logo, 'images/logos/centers');
+                // else $logo=0;
                 $center = Center::create([
-                    'logo_path' => $request->logo_path,
+                    'logo_path' => $logo,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -58,7 +62,7 @@ class CenterController extends Controller
                     'snapchat' => $request->snapchat,
                     'youtube' => $request->youtube,
                 ]);
-                Admin::create([
+                $admin=Admin::create([
                     'center_id' => $center->id,
                     'name' => $center->name,
                     'username' => $center->username,
@@ -69,12 +73,12 @@ class CenterController extends Controller
                 ]);
                 //login
 
-                $credentials = request()->only('email', 'password');
+                // $credentials = request()->only('email', 'password');
 
-                if (!$token = auth('admin')->attempt($credentials)) {
-                    return $this->returnError('401', 'Unauthorized');
-                }
-
+                // if (!$token = auth('admin')->attempt($credentials)) {
+                //     return $this->returnError('401', 'Unauthorized');
+                // }
+                $token = auth('admin')->login($admin);
                 return $this->returnData('token', $token, 'Here Is Your Token');
 
                 //     $token = auth('admin')->login($admin);
@@ -186,9 +190,10 @@ class CenterController extends Controller
     public function createDepartment(Request $request)
     {
         try {
+            $image = $this->saveImage($request->image, 'images/centers/departments');
             $department = Department::create([
                 'center_id' => $request->center_id,
-                'name' => $request->name,
+                'name' => $image,
                 'image_path' => $request->image_path,
                 'description' => $request->description,
             ]);

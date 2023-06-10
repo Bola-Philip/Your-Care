@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Pharmacy;
 use App\Models\PharmacyProduct;
 use App\Models\PharmacyProductImage;
 use App\Traits\GeneralTrait;
-use App\Traits\imageTrait;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class pharmacyController extends Controller
+class PharmacyController extends Controller
 {
     use GeneralTrait;
-    use imageTrait;
+    use ImageTrait;
     public function __construct()
     {
     }
@@ -41,9 +42,13 @@ class pharmacyController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+                if ($request->image)
+                $pharmacy_image = $this->saveImage($request->image, 'images/pharmacies');
+            else $pharmacy_image = 0;
                 $pharmacy = Pharmacy::create([
                     'center_id' => $request->center_id,
                     'name' => $request->name,
+                    'image_path'=>$pharmacy_image,
                     'username' => $request->username,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),

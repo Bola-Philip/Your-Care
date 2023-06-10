@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\Lab;
 use App\Models\Reply;
 use App\Traits\GeneralTrait;
-use App\Traits\imageTrait;
+use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class labController extends Controller
+class LabController extends Controller
 {
     use GeneralTrait;
-    use imageTrait;
+    use ImageTrait;
     public function __construct()
     {
     }
@@ -40,7 +41,9 @@ class labController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
-               $lab_image = $this->saveImage($request->image,'images/labs');
+                if ($request->image)
+                    $lab_image = $this->saveImage($request->image, 'images/labs');
+                else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
                     'image_path' => $lab_image,
@@ -86,7 +89,7 @@ class labController extends Controller
     }
     public function edit(Request $request)
     {
-        $lab_image = $this->saveImage($request->image,'images/labs');
+        $lab_image = $this->saveImage($request->image, 'images/labs');
 
         $lab_id = auth('lab')->user()->id;
         $lab = Lab::find($lab_id);
@@ -103,18 +106,5 @@ class labController extends Controller
         ]);
 
         return $this->returnSuccessMessage('Successfully Updated');
-
-    }
-
-    public function ourReply(Request $request)
-    {
-        $result_image_file = $this->saveImage($request->result,'images/replies');
-
-        Reply::create([
-            'sample_id' => $request->sample_id,
-            'result' => $result_image_file,
-        ]);
-        return $this->returnSuccessMessage('Successfully Replied');
-
     }
 }

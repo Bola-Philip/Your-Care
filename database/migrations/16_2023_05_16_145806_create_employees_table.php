@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('username')->unique();
             $table->string('phone')->nullable();
-            $table->string('email');
-            $table->string('password');
+            $table->string('email')->nullable();
+            // $table->string('password');
             $table->string('ssn')->nullable();
             $table->double('salary_per_hour')->nullable();
             $table->double('total_salary')->nullable();
