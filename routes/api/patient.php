@@ -14,14 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['api', 'auth:patient'], 'prefix' => 'patient'], function ($router) {
+Route::group(['middleware' => ['api', 'checkToken:patient'], 'prefix' => 'patient'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\Api\PatientController@login')->withoutMiddleware('auth:patient')->name('patient.login');
-    Route::post('register', 'App\Http\Controllers\Api\PatientController@register')->withoutMiddleware('auth:patient');
+    Route::post('login', 'App\Http\Controllers\Api\PatientController@login')->withoutMiddleware('checkToken:patient')->name('patient.login');
+    Route::post('register', 'App\Http\Controllers\Api\PatientController@register')->withoutMiddleware('checkToken:patient');
     Route::post('logout', 'App\Http\Controllers\Api\PatientController@logout');
     Route::post('refresh', 'App\Http\Controllers\Api\PatientController@refresh');
     Route::post('myData', 'App\Http\Controllers\Api\PatientController@myData');
-    Route::post('edit', 'App\Http\Controllers\Api\PatientController@edit');
-    Route::post('bookingRequest/{doctor_id}', 'App\Http\Controllers\Api\PatientController@bookingRequest');
+    Route::post('update', 'App\Http\Controllers\Api\PatientController@update');
+    Route::post('bookingRequest', 'App\Http\Controllers\Api\PatientController@bookingRequest');
     Route::post('myReport', 'App\Http\Controllers\Api\PatientController@myReport');
 });

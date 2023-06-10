@@ -14,10 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => ['api', 'auth:doctor'], 'prefix' => 'doctor'], function ($router) {
+Route::group(['middleware' => ['api', 'checkToken:doctor'], 'prefix' => 'doctor'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\Api\DoctorController@login')->withoutMiddleware('auth:doctor')->name('doctor.login');
-    Route::post('register', 'App\Http\Controllers\Api\DoctorController@register')->withoutMiddleware('auth:doctor');
+    Route::post('login', 'App\Http\Controllers\Api\DoctorController@login')->withoutMiddleware('checkToken:doctor')->name('doctor.login');
+    Route::post('register', 'App\Http\Controllers\Api\DoctorController@register')->withoutMiddleware('checkToken:doctor');
     Route::post('logout', 'App\Http\Controllers\Api\DoctorController@logout');
     Route::post('refresh', 'App\Http\Controllers\Api\DoctorController@refresh');
     Route::post('myData', 'App\Http\Controllers\Api\DoctorController@myData');
