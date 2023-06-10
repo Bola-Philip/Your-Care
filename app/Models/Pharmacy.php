@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Pharmacy extends  Authenticatable implements JWTSubject
+class Pharmacy extends Authenticatable implements JWTSubject
 {
     protected $table = 'pharmacies';
     protected $primaryKey = 'id';

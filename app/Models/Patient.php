@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Patient extends  Authenticatable implements JWTSubject
+class Patient extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     protected $table = 'patients';

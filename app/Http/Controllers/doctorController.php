@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\PatientTakeService;
+use App\Models\Report;
 use App\Traits\GeneralTrait;
+use App\Traits\imageTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 class doctorController extends Controller
 {
     use GeneralTrait;
+    use imageTrait;
     public function __construct()
     {
         $this->middleware('auth:doctor', ['except' => ['login', 'register']]);
@@ -29,10 +33,11 @@ class doctorController extends Controller
             return $this->returnValidationError($code, $validator);
         } else {
             try {
+                    $doctor_image = $this->saveImage($request->image,'images/doctors');
                 $doctor = Doctor::create([
                     'center_id' => $request->center_id,
                     'department_id' => $request->department_id,
-                    'image_path' => $request->image_path,
+                    'image_path' => $doctor_image,
                     'username' => $request->username,
                     'name' => $request->name,
                     'specialty' => $request->specialty,
@@ -71,6 +76,7 @@ class doctorController extends Controller
         }
         return $this->returnData('token', $token, 'Here Is Your Token');
     }
+
     public function myData()
     {
         $data = auth('doctor')->user();
@@ -93,4 +99,28 @@ class doctorController extends Controller
             'expires_in' => auth('doctor')->factory()->getTTL() * 60
         ]);
     }
+
+    public function report(Request $request)
+    {
+        Report::create([
+            'center_id' => auth('doctor')->user()->center_id,
+            'doctor_id' => auth('doctor')->user()->id,
+            'patient_id' => $request->patient_id,
+            'form_id' => $request->form_id,
+        ]);
+        return $this->returnSuccessMessage('Successfully Reported');
+
+    }
+    public function patientTakeService(Request $request)
+    {
+        PatientTakeService::create([
+            'booking_id' => $request->booking_id,
+            'service_id' => $request->service_id,
+            'cost' => $request->cost,
+            'date' => $request->date,
+        ]);
+        return $this->returnSuccessMessage('Success');
+
+    }
+
 }

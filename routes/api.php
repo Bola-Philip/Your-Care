@@ -35,8 +35,8 @@ Route::group(['middleware' => ['api', 'auth:doctor'], 'prefix' => 'doctor'], fun
     Route::post('logout', 'App\Http\Controllers\doctorController@logout');
     Route::post('refresh', 'App\Http\Controllers\doctorController@refresh');
     Route::post('myData', 'App\Http\Controllers\doctorController@myData');
-    Route::post('login', 'App\Http\Controllers\doctorController@login')->withoutMiddleware('auth:doctor');;
-    Route::post('register', 'App\Http\Controllers\doctorController@register')->withoutMiddleware('auth:doctor');
+    Route::post('report', 'App\Http\Controllers\doctorController@report');
+    Route::post('patientTakeService', 'App\Http\Controllers\doctorController@patientTakeService');
 });
 
 Route::group(['middleware' => ['api', 'auth:nurse'], 'prefix' => 'nurse'], function ($router) {
@@ -68,6 +68,9 @@ Route::group(['middleware' => ['api', 'auth:pharmacy'], 'prefix' => 'pharmacy'],
     Route::post('logout', 'App\Http\Controllers\pharmacyController@logout');
     Route::post('refresh', 'App\Http\Controllers\pharmacyController@refresh');
     Route::post('myData', 'App\Http\Controllers\pharmacyController@myData');
+    Route::post('edit', 'App\Http\Controllers\pharmacyController@edit');
+    Route::post('addProducts', 'App\Http\Controllers\pharmacyController@addProducts');
+    Route::post('addProductImages', 'App\Http\Controllers\pharmacyController@addProductImages');
 });
 
 Route::group(['middleware' => ['api', 'auth:lab'], 'prefix' => 'lab'], function ($router) {
@@ -77,4 +80,6 @@ Route::group(['middleware' => ['api', 'auth:lab'], 'prefix' => 'lab'], function 
     Route::post('logout', 'App\Http\Controllers\labController@logout');
     Route::post('refresh', 'App\Http\Controllers\labController@refresh');
     Route::post('myData', 'App\Http\Controllers\labController@myData');
+    Route::post('edit', 'App\Http\Controllers\labController@edit');
+    Route::post('ourReply', 'App\Http\Controllers\labController@ourReply');
 });
