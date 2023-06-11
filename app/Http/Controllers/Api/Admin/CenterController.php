@@ -118,7 +118,7 @@ class CenterController extends Controller
         try {
             $center = Center::findOrFail($id);
             $admin = $center->admins()->where('permission', 'admin');
-            $admins = Admin::where('center_id', '=', $id)->get();
+            $admin = Admin::where('center_id', '=', $id)->get();
             $rules = [
                 "name" => "required|string",
                 "username" => "required|string",

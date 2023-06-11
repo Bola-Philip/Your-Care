@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('nationality');
             $table->timestamps();
-
+            
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('set null');
             $table->foreign('insurance_company_id')->references('id')->on('insurance_companies')->onDelete('set null');
         });
