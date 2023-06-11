@@ -21,7 +21,7 @@ class Client extends Model
     }
     public function expenses()
     {
-        return $this->hasMany(expenses::class, 'client_id');
+        return $this->hasMany(Expense::class, 'client_id');
     }
     public function invoices()
     {

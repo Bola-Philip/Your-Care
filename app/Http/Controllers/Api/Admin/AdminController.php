@@ -28,6 +28,7 @@ class AdminController extends Controller
     }
     public function register(Request $request)
     {
+//        dd($request);
         try {
             $rules = [
                 "email" => "required|string|unique:admins",
@@ -39,6 +40,7 @@ class AdminController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+
                 $admin = Admin::create([
                     'center_id' => $request->center_id,
                     'username' => $request->username,
