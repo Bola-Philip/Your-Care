@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    
+
 
     public function store(Request $request)
     {
@@ -17,7 +17,7 @@ class InvoiceController extends Controller
 
                 $invoice = Invoice::create([
                     'center_id' => $request->center_id,
-                    'client_id' => $client_id,
+                    'client_id' =>  $request->client_id,
                     'patient_id' => $request->patient_id,
                     'doctor_id' => $request->doctor_id,
                     'payment_due' => $request->payment_due,
@@ -29,10 +29,10 @@ class InvoiceController extends Controller
                     'tax' => $request->tax,
                     'state' => $request->state,
                     'message' => $request->message,
-                
+
                 ]);
                 return $this->returnData('Invoice', $invoice, 'successfully created ');
-            
+
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -56,9 +56,9 @@ class InvoiceController extends Controller
 
     }
 
-    
 
-    
+
+
     public function destroy($id)
     {
         try {
@@ -73,6 +73,6 @@ class InvoiceController extends Controller
     }
 
 
-    
-    
+
+
 }

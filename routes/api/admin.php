@@ -36,16 +36,16 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
 
         });
         Route::group(['middleware' => ['api'], 'prefix' => 'client'], function ($router) {
-            Route::post('save', 'App\Http\Controllers\Api\Admin\ClientController@store');
-            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\ClientController@show');
-            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\ClientController@update');
+            Route::post('save', 'App\Http\Controllers\Api\Admin\ClientController@store')->withoutMiddleware('checkToken:admin');
+            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\ClientController@show')->withoutMiddleware('checkToken:admin');
+            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\ClientController@update')->withoutMiddleware('checkToken:admin');
             Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\ClientController@destroy');
         });
         Route::group(['middleware' => ['api'], 'prefix' => 'expense'], function ($router) {
-            Route::post('save', '\App\Http\Controllers\Api\Admin\ExpenseController@store');
-            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@show');
-            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@update');
-            Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@destroy');
+            Route::post('save', '\App\Http\Controllers\Api\Admin\ExpenseController@store')->withoutMiddleware('checkToken:admin');
+            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@show')->withoutMiddleware('checkToken:admin');
+            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@update')->withoutMiddleware('checkToken:admin');
+            Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@destroy')->withoutMiddleware('checkToken:admin');
         });
 
 
