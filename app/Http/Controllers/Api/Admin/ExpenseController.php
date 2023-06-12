@@ -12,6 +12,7 @@ use App\Traits\GeneralTrait;
 use App\Http\Controllers\Controller;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 class ExpenseController extends Controller
@@ -41,7 +42,7 @@ class ExpenseController extends Controller
 
             // insert img
             if ($request->hasfile('media_path')) {
-                $patient_image = $this->saveImage($request->media_path, 'images/expenses');
+                $patient_image = $this->saveImage($request->media_path, 'images/expenses/'.$expense->id);
                 // insert in ExpenseMedia
                     $image = new ExpenseMedia();
                     $image->expense_id = $expense->id;
@@ -99,6 +100,8 @@ class ExpenseController extends Controller
     public function destroy(string $id)
     {
         try {
+            // Delete img in server disk
+            $this->deleteFile('expenses',$id);
             $center = Expense::find($id);
             if ($center) {
                 Expense::destroy($id);
