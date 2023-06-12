@@ -12,14 +12,6 @@ use App\Http\Controllers\ClientController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('login', 'App\Http\Controllers\Controller@login');
+Route::post('check', 'App\Http\Controllers\Api\Admin\AdminController@login')->name('login');
 
-Route::get('/login', function () {
-    return view('welcome');
-});
-Route::controller(ClientController::class)->group(function(){
-    Route::post('new', 'create')->name('client.create');
-    Route::post('save', 'store')->name('client.store');
-    Route::post('edit', 'edit')->name('client.edit');
-    Route::post('update', 'update')->name('client.update');
-    Route::post('delete', 'delete')->name('client.delete');
-});
