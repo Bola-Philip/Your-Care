@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Lab;
 use App\Models\Reply;
+use App\Models\Sample;
 use App\Traits\GeneralTrait;
 use App\Traits\imageTrait;
 use Illuminate\Http\Request;
@@ -118,4 +119,25 @@ class labController extends Controller
         return $this->returnSuccessMessage('Successfully Replied');
 
     }
+    public function show($lab_id)
+    {
+        $data = Lab::find($lab_id);
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+    public function addSample(Request $request)
+    {
+        Sample::create([
+            'lab_id' => $request->lab_id,
+            'doctor_id	' => $request->doctor_id	,
+            'patient_id' => $request->patient_id,
+            'reply_id' => $request->reply_id,
+        ]);
+        return $this->returnSuccessMessage('Successfully Added');
+    }
+    public function destroy($lab_id)
+    {
+        $data = Lab::find($lab_id);
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+
 }

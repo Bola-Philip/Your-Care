@@ -35,7 +35,10 @@ Route::group(['middleware' => ['api','auth:doctor'], 'prefix' => 'doctor'], func
     Route::post('refresh', 'App\Http\Controllers\doctorController@refresh');
     Route::post('myData', 'App\Http\Controllers\doctorController@myData');
     Route::post('report', 'App\Http\Controllers\doctorController@report');
+    Route::post('edit', 'App\Http\Controllers\doctorController@edit');
+    Route::post('show/{doctor_id}', 'App\Http\Controllers\doctorController@show');
     Route::post('patientTakeService', 'App\Http\Controllers\doctorController@patientTakeService');
+    Route::post('experience', 'App\Http\Controllers\doctorController@experience');
 
 });
 
@@ -61,6 +64,8 @@ Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], 
     Route::post('myData', 'App\Http\Controllers\pharmacyController@myData');
     Route::post('edit', 'App\Http\Controllers\pharmacyController@edit');
     Route::post('addProducts', 'App\Http\Controllers\pharmacyController@addProducts');
+    Route::post('show/{pharmacy_id}', 'App\Http\Controllers\pharmacyController@show');
+    Route::delete('destroy/{pharmacy_id}', 'App\Http\Controllers\pharmacyController@destroy');
     Route::post('addProductImages', 'App\Http\Controllers\pharmacyController@addProductImages');
 
 });
@@ -73,6 +78,18 @@ Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function (
     Route::post('refresh', 'App\Http\Controllers\labController@refresh');
     Route::post('myData', 'App\Http\Controllers\labController@myData');
     Route::post('edit', 'App\Http\Controllers\labController@edit');
+    Route::post('show/{lab_id}', 'App\Http\Controllers\labController@show');
+    Route::post('addSample', 'App\Http\Controllers\labController@addSample');
+    Route::post('destroy/{lab_id}', 'App\Http\Controllers\labController@destroy');
     Route::post('ourReply', 'App\Http\Controllers\labController@ourReply');
+
+});
+
+Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'WorkTime'], function ($router) {
+
+    Route::post('add', 'App\Http\Controllers\workTimeController@add');
+    Route::post('show/{Work_time_id}', 'App\Http\Controllers\workTimeController@show');
+    Route::post('edit/{work_time_id}', 'App\Http\Controllers\workTimeController@edit');
+    Route::post('destroy/{work_time_id}', 'App\Http\Controllers\workTimeController@destroy');
 
 });

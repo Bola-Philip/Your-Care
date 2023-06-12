@@ -152,5 +152,21 @@ class pharmacyController extends Controller
 
         return $this->returnSuccessMessage('Successfully added');
     }
+    public function show($pharmacy_id)
+    {
+        $data = Pharmacy::find($pharmacy_id);
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+    public function destory($pharmacy_id)
+    {
+        $data = Pharmacy::find($pharmacy_id);
+
+        if ($data) {
+            $data->delete();
+            return $this->returnSuccessMessage('Successfully added');
+        } else {
+            return $this->returnError('401', 'Record not found');
+        }
+    }
 
 }

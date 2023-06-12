@@ -121,10 +121,62 @@ class doctorController extends Controller
         return $this->returnSuccessMessage('Success');
 
     }
+    public function edit(Request $request)
+    {
+        $doctor_image = $this->saveImage($request->image,'images/doctors');
+
+        $doctor_id = auth('doctor')->user()->id;
+        $doctor = Doctor::find($doctor_id);
+        $doctor->update([
+            'center_id' => $request->center_id,
+            'department_id' => $request->department_id,
+            'image_path' => $doctor_image,
+            'username' => $request->username,
+            'name' => $request->name,
+            'specialty' => $request->specialty,
+            'ssn' => $request->ssn,
+            'phone' => $request->phone,
+            'work_phone' => $request->work_phone,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'work_email' => $request->work_email,
+            'job_description' => $request->job_description,
+            'abstract' => $request->abstract,
+            'full_brief' => $request->full_brief,
+            'job_id' => $request->job_id,
+            'birth_date' => $request->birth_date,
+            'experience_years' => $request->experience_years,
+            'address' => $request->address,
+            'salary' => $request->salary,
+            'gender' => $request->gender,
+            'nationality' => $request->nationality,
+        ]);
+
+        return $this->returnSuccessMessage('Successfully Updated');
+    }
+
+    public function show($doctor_id)
+    {
+        $data = Doctor::find($doctor_id);
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
 
     public function showReports()
     {
         return Report::with('form')->get();
     }
 
+    public function experience(Request $request)
+    {
+        Report::create([
+            'doctor_id' => $request->doctor_id,
+            'experience_name' => $request->experience_name,
+            'work_place_name	' => $request->work_place_name	,
+            'started_at' => $request->started_at,
+            'finished_at' => $request->finished_at,
+            'still_works' => $request->still_works,
+        ]);
+        return $this->returnSuccessMessage('Experience Successfully Added');
+
+    }
 }
