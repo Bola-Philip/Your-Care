@@ -24,4 +24,9 @@ Route::group(['middleware' => ['api', 'checkToken:patient'], 'prefix' => 'patien
     Route::post('update', 'App\Http\Controllers\Api\PatientController@update');
     Route::post('bookingRequest', 'App\Http\Controllers\Api\PatientController@bookingRequest');
     Route::post('myReport', 'App\Http\Controllers\Api\PatientController@myReport');
+    Route::post('deleteMyAccount', 'App\Http\Controllers\Api\PatientController@destroy');
+    Route::group(['prefix'=>'disease'], function($router){
+    Route::post('add', 'App\Http\Controllers\Api\PatientController@addDisease');
+    Route::post('{id}/addMedia', 'App\Http\Controllers\Api\PatientController@addDiseaseMedia');
+    });
 });

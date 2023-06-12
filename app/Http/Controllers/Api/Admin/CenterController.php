@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Center;
 use App\Models\Admin;
+use App\Models\CenterService;
 use App\Traits\GeneralTrait;
 use App\Traits\ImageTrait;
 use Illuminate\Http\Request;
@@ -17,6 +18,19 @@ class CenterController extends Controller
 {
     use GeneralTrait;
     use ImageTrait;
+
+    public function show(string $id)
+    {
+        try {
+            $center = Center::find($id);
+            if ($center) {
+                return $this->returnData('center', $center);
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -62,7 +76,7 @@ class CenterController extends Controller
                     'snapchat' => $request->snapchat,
                     'youtube' => $request->youtube,
                 ]);
-                $admin=Admin::create([
+                $admin = Admin::create([
                     'center_id' => $center->id,
                     'name' => $center->name,
                     'username' => $center->username,
@@ -101,103 +115,220 @@ class CenterController extends Controller
 
     }
 
-    public function show(string $id)
+
+    public function update(Request $request)
     {
         try {
+            $id = auth('admin')->user()->center_id;
             $center = Center::find($id);
             if ($center) {
-                return $this->returnData('center', $center);
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
+                $admin = $center->admins()->where('permission', 'admin');
+                $admin = Admin::where('center_id', '=', $id)->get();
+                $rules = [
+                    "name" => "required|string",
+                    "username" => "required|string",
+                    "subscription_type" => "required|string",
+                    "subscription_period" => "required|string",
 
-    public function update(Request $request, string $id)
-    {
-        try {
-            $center = Center::findOrFail($id);
-            $admin = $center->admins()->where('permission', 'admin');
-            $admin = Admin::where('center_id', '=', $id)->get();
-            $rules = [
-                "name" => "required|string",
-                "username" => "required|string",
-                "subscription_type" => "required|string",
-                "subscription_period" => "required|string",
+                ];
+                $validator = Validator::make($request->all(), $rules);
 
-            ];
-            $validator = Validator::make($request->all(), $rules);
+                if ($validator->fails()) {
+                    $code = $this->returnCodeAccordingToInput($validator);
+                    return $this->returnValidationError($code, $validator);
+                } else {
+                    $center->update([
+                        'logo_path' => $request->logo_path,
+                        'name' => $request->name,
+                        'username' => $request->username,
+                        'email' => $request->email,
+                        'country' => $request->country,
+                        'subscription_type' => $request->subscription_type,
+                        'subscription_period' => $request->subscription_period,
+                        'formal_email' => $request->formal_email,
+                        'phone' => $request->phone,
+                        'formal_phone' => $request->formal_phone,
+                        'website' => $request->website,
+                        'address1' => $request->address1,
+                        'address2' => $request->address2,
+                        'state' => $request->state,
+                        'province' => $request->province,
+                        'zip_code' => $request->zip_code,
+                        'facebook' => $request->facebook,
+                        'instagram' => $request->instagram,
+                        'twitter' => $request->twitter,
+                        'snapchat' => $request->snapchat,
+                        'youtube' => $request->youtube,
+                    ]);
 
-            if ($validator->fails()) {
-                $code = $this->returnCodeAccordingToInput($validator);
-                return $this->returnValidationError($code, $validator);
+                    $admin->update([
+                        'name' => $center->name,
+                        'username' => $center->username,
+                        'password' => $center->password,
+                        'phone' => $center->phone,
+                        'email' => $center->email,
+                    ]);
+
+                    //    return dd($admins);
+                    return $this->returnData('center', $center);
+                }
             } else {
-                $center->update([
-                    'logo_path' => $request->logo_path,
-                    'name' => $request->name,
-                    'username' => $request->username,
-                    'email' => $request->email,
-                    'country' => $request->country,
-                    'subscription_type' => $request->subscription_type,
-                    'subscription_period' => $request->subscription_period,
-                    'formal_email' => $request->formal_email,
-                    'phone' => $request->phone,
-                    'formal_phone' => $request->formal_phone,
-                    'website' => $request->website,
-                    'address1' => $request->address1,
-                    'address2' => $request->address2,
-                    'state' => $request->state,
-                    'province' => $request->province,
-                    'zip_code' => $request->zip_code,
-                    'facebook' => $request->facebook,
-                    'instagram' => $request->instagram,
-                    'twitter' => $request->twitter,
-                    'snapchat' => $request->snapchat,
-                    'youtube' => $request->youtube,
-                ]);
-
-                $admin->update([
-                    'name' => $center->name,
-                    'username' => $center->username,
-                    'password' => $center->password,
-                    'phone' => $center->phone,
-                    'email' => $center->email,
-                ]);
-
-                //    return dd($admins);
-                return $this->returnData('center', $center);
+                return $this->returnError(404, "The requested center does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+    public function myData()
     {
         try {
-            $center = Center::find($id);
-            if ($center) {
-                Center::destroy($id);
-                return $this->returnSuccessMessage('Center Successfully deleted');
+            $data = Center::findOrFail(auth('admin')->user()->center_id);
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function delete()
+    {
+        try {
+            Center::destroy(auth('admin')->user()->center_id);
+            return $this->returnSuccessMessage('Center Successfully deleted');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    // =====================Departments==================
+
+    public function showDepartment($id)
+    {
+        try {
+            $department = Department::find($id);
+            if ($department) {
+                return $this->returnData('department', $department);
+            } else {
+                return $this->returnError(404, "The requested department does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
 
     public function createDepartment(Request $request)
     {
         try {
             $image = $this->saveImage($request->image, 'images/centers/departments');
             $department = Department::create([
-                'center_id' => $request->center_id,
+                'center_id' => auth('admin')->user()->center_id,
                 'name' => $image,
                 'image_path' => $request->image_path,
                 'description' => $request->description,
             ]);
             return $this->returnData('department', $department);
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function updateDepartment($id, Request $request)
+    {
+        try {
+            $department = Department::find($id);
+            if ($department) {
+                $image = $this->saveImage($request->image, 'images/centers/departments');
+                $department->update([
+                    'name' => $image,
+                    'image_path' => $request->image_path,
+                    'description' => $request->description,
+                ]);
+                return $this->returnData('department', $department);
+            } else {
+                return $this->returnError(404, "The requested department does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+
+    public function deleteDepartment($id)
+    {
+        try {
+            $department = Department::find($id);
+            if ($department) {
+                Department::destroy($id);
+                return $this->returnSuccessMessage('Department successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested department does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    // =====================Services==================
+
+    public function showService($id)
+    {
+        try {
+            $service = CenterService::find($id);
+            if ($service) {
+                CenterService::destroy($id);
+                return $this->returnData('center service', $service);
+            } else {
+                return $this->returnError(404, "The requested service does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function createService(Request $request)
+    {
+        try {
+            $service = CenterService::create([
+                'center_id' => auth('admin')->user()->center_id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'price' => $request->price,
+            ]);
+            return $this->returnData('center service', $service);
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function updateService($id, Request $request)
+    {
+        try {
+            $service = CenterService::find($id);
+            if ($service) {
+                $service->update([
+                    'name' => $request->name,
+                    'description' => $request->description,
+                    'price' => $request->price,
+                ]);
+                return $this->returnData('center service', $service);
+            } else {
+                return $this->returnError(404, "The requested service does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function deleteService($id)
+    {
+        try {
+            $service = CenterService::find($id);
+            if ($service) {
+                CenterService::destroy($id);
+                return $this->returnSuccessMessage('Service successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested service does not exist !");
+            }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }

@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\BookingRequest;
 use App\Models\Patient;
+use App\Models\PatientDisease;
+use App\Models\PatientDiseaseMedia;
 use App\Traits\GeneralTrait;
 use App\Traits\ImageTrait;
+use Dotenv\Store\File\Paths;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +22,20 @@ class PatientController extends Controller
     public function __construct()
     {
     }
+    public function show($id)
+    {
+        try {
+            $patient = Patient::find($id);
+            if ($patient) {
+                return $this->returnData('patient', $patient);
+            } else {
+                return $this->returnError(404, "The requested patient does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
     public function login()
     {
         $credentials = request()->only('email', 'password');
@@ -73,12 +90,6 @@ class PatientController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function myData()
-    {
-        $data = auth('patient')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
-    }
-
 
     public function edit(Request $request)
     {
@@ -107,6 +118,63 @@ class PatientController extends Controller
         ]);
 
         return $this->returnSuccessMessage('Successfully Updated');
+    }
+
+    public function addDisease(Request $request)
+    {
+        try {
+            $patient_id = auth('patient')->user()->id;
+            $patient = Patient::find($patient_id);
+            if ($patient) {
+                $disease = PatientDisease::create([
+                    'patient_id' => $patient_id,
+                    'disease_title' => $request->title,
+                    'disease_description' => $request->description
+                ]);
+                if ($request->media)
+                    $media_file = $this->saveImage($request->media, 'images/patients/DiseaseMedia');
+                else $media_file = 0;
+                $disease_media = PatientDiseaseMedia::create([
+                    'disease_id' => $patient_id,
+                    'media_path' => $media_file,
+                    'detection_date' => $request->detection_at,
+                ]);
+
+                return $this->returnData('disease', [$disease, $disease_media], 'Disease successfully added');
+            } else {
+                return $this->returnError(404, "The requested patient does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function addDiseaseMedia($id, Request $request)
+    {
+        try {
+            $disease = PatientDisease::find($id);
+            if ($disease) {
+                if ($request->media)
+                    $media_file = $this->saveImage($request->media, 'images/patients/DiseaseMedia');
+                else $media_file = 0;
+                $disease_media = PatientDiseaseMedia::create([
+                    'media_path' => $media_file,
+                    'detection_date' => $request->detection_at,
+                ]);
+
+                return $this->returnData('disease', $disease_media, 'Media successfully added');
+            } else {
+                return $this->returnError(404, "The requested disease does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function myData()
+    {
+        $data = auth('patient')->user();
+        return $this->returnData('data', $data, 'Here Is Your Data');
     }
 
     public function bookingRequest(Request $request, $doctor_id)
@@ -145,5 +213,26 @@ class PatientController extends Controller
             'access_token' => $token,
             'expires_in' => auth('patient')->factory()->getTTL() * 60
         ]);
+    }
+
+    public function destroy()
+    {
+        Patient::destroy(auth('patient')->user()->id);
+        return $this->returnSuccessMessage('Your account successfully deleted');
+    }
+
+    public function delete($id)
+    {
+        try {
+            $patient = Patient::find($id);
+            if ($patient) {
+                Patient::destroy($id);
+                return $this->returnSuccessMessage('Patient successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested patient does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 }
