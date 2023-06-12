@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Doctor;
 use App\Models\PatientTakeService;
 use App\Models\Report;
 use App\Traits\GeneralTrait;
-use App\Traits\imageTrait;
-use Illuminate\Http\Request;
+use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class doctorController extends Controller
+class DoctorController extends Controller
 {
     use GeneralTrait;
-    use imageTrait;
+    use ImageTrait;
     public function __construct()
     {
     }
@@ -32,7 +33,9 @@ class doctorController extends Controller
             return $this->returnValidationError($code, $validator);
         } else {
             try {
-                    $doctor_image = $this->saveImage($request->image,'images/doctors');
+                if ($request->image)
+                    $doctor_image = $this->saveImage($request->image, 'images/doctors');
+                else $doctor_image = 0;
                 $doctor = Doctor::create([
                     'center_id' => $request->center_id,
                     'department_id' => $request->department_id,
@@ -108,7 +111,6 @@ class doctorController extends Controller
             'form_id' => $request->form_id,
         ]);
         return $this->returnSuccessMessage('Successfully Reported');
-
     }
     public function patientTakeService(Request $request)
     {
@@ -119,7 +121,6 @@ class doctorController extends Controller
             'date' => $request->date,
         ]);
         return $this->returnSuccessMessage('Success');
-
     }
     public function edit(Request $request)
     {

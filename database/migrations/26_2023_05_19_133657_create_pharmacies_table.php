@@ -12,7 +12,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('center_id')->nullable();
             $table->string('name')->nullable();
-            $table->string('username');
+            $table->string('image_path')->nullable();
+            $table->string('username')->nullable();
             $table->string('password');
             $table->string('email');
             $table->string('work_email')->nullable();

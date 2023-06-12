@@ -2,7 +2,9 @@
 
 namespace App\Traits;
 
-trait imageTrait
+use Illuminate\Support\Facades\Storage;
+
+trait ImageTrait
 {
     function saveImage($photo,$folder)
     {
@@ -17,5 +19,15 @@ trait imageTrait
         }
         return null;
     }
+    public function deleteFile($folder,$id)
+    {
+        $exists = Storage::disk('upload_attachments')->exists('images/'.$folder.'/'.$id);
+
+        if($exists)
+        {
+            Storage::disk('upload_attachments')->deleteDirectory('images/'.$folder.'/'.$id);
+        }
+    }
+
 
 }

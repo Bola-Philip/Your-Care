@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class adminController extends Controller
+class AdminController extends Controller
 {
     use GeneralTrait;
     public function __construct()
@@ -22,10 +23,12 @@ class adminController extends Controller
             return $this->returnError('401', 'Unauthorized');
         }
 
+
         return $this->returnData('token', $token, 'Here Is Your Token');
     }
     public function register(Request $request)
     {
+//        dd($request);
         try {
             $rules = [
                 "email" => "required|string|unique:admins",
@@ -37,6 +40,7 @@ class adminController extends Controller
                 $code = $this->returnCodeAccordingToInput($validator);
                 return $this->returnValidationError($code, $validator);
             } else {
+
                 $admin = Admin::create([
                     'center_id' => $request->center_id,
                     'username' => $request->username,
@@ -47,6 +51,7 @@ class adminController extends Controller
                     'permission' => $request->permission,
                 ]);
 
+                // $token = auth('admin')->user();
                 $token = auth('admin')->login($admin);
 
                 return $this->returnData('token', $token, 'Here Is Your Token');

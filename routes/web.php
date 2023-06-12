@@ -13,7 +13,7 @@ use App\Http\Controllers\ClientController;
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('welcome');
 });
 Route::controller(ClientController::class)->group(function(){
