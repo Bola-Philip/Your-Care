@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\WorkTime;
 use Illuminate\Http\Request;
 
-class workTimeController extends Controller
+class WorkTimeController extends Controller
 {
     public function add(Request $request)
     {
