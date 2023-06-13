@@ -35,10 +35,10 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\CenterController@deleteService');
         });
         Route::group(['middleware' => ['api'], 'prefix' => 'Invoice'], function ($router) {
-            Route::post('save', '\App\Http\Controllers\Api\Admin\InvoiceController@createDepartment')->withoutMiddleware('checkToken:admin');
-            Route::post('store', '\App\Http\Controllers\Api\Admin\InvoiceController@createDepartment');
-            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@createDepartment');
-            Route::post('destroy/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@createDepartment');
+            Route::post('save', '\App\Http\Controllers\Api\Admin\InvoiceController@store')->withoutMiddleware('checkToken:admin');
+            Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@show');
+            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@update');
+            Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@destroy');
         });
 
         Route::group(['middleware' => ['api'], 'prefix' => 'insuranceCompany'], function ($router) {
