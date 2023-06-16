@@ -3,6 +3,7 @@
 use App\Http\Controllers\clientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Gate;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +19,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\adminController@login')->withoutMiddleware('auth:admin');
-    Route::post('register', 'App\Http\Controllers\adminController@register')->withoutMiddleware('auth:admin');
-    Route::post('logout', 'App\Http\Controllers\adminController@logout');
-    Route::post('refresh', 'App\Http\Controllers\adminController@refresh');
-    Route::post('myData', 'App\Http\Controllers\adminController@myData');
+    Route::post('myData', function () {
+        if (Gate::allows('manger-permission') || Gate::allows('supervisor-permission')) {
+            return app('App\Http\Controllers\Api\Admin\adminController')->myData();
+        } else {
+            return response()->json(['error' => 'You are not authorized with the required permissions.']);
+        }
+    })->name('myData');
+
+    Route::post('login', 'App\Http\Controllers\Api\Admin\adminController@login')->withoutMiddleware('auth:admin');
+    Route::post('register', 'App\Http\Controllers\Api\Admin\adminController@register')->withoutMiddleware('auth:admin');
+    Route::post('logout', 'App\Http\Controllers\Api\Admin\adminController@logout');
+    Route::post('refresh', 'App\Http\Controllers\Api\Admin\adminController@refresh');
+    Route::post('authorization', 'App\Http\Controllers\Api\Admin\adminController@authorization');
 
 });
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -60,10 +61,11 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
     public function myData()
     {
-        $data = auth('admin')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
+            $data = auth('admin')->user();
+            return $this->returnData('data', $data, 'Here Is Your Data');
     }
     public function logout()
     {
@@ -81,5 +83,28 @@ class AdminController extends Controller
             'access_token' => $token,
             'expires_in' => auth('admin')->factory()->getTTL() * 60
         ]);
+    }
+
+    protected function authorization()
+    {
+        $admin_id = auth('admin')->user()->id;
+        $admin = Admin::find($admin_id);
+
+        if (Gate::allows('manger-permission')) {
+            return 'You are manger';
+        } elseif (Gate::allows('supervisor-permission')) {
+            return 'You are supervisor';
+        } elseif (Gate::allows('parser-permission')) {
+            return 'You are parser';
+        } else {
+            return 'You dont have any of the specified permissions';
+        }
+
+        if(Gate::allows('manger-permission') || Gate::allows('supervisor-permission')){
+            return 'You are manger';
+
+        }else {
+            return 'You dont have any of the specified permissions';
+        }
     }
 }
