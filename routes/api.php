@@ -19,35 +19,34 @@ use Illuminate\Support\Facades\Gate;
 
 Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin'], function ($router) {
 
-    Route::post('myData', function () {
-        if (Gate::allows('manger-permission') || Gate::allows('supervisor-permission')) {
-            return app('App\Http\Controllers\Api\Admin\adminController')->myData();
-        } else {
-            return response()->json(['error' => 'You are not authorized with the required permissions.']);
-        }
-    })->name('myData');
+    Route::group(['middleware' => ['canAny:manger-permission,supervisor-permission'], 'prefix' => 'permission'],
+        function (){
+        Route::post('myData', 'App\Http\Controllers\Api\Admin\adminController@myData');
+        Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@show');
+        });
 
     Route::post('login', 'App\Http\Controllers\Api\Admin\adminController@login')->withoutMiddleware('auth:admin');
     Route::post('register', 'App\Http\Controllers\Api\Admin\adminController@register')->withoutMiddleware('auth:admin');
     Route::post('logout', 'App\Http\Controllers\Api\Admin\adminController@logout');
     Route::post('refresh', 'App\Http\Controllers\Api\Admin\adminController@refresh');
     Route::post('authorization', 'App\Http\Controllers\Api\Admin\adminController@authorization');
+    Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@myData');
 
 });
 
 
 Route::group(['middleware' => ['api','auth:doctor'], 'prefix' => 'doctor'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\doctorController@login')->withoutMiddleware('auth:doctor');;
-    Route::post('register', 'App\Http\Controllers\doctorController@register')->withoutMiddleware('auth:doctor');
-    Route::post('logout', 'App\Http\Controllers\doctorController@logout');
-    Route::post('refresh', 'App\Http\Controllers\doctorController@refresh');
-    Route::post('myData', 'App\Http\Controllers\doctorController@myData');
-    Route::post('report', 'App\Http\Controllers\doctorController@report');
-    Route::post('edit', 'App\Http\Controllers\doctorController@edit');
-    Route::post('show/{doctor_id}', 'App\Http\Controllers\doctorController@show');
-    Route::post('patientTakeService', 'App\Http\Controllers\doctorController@patientTakeService');
-    Route::post('experience', 'App\Http\Controllers\doctorController@experience');
+    Route::post('login', 'App\Http\Controllers\Api\DoctorController@login')->withoutMiddleware('auth:doctor');;
+    Route::post('register', 'App\Http\Controllers\Api\DoctorController@register')->withoutMiddleware('auth:doctor');
+    Route::post('logout', 'App\Http\Controllers\Api\DoctorController@logout');
+    Route::post('refresh', 'App\Http\Controllers\Api\DoctorController@refresh');
+    Route::post('myData', 'App\Http\Controllers\Api\DoctorController@myData');
+    Route::post('report', 'App\Http\Controllers\Api\DoctorController@report');
+    Route::post('edit', 'App\Http\Controllers\Api\DoctorController@edit');
+    Route::post('show/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@show');
+    Route::post('patientTakeService', 'App\Http\Controllers\Api\DoctorController@patientTakeService');
+    Route::post('experience', 'App\Http\Controllers\Api\DoctorController@experience');
 
 });
 
@@ -66,31 +65,31 @@ Route::group(['middleware' => ['api','auth:patient'], 'prefix' => 'patient'], fu
 
 Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\pharmacyController@login')->withoutMiddleware('auth:pharmacy');
-    Route::post('register', 'App\Http\Controllers\pharmacyController@register')->withoutMiddleware('auth:pharmacy');
-    Route::post('logout', 'App\Http\Controllers\pharmacyController@logout');
-    Route::post('refresh', 'App\Http\Controllers\pharmacyController@refresh');
-    Route::post('myData', 'App\Http\Controllers\pharmacyController@myData');
-    Route::post('edit', 'App\Http\Controllers\pharmacyController@edit');
-    Route::post('addProducts', 'App\Http\Controllers\pharmacyController@addProducts');
-    Route::post('show/{pharmacy_id}', 'App\Http\Controllers\pharmacyController@show');
-    Route::delete('destroy/{pharmacy_id}', 'App\Http\Controllers\pharmacyController@destroy');
-    Route::post('addProductImages', 'App\Http\Controllers\pharmacyController@addProductImages');
+    Route::post('login', 'App\Http\Controllers\Api\PharmacyController@login')->withoutMiddleware('auth:pharmacy');
+    Route::post('register', 'App\Http\Controllers\Api\PharmacyController@register')->withoutMiddleware('auth:pharmacy');
+    Route::post('logout', 'App\Http\Controllers\Api\PharmacyController@logout');
+    Route::post('refresh', 'App\Http\Controllers\Api\PharmacyController@refresh');
+    Route::post('myData', 'App\Http\Controllers\Api\PharmacyController@myData');
+    Route::post('edit', 'App\Http\Controllers\Api\PharmacyController@edit');
+    Route::post('addProducts', 'App\Http\Controllers\Api\PharmacyController@addProducts');
+    Route::post('show/{pharmacy_id}', 'App\Http\Controllers\Api\PharmacyController@show');
+    Route::post('destroy/{pharmacy_id}', 'App\Http\Controllers\Api\PharmacyController@destroy');
+    Route::post('addProductImages', 'App\Http\Controllers\Api\PharmacyController@addProductImages');
 
 });
 
 Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function ($router) {
 
-    Route::post('login', 'App\Http\Controllers\labController@login')->withoutMiddleware('auth:lab');
-    Route::post('register', 'App\Http\Controllers\labController@register')->withoutMiddleware('auth:lab');
-    Route::post('logout', 'App\Http\Controllers\labController@logout');
-    Route::post('refresh', 'App\Http\Controllers\labController@refresh');
-    Route::post('myData', 'App\Http\Controllers\labController@myData');
-    Route::post('edit', 'App\Http\Controllers\labController@edit');
-    Route::post('show/{lab_id}', 'App\Http\Controllers\labController@show');
-    Route::post('addSample', 'App\Http\Controllers\labController@addSample');
-    Route::post('destroy/{lab_id}', 'App\Http\Controllers\labController@destroy');
-    Route::post('ourReply', 'App\Http\Controllers\labController@ourReply');
+    Route::post('login', 'App\Http\Controllers\Api\LabController@login')->withoutMiddleware('auth:lab');
+    Route::post('register', 'App\Http\Controllers\Api\LabController@register')->withoutMiddleware('auth:lab');
+    Route::post('logout', 'App\Http\Controllers\Api\LabController@logout');
+    Route::post('refresh', 'App\Http\Controllers\Api\LabController@refresh');
+    Route::post('myData', 'App\Http\Controllers\Api\LabController@myData');
+    Route::post('edit', 'App\Http\Controllers\Api\LabController@edit');
+    Route::post('show/{lab_id}', 'App\Http\Controllers\Api\LabController@show');
+    Route::post('addSample', 'App\Http\Controllers\Api\LabController@addSample');
+    Route::post('destroy/{lab_id}', 'App\Http\Controllers\Api\LabController@destroy');
+    Route::post('ourReply', 'App\Http\Controllers\Api\LabController@ourReply');
 
 });
 

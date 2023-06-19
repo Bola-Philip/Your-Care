@@ -47,7 +47,7 @@ class LabController extends Controller
                 else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
-                    'image_path' => $lab_image,
+                    'image' => $lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -118,7 +118,7 @@ class LabController extends Controller
     {
         Sample::create([
             'lab_id' => $request->lab_id,
-            'doctor_id	' => $request->doctor_id	,
+            'doctor_id' => $request->doctor_id	,
             'patient_id' => $request->patient_id,
             'reply_id' => $request->reply_id,
         ]);
@@ -127,7 +127,22 @@ class LabController extends Controller
     public function destroy($lab_id)
     {
         $data = Lab::find($lab_id);
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        if ($data) {
+            $data->delete();
+            return $this->returnSuccessMessage('Successfully deleted');
+        } else {
+            return $this->returnError('401', 'Record not found');
+        }
+    }
+
+    public function ourReply(Request $request)
+    {
+        $lab_image = $this->saveImage($request->result, 'images/replies');
+        Reply::create([
+            'sample_id' => $request->sample_id,
+            'result' => $lab_image,
+        ]);
+        return $this->returnSuccessMessage('Successfully Added');
     }
 
 }

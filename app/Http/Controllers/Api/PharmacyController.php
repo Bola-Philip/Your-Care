@@ -162,13 +162,13 @@ class PharmacyController extends Controller
         $data = Pharmacy::find($pharmacy_id);
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
-    public function destory($pharmacy_id)
+    public function destroy($pharmacy_id)
     {
         $data = Pharmacy::find($pharmacy_id);
 
         if ($data) {
             $data->delete();
-            return $this->returnSuccessMessage('Successfully added');
+            return $this->returnSuccessMessage('Successfully deleted');
         } else {
             return $this->returnError('401', 'Record not found');
         }
