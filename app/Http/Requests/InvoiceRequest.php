@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class InvoiceRequest extends FormRequest
 {
+    
     /**
      * Determine if the user is authorized to make this request.
      */

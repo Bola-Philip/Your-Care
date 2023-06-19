@@ -27,7 +27,6 @@ class InvoiceController extends Controller
                     'total_value' => $request->total_value,
                     'discount' => $request->discount,
                     'tax' => $request->tax,
-                    'state' => $request->state,
                     'message' => $request->message,
 
                 ]);
