@@ -11,6 +11,14 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
     Route::post('update', '\App\Http\Controllers\Api\Admin\CenterController@update');
     Route::post('delete', '\App\Http\Controllers\Api\Admin\CenterController@delete');
     Route::post('myData', '\App\Http\Controllers\Api\Admin\CenterController@myData');
+    Route::post('addDoctor', '\App\Http\Controllers\Api\Admin\CenterController@addDoctor');
+    Route::post('addPatient', '\App\Http\Controllers\Api\Admin\CenterController@addPatient');
+    Route::post('addLab', '\App\Http\Controllers\Api\Admin\CenterController@addLab');
+    Route::post('addPharmacy', '\App\Http\Controllers\Api\Admin\CenterController@addPharmacy');
+    Route::post('removeDoctor/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removeDoctor');
+    Route::post('removePatient/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removePatient');
+    Route::post('removeLab/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removeLab');
+    Route::post('removePharmacy/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removePharmacy');
 
     Route::group(['middleware' => ['api'], 'prefix' => 'admin'], function ($router) {
         Route::post('login', 'App\Http\Controllers\Api\Admin\AdminController@login')->withoutMiddleware('checkToken:admin')->name('admin.login');
