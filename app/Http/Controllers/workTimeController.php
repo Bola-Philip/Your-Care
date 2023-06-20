@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\WorkTime;
+use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 
 class workTimeController  extends Controller
 {
+    use GeneralTrait;
     public function add(Request $request)
     {
         WorkTime::create([
@@ -41,6 +43,11 @@ class workTimeController  extends Controller
     public function destroy($work_time_id)
     {
         $data = WorkTime::find($work_time_id);
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        if ($data) {
+            $data->delete();
+            return $this->returnSuccessMessage('Successfully deleted');
+        } else {
+            return $this->returnError('401', 'Record not found');
+        }
     }
 }

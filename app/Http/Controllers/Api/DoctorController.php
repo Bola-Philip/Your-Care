@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DoctorExperience;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
 use App\Models\DoctorExperience;
@@ -167,7 +168,7 @@ class DoctorController extends Controller
         $doctor->update([
             'center_id' => $request->center_id,
             'department_id' => $request->department_id,
-            'image_path' => $doctor_image,
+            'image' => $doctor_image,
             'username' => $request->username,
             'name' => $request->name,
             'specialty' => $request->specialty,

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class WorkTime extends Model
 {
     protected $table = 'work_times';
+
     protected $primaryKey = 'id';
 
     protected $guarded = [];
