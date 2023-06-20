@@ -36,9 +36,8 @@ class AdminController extends Controller
         if (!$token = auth('admin')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-
-
         return $this->returnData('token', $token, 'Here Is Your Token');
+
     }
     public function register(Request $request)
     {
