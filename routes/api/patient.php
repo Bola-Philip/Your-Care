@@ -29,4 +29,25 @@ Route::group(['middleware' => ['api', 'checkToken:patient'], 'prefix' => 'patien
     Route::post('add', 'App\Http\Controllers\Api\PatientController@addDisease');
     Route::post('{id}/addMedia', 'App\Http\Controllers\Api\PatientController@addDiseaseMedia');
     });
-});
+
+    Route::group(['prefix'=>'favorite'], function($router){
+        Route::post('addCenter/{id}', 'App\Http\Controllers\Api\PatientController@addCenterToFavorite');
+        Route::post('addDoctor/{id}', 'App\Http\Controllers\Api\PatientController@addDoctorToFavorite');
+        Route::post('addPharmacy/{id}', 'App\Http\Controllers\Api\PatientController@addPharmacyToFavorite');
+        Route::post('addLab/{id}', 'App\Http\Controllers\Api\PatientController@addLabToFavorite');
+        Route::post('removeCenter/{id}', 'App\Http\Controllers\Api\PatientController@removeCenterFromFavorite');
+        Route::post('removeDoctor/{id}', 'App\Http\Controllers\Api\PatientController@removeDoctorFromFavorite');
+        Route::post('removePharmacy/{id}', 'App\Http\Controllers\Api\PatientController@removePharmacyFromFavorite');
+        Route::post('removeLab/{id}', 'App\Http\Controllers\Api\PatientController@removeLabFromFavorite');
+    });
+
+        Route::post('rateCenter/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToCenter');
+        Route::post('rateDoctor/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToDoctor');
+        Route::post('ratePharmacy/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToPharmacy');
+        Route::post('rateLab/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToLab');
+        Route::post('removeCenterRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromCenter');
+        Route::post('removeDoctorRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromDoctor');
+        Route::post('removePharmacyRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromPharmacy');
+        Route::post('removeLabRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromLab');
+
+    });

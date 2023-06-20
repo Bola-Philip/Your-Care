@@ -28,13 +28,15 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\CenterController@updateDepartment');
             Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\CenterController@deleteDepartment');
         });
+
         Route::group(['middleware' => ['api'], 'prefix' => 'service'], function ($router) {
             Route::post('save', '\App\Http\Controllers\Api\Admin\CenterController@createService');
             Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\CenterController@showService');
             Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\CenterController@updateService');
             Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\CenterController@deleteService');
         });
-        Route::group(['middleware' => ['api'], 'prefix' => 'Invoice'], function ($router) {
+
+        Route::group(['middleware' => ['api'], 'prefix' => 'invoice'], function ($router) {
             Route::post('save', '\App\Http\Controllers\Api\Admin\InvoiceController@store');
             Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@show');
 //            Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\InvoiceController@update');
@@ -47,6 +49,7 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('removePatient/{id}', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@removePatient');
 
         });
+
         Route::group(['middleware' => ['api'], 'prefix' => 'client'], function ($router) {
             Route::post('save', 'App\Http\Controllers\Api\Admin\ClientController@store');
             Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\ClientController@show');
@@ -67,9 +70,6 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('update/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@update');
             Route::post('delete/{id}', '\App\Http\Controllers\Api\Admin\ExpenseController@destroy');
         });
-
-
-
 
     });
 });

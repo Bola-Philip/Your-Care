@@ -15,6 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('booking_id');
             $table->unsignedBigInteger('service_id')->nullable();
             $table->float('cost')->nullable();
+            $table->string('detection_recommendations')->nullable();
             $table->timestamp('date');
 
             $table->foreign('booking_id')->references('id')->on('booking_requests')->onDelete('cascade');

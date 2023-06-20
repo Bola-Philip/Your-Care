@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+
 class Doctor extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     protected $table = 'doctors';
-    protected $primaryKey='id';
+    protected $primaryKey = 'id';
 
     protected $guarded = [];
     public function center()
@@ -33,13 +34,23 @@ class Doctor extends Authenticatable implements JWTSubject
     {
         return $this->hasManyThrough(Patient::class, BookingRequest::class, 'doctor_id', 'id', 'id', 'patient_id');
     }
-   public function bookingRequests()
+    public function bookingRequests()
     {
         return $this->hasMany(BookingRequest::class, 'doctor_id');
     }
     public function services()
     {
-        return $this->bookingRequests()->services();
+        $my_services = "";
+        foreach ($this->bookingRequests() as $booking) {
+            $my_services += $booking->services();
+        }
+        return $my_services();
+        // return $this->join('booking_requests', 'booking_requests.doctor_id', '=', 'doctors.id')
+        // ->join('c', 'a.id', '=', 'c.a_id')
+        // ->where('b.id', $id)
+        // ->select('b.*', 'a.*', 'c.*')
+        // ->first();
+
     }
     public function samples()
     {
@@ -52,6 +63,14 @@ class Doctor extends Authenticatable implements JWTSubject
     public function invoices()
     {
         return $this->hasMany(Invoice::class, 'doctor_id');
+    }
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'doctor_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'doctor_id');
     }
     public function getJWTIdentifier()
     {

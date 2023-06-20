@@ -7,11 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class WorkTime extends Model
 {
     protected $table = 'work_times';
-    protected $primaryKey = [
-        'id',
-        'doctor_id',
-        'employee_id'
-    ];
+    protected $primaryKey = 'id';
+
     protected $guarded = [];
 
     public function center()

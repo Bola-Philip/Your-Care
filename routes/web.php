@@ -14,4 +14,12 @@ use App\Http\Controllers\ClientController;
 */
 Route::get('login', 'App\Http\Controllers\Controller@login');
 Route::post('check', 'App\Http\Controllers\Api\Admin\AdminController@login')->name('login');
+Route::get('newForm', 'App\Http\Controllers\Controller@newForm');
+Route::post('saveForm', 'App\Http\Controllers\Controller@storeForm')->name('upload.pdf');
+
+Route::get('show-pdf', function () {
+    $path = public_path('images/forms/pdf/1686758810.docx');
+    return response()->file($path);
+});
+
 
