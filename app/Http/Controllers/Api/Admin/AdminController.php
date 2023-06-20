@@ -147,7 +147,8 @@ class AdminController extends Controller
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
-
+        }
+    }
     protected function authorization()
     {
         $admin_id = auth('admin')->user()->id;
