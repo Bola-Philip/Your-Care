@@ -73,4 +73,12 @@ class Center extends Model
     {
         return $this->hasMany(Pharmacy::class, 'center_id');
     }
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'center_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'center_id');
+    }
 }

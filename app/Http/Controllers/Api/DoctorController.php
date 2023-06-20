@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DoctorExperience;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
+use App\Models\DoctorExperience;
 use App\Models\PatientTakeService;
 use App\Models\Report;
 use App\Traits\GeneralTrait;
@@ -19,6 +21,13 @@ class DoctorController extends Controller
     public function __construct()
     {
     }
+
+    public function show($doctor_id)
+    {
+        $data = Doctor::find($doctor_id);
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+
     public function register(Request $request)
     {
         $rules = [
@@ -61,9 +70,9 @@ class DoctorController extends Controller
                     'nationality' => $request->nationality,
                 ]);
 
-                $token = auth('doctor')->login($doctor);
+                $doctor->token = auth('doctor')->login($doctor);
 
-                return $this->returnData('token', $token, 'Here Is Your Token');
+                return $this->returnData('Doctor', $doctor, 'Here Is Your Token');
             } catch (\Throwable $ex) {
                 return $this->returnError($ex->getCode(), $ex->getMessage());
             }
@@ -76,14 +85,30 @@ class DoctorController extends Controller
         if (!$token = auth('doctor')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-        return $this->returnData('token', $token, 'Here Is Your Token');
+        $doctor = Doctor::with([
+            'center',
+            'department',
+            'doctorExperiences',
+            'workTimes',
+            'patients',
+            'bookingRequests',
+            // 'services',
+            'samples',
+            'reports',
+            'invoices',
+            'rates',
+            'favorites',
+        ])->find(auth('doctor')->user()->id);
+        $doctor->token = $token;
+        return $this->returnData('token', $doctor, 'Here Is Your Token');
     }
 
     public function myData()
     {
         $data = auth('doctor')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        return $this->returnData('My Data', $data, 'Here Is Your Data');
     }
+
     public function logout()
     {
         auth('doctor')->logout();
@@ -94,6 +119,7 @@ class DoctorController extends Controller
     {
         return $this->respondWithToken(auth('doctor')->refresh());
     }
+
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -104,34 +130,45 @@ class DoctorController extends Controller
 
     public function addReport(Request $request)
     {
-        Report::create([
+        $report_file = $this->saveImage($request->report, 'files/reports');
+
+        $report = Report::create([
             'center_id' => auth('doctor')->user()->center_id,
             'doctor_id' => auth('doctor')->user()->id,
             'patient_id' => $request->patient_id,
-            'form_id' => $request->form_id,
+            'file_path' => $report_file,
         ]);
-        return $this->returnSuccessMessage('Successfully Reported');
+        return $this->returnData("report", $report, 'Report has been added successfully');
     }
+
+    public function myReports($id)
+    {
+        $doctor =  Doctor::find($id)->first();
+        return $this->returnData("Reports", $doctor->reports());
+    }
+
     public function patientTakeService(Request $request)
     {
-        PatientTakeService::create([
+        $scout = PatientTakeService::create([
             'booking_id' => $request->booking_id,
             'service_id' => $request->service_id,
+            'detection_recommendations' => $request->notes,
             'cost' => $request->cost,
             'date' => $request->date,
         ]);
-        return $this->returnSuccessMessage('Success');
+        $scout->doctor_id = auth('doctor')->user()->id;
+        return $this->returnData('Scout', $scout, "");
     }
-    public function edit(Request $request)
-    {
-        $doctor_image = $this->saveImage($request->image,'images/doctors');
 
-        $doctor_id = auth('doctor')->user()->id;
-        $doctor = Doctor::find($doctor_id);
+    public function edit(Request $request, $id)
+    {
+        $doctor_image = $this->saveImage($request->image, 'images/doctors');
+
+        $doctor = Doctor::find($id);
         $doctor->update([
             'center_id' => $request->center_id,
             'department_id' => $request->department_id,
-            'image_path' => $doctor_image,
+            'image' => $doctor_image,
             'username' => $request->username,
             'name' => $request->name,
             'specialty' => $request->specialty,
@@ -153,31 +190,35 @@ class DoctorController extends Controller
             'nationality' => $request->nationality,
         ]);
 
-        return $this->returnSuccessMessage('Successfully Updated');
+        $doctor = Doctor::with([
+            'center',
+            'department',
+            'doctorExperiences',
+            'workTimes',
+            'patients',
+            'bookingRequests',
+            // 'services',
+            'samples',
+            'reports',
+            'invoices',
+            'rates',
+            'favorites',
+        ])->find(auth('doctor')->user()->id);
+        $doctor->token = auth('doctor')->refresh();
+        return $this->returnData("Doctor", $doctor, "Doctor has been successfully edited");
     }
 
-    public function show($doctor_id)
+    public function experience(Request $request, $id)
     {
-        $data = Doctor::find($doctor_id);
-        return $this->returnData('data', $data, 'Here Is Your Data');
-    }
-
-    public function showReports()
-    {
-        return Report::with('form')->get();
-    }
-
-    public function experience(Request $request)
-    {
-        Report::create([
-            'doctor_id' => $request->doctor_id,
-            'experience_name' => $request->experience_name,
-            'work_place_name	' => $request->work_place_name	,
+        $experience = DoctorExperience::create([
+            'doctor_id' => $id,
+            'experience_name' => $request->name,
+            'work_place_name' => $request->place_name,
+            'work_place_country' => $request->place_country,
             'started_at' => $request->started_at,
             'finished_at' => $request->finished_at,
-            'still_works' => $request->still_works,
+            'still_works' => $request->still_in,
         ]);
-        return $this->returnSuccessMessage('Experience Successfully Added');
-
+        return $this->returnData("Experience", $experience, 'Experience has been successfully added');
     }
 }

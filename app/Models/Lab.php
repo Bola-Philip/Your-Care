@@ -28,6 +28,14 @@ class Lab extends Authenticatable implements JWTSubject
     {
         return $this->hasManyThrough(Replies::class, Sample::class, 'lab_id', 'id', 'id', 'reply_id');
     }
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'lab_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'lab_id');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();

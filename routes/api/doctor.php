@@ -21,6 +21,10 @@ Route::group(['middleware' => ['api', 'checkToken:doctor'], 'prefix' => 'doctor'
     Route::post('logout', 'App\Http\Controllers\Api\DoctorController@logout');
     Route::post('refresh', 'App\Http\Controllers\Api\DoctorController@refresh');
     Route::post('myData', 'App\Http\Controllers\Api\DoctorController@myData');
-    Route::post('report', 'App\Http\Controllers\Api\DoctorController@report');
+    Route::post('experience/{id}', 'App\Http\Controllers\Api\DoctorController@experience');
     Route::post('patientTakeService', 'App\Http\Controllers\Api\DoctorController@patientTakeService');
+    Route::post('myReports/add', 'App\Http\Controllers\Api\DoctorController@addReport');
+    Route::post('myReports/{id}', 'App\Http\Controllers\Api\DoctorController@myReports');
+        Route::post('edit/{id}', 'App\Http\Controllers\Api\DoctorController@edit');
+        Route::post('show/{id}', 'App\Http\Controllers\Api\DoctorController@show');
 });
