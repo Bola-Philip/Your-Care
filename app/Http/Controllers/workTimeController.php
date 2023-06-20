@@ -6,7 +6,7 @@ use App\Models\WorkTime;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 
-class workTimeController extends Controller
+class workTimeController  extends Controller
 {
     use GeneralTrait;
     public function add(Request $request)

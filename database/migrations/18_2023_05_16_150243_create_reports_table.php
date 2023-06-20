@@ -15,13 +15,12 @@ return new class extends Migration
             $table->unsignedBigInteger('center_id')->nullable();
             $table->unsignedBigInteger('doctor_id')->nullable();
             $table->unsignedBigInteger('patient_id')->nullable();
-            $table->unsignedBigInteger('form_id');
+            $table->unsignedBigInteger('file_path');
             $table->timestamp('created_at');
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
             $table->foreign('doctor_id')->references('id')->on('doctors')->onDelete('set null');
             $table->foreign('patient_id')->references('id')->on('patients')->onDelete('set null');
-            $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade');
         });
     }
 

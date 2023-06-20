@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class DoctorExperience extends Model
 {
     use HasFactory;
-    protected $table = 'doctorexperiences';
+
+    protected $table = 'doctor_experiences';
+    protected $primaryKey = 'id';
+
     protected $guarded = [];
 
     public function doctor()

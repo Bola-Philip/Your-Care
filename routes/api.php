@@ -93,8 +93,8 @@ Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function (
 
 });
 
-Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'WorkTime'], function ($router) {
 
+Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'WorkTime'], function ($router) {
     Route::post('add', 'App\Http\Controllers\workTimeController@add');
     Route::post('show/{Work_time_id}', 'App\Http\Controllers\workTimeController@show');
     Route::post('edit/{work_time_id}', 'App\Http\Controllers\workTimeController@edit');

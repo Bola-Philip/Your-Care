@@ -8,8 +8,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
-class InvoiceRequest extends FormRequest
+class AddLabRequest extends FormRequest
 {
+    
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -28,17 +29,15 @@ class InvoiceRequest extends FormRequest
     {
         return [
             "center_id" => "required|integer",
-            "client_id" => "required|integer",
-            "patient_id" => "required|integer",
-            "doctor_id" => "required|integer",
-            "payment_due" => "required|string",
-            "title" => "required|string",
-//            "real_time" => "required|string",
-            "total_value" => "required|string",
-            "discount" => "required|string",
-            "tax" => "required|string",
-            "message" => "required|string",
-
+            "image_path" => "required|string",
+            "name" => "required|string",
+            "username" => "required|string",
+            "password" => "required|string",
+            "phone" => "required|string",
+            "email" => "required|email|unique:admins|unique:centers|unique:clients",
+            "website" => "required|string",
+            "address" => "required|string",
+      
         ];
     }
     protected function failedValidation(Validator $validator)

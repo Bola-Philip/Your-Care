@@ -21,11 +21,11 @@ trait ImageTrait
     }
     public function deleteFile($folder,$id)
     {
-        $exists = Storage::disk('upload_attachments')->exists('images/'.$folder.'/'.$id);
+        $exists = Storage::disk('upload_attachments')->exists($folder.'/'.$id);
 
         if($exists)
         {
-            Storage::disk('upload_attachments')->deleteDirectory('images/'.$folder.'/'.$id);
+            Storage::disk('upload_attachments')->deleteDirectory($folder.'/'.$id);
         }
     }
 

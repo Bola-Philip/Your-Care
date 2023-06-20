@@ -66,9 +66,21 @@ class Patient extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Invoice::class, 'patient_id');
     }
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'patient_id');
+    }
     // public function doctor(){
     //     return $this->belongsToMany(Doctor::class)->withPivot('bookingRequests');
     // }
+    public function rates()
+    {
+        return $this->hasMany(Rate::class, 'patient_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'patient_id');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();

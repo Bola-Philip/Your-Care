@@ -16,6 +16,20 @@ class AdminController extends Controller
     public function __construct()
     {
     }
+
+    public function show($id)
+    {
+        try {
+            $admin = Admin::find($id);
+            if ($admin) {
+                return $this->returnData('Admin', $admin);
+            } else {
+                return $this->returnError(404, "The requested admin does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
     public function login()
     {
         $credentials = request()->only('email', 'password');
@@ -23,13 +37,11 @@ class AdminController extends Controller
         if (!$token = auth('admin')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-
-
         return $this->returnData('token', $token, 'Here Is Your Token');
+
     }
     public function register(Request $request)
     {
-//        dd($request);
         try {
             $rules = [
                 "email" => "required|string|unique:admins",
@@ -53,9 +65,46 @@ class AdminController extends Controller
                 ]);
 
                 // $token = auth('admin')->user();
-                $token = auth('admin')->login($admin);
+                // $token = auth('admin')->login($admin);
 
-                return $this->returnData('token', $token, 'Here Is Your Token');
+                return $this->returnData('Admin', $admin, 'Admin successfully added');
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function update($id, Request $request)
+    {
+        try {
+            $admin = Admin::find($id);
+            if ($admin) {
+                $rules = [
+                    "email" => "required|string|unique:admins",
+                    "password" => "required|string",
+                ];
+                $validator = Validator::make($request->all(), $rules);
+
+                if ($validator->fails()) {
+                    $code = $this->returnCodeAccordingToInput($validator);
+                    return $this->returnValidationError($code, $validator);
+                } else {
+                    $admin->update([
+                        'username' => $request->username,
+                        'name' => $request->name,
+                        'phone' => $request->phone,
+                        'email' => $request->email,
+                        'password' => Hash::make($request->password),
+                        'permission' => $request->permission,
+                    ]);
+
+                    // $token = auth('admin')->user();
+                    // $token = auth('admin')->login($admin);
+
+                    return $this->returnData('Admin', $admin, 'Admin successfully edited');
+                }
+            } else {
+                return $this->returnError(404, "The requested admin does not exist !");
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -85,6 +134,20 @@ class AdminController extends Controller
         ]);
     }
 
+    public function delete($id)
+    {
+        try {
+            $admin = Admin::find($id);
+            if ($admin) {
+                Admin::destroy($id);
+                return $this->returnSuccessMessage('Admin successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested admin does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
     protected function authorization()
     {
         $admin_id = auth('admin')->user()->id;

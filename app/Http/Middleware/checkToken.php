@@ -39,7 +39,7 @@ class checkToken
                 return  $this -> returnError('401','Unauthenticated');
             } catch (JWTException $e) {
 
-                return  $this -> returnError('', 'Token Invalid, '.$e->getMessage());
+                return  $this -> returnError('', 'Invalid token , '.$e->getMessage());
             }
 
         }
