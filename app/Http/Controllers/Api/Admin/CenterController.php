@@ -388,7 +388,7 @@ public function addDoctor(AdddoctorRequest $request)
             ]);
 
 
-            return $this->returnData('token', $token, 'Doctor has been successfully added');
+            return $this->returnData('Doctor', $doctor 'Doctor has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -434,7 +434,7 @@ public function addDoctor(AdddoctorRequest $request)
                 ]);
 
 
-                return $this->returnData('token', $token, 'patient has been successfully added');
+                return $this->returnData('Patient', $patient 'patient has been successfully added');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -472,7 +472,7 @@ public function addDoctor(AdddoctorRequest $request)
                     'address' => $request->address,
                 ]);
                 dd('data');
-                return $this->returnData('token', $token, 'Lab has been successfully added');
+                return $this->returnData('Lab', $lab 'Lab has been successfully added');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -521,7 +521,7 @@ public function addPharmacy(AddPharmacyRequest $request)
             ]);
 
 
-            return $this->returnData('token', $token, 'Pharmacy has been successfully added');
+            return $this->returnData('Pharmacy', $pharmacy 'Pharmacy has been successfully added');
         }
     } catch (\Throwable $ex) {
         return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -532,10 +532,9 @@ public function addPharmacy(AddPharmacyRequest $request)
 
     //////////remove//////////
    
-    public function removeDoctor(string $id)
+    public function removeDoctor()
     {
         try {
-            $center = Doctor::find($id);
             if ($center) {
                 Doctor::destroy($id);
                 return $this->returnSuccessMessage('Doctor Successfully deleted');
@@ -547,10 +546,9 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-     public function removePatient(string $id)
+     public function removePatient()
     {
         try {
-            $center = Patient::find($id);
             if ($center) {
                 Patient::destroy($id);
                 return $this->returnSuccessMessage('Patient Successfully deleted');
@@ -562,10 +560,9 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-    public function removeLab(string $id)
+    public function removeLab()
     {
         try {
-            $center = Lab::find($id);
             if ($center) {
                 Lab::destroy($id);
                 return $this->returnSuccessMessage('Lab Successfully deleted');
@@ -577,10 +574,9 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-    public function removePharmacy(string $id)
+    public function removePharmacy()
     {
         try {
-            $center = Pharmacy::find($id);
             if ($center) {
                 Pharmacy::destroy($id);
                 return $this->returnSuccessMessage('Pharmacy Successfully deleted');
