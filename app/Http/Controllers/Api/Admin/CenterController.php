@@ -394,7 +394,7 @@ public function addDoctor(AdddoctorRequest $request)
         }
     }
 }
- 
+
 
     ////////////////pation////////////////
     public function addPatient(AddpatientRequest $request)
@@ -445,7 +445,7 @@ public function addDoctor(AdddoctorRequest $request)
     ////////////////lab//////////////////////////////////
     public function addLab(AddLabRequest $request)
     {
-        
+
         try {
             $rules = [
                 "email" => "required|string|unique:labs",
@@ -478,7 +478,7 @@ public function addDoctor(AdddoctorRequest $request)
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-         
+
 /////////////////////////addPharmacy//////////////////
 public function addPharmacy(AddPharmacyRequest $request)
 {
@@ -531,12 +531,13 @@ public function addPharmacy(AddPharmacyRequest $request)
 
 
     //////////remove//////////
-   
+
     public function removeDoctor()
     {
         try {
-            if ($center) {
-                Doctor::destroy($id);
+            $doctor = Doctor::findOrFail($id);
+        if ($doctor) {
+            unset($doctor);
                 return $this->returnSuccessMessage('Doctor Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -549,8 +550,9 @@ public function addPharmacy(AddPharmacyRequest $request)
      public function removePatient()
     {
         try {
-            if ($center) {
-                Patient::destroy($id);
+            $patient = Patient::findOrFail($id);
+            if ($patient) {
+                unset($patient);
                 return $this->returnSuccessMessage('Patient Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -563,8 +565,9 @@ public function addPharmacy(AddPharmacyRequest $request)
     public function removeLab()
     {
         try {
-            if ($center) {
-                Lab::destroy($id);
+            $lab = Lab::findOrFail($id);
+        if ($lab) {
+            unset($lab);
                 return $this->returnSuccessMessage('Lab Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -577,8 +580,9 @@ public function addPharmacy(AddPharmacyRequest $request)
     public function removePharmacy()
     {
         try {
-            if ($center) {
-                Pharmacy::destroy($id);
+            $pharmacy = Pharmacy::findOrFail($id);
+        if ($pharmacy) {
+            unset($pharmacy);
                 return $this->returnSuccessMessage('Pharmacy Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -592,7 +596,7 @@ public function addPharmacy(AddPharmacyRequest $request)
 
 
 
-    
+
 
 
 }
