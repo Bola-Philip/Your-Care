@@ -30,7 +30,7 @@ class CenterController extends Controller
     public function show(string $id)
     {
         try {
-            $center = Center::find($id);
+            $center = Center::with(['doctors','departments','rates','favorites'])->find($id);
             if ($center) {
                 return $this->returnData('center', $center);
             }
@@ -39,6 +39,45 @@ class CenterController extends Controller
         }
     }
 
+    public function myAdmins($id)
+    {
+        $centerAdmins = Center::find($id);
+        $admins = $centerAdmins->admins;
+        return $this->returnData('center', $admins);
+
+    }
+
+    public function myClients($id)
+    {
+        $centerClients = Center::find($id);
+        $clients = $centerClients->clients;
+        return $this->returnData('center', $clients);
+
+    }
+
+    public function myEmployees($id)
+    {
+        $centerEmployees = Center::find($id);
+        $employees = $centerEmployees->employees;
+        return $this->returnData('center', $employees);
+
+    }
+
+    public function myInsuranceCompanies($id)
+    {
+        $centerInsuranceCompanies = Center::find($id);
+        $insuranceCompanies = $centerInsuranceCompanies->insuranceCompanies;
+        return $this->returnData('center', $insuranceCompanies);
+
+    }
+
+    public function myReports($id)
+    {
+        $centerReports = Center::find($id);
+        $reports = $centerReports->reports;
+        return $this->returnData('center', $reports);
+
+    }
     public function store(Request $request)
     {
         try {
@@ -77,7 +116,7 @@ class CenterController extends Controller
                     'address2' => $request->address2,
                     'state' => $request->state,
                     'province' => $request->province,
-                    'zip_code' => $request->zip_code,
+                    'zipCod' => $request->zip_code,
                     'facebook' => $request->facebook,
                     'instagram' => $request->instagram,
                     'twitter' => $request->twitter,
@@ -191,7 +230,7 @@ class CenterController extends Controller
     public function myData()
     {
         try {
-            $data = Center::findOrFail(auth('admin')->user()->center_id);
+            $data = Center::with(['doctors','rates','favorites'])->findOrFail(auth('admin')->user()->center_id);
             return $this->returnData('data', $data, 'Here Is Your Data');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -394,7 +433,7 @@ public function addDoctor(AdddoctorRequest $request)
         }
     }
 }
- 
+
 
     ////////////////pation////////////////
     public function addPatient(AddpatientRequest $request)
@@ -445,7 +484,7 @@ public function addDoctor(AdddoctorRequest $request)
     ////////////////lab//////////////////////////////////
     public function addLab(AddLabRequest $request)
     {
-        
+
         try {
             $rules = [
                 "email" => "required|string|unique:labs",
@@ -478,7 +517,7 @@ public function addDoctor(AdddoctorRequest $request)
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-         
+
 /////////////////////////addPharmacy//////////////////
 public function addPharmacy(AddPharmacyRequest $request)
 {
@@ -531,7 +570,7 @@ public function addPharmacy(AddPharmacyRequest $request)
 
 
     //////////remove//////////
-   
+
     public function removeDoctor(string $id)
     {
         try {
@@ -596,7 +635,7 @@ public function addPharmacy(AddPharmacyRequest $request)
 
 
 
-    
+
 
 
 }

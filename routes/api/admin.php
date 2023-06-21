@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center'], function ($router) {
     Route::post('save', '\App\Http\Controllers\Api\Admin\CenterController@store')->withoutMiddleware('checkToken:admin');
     Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\CenterController@show');
+    Route::post('myAdmins/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myAdmins');
+    Route::post('myClients/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myClients');
+    Route::post('myEmployees/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myEmployees');
+    Route::post('myInsuranceCompanies/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myInsuranceCompanies');
+    Route::post('myReports/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myReports');
     Route::post('update', '\App\Http\Controllers\Api\Admin\CenterController@update');
     Route::post('delete', '\App\Http\Controllers\Api\Admin\CenterController@delete');
     Route::post('myData', '\App\Http\Controllers\Api\Admin\CenterController@myData');
