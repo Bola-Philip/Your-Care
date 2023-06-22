@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('email');
             $table->string('password');
             $table->string('permission');
+            $table->string('country')->nullable();
+
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

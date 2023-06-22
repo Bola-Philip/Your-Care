@@ -26,8 +26,9 @@ class PharmacyController extends Controller
         if (!$token = auth('pharmacy')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-
-        return $this->returnData('token', $token, 'Here Is Your Token');
+        $pharmacy = auth('pharmacy')->user();
+        $pharmacy->token = $token;
+        return $this->returnData('Your Data', $pharmacy, 'Successfully logged in');
     }
     public function register(Request $request)
     {
@@ -35,6 +36,7 @@ class PharmacyController extends Controller
             $rules = [
                 "email" => "required|string|unique:pharmacies",
                 "password" => "required|string",
+                "country" => "required|string",
             ];
             $validator = Validator::make($request->all(), $rules);
 
@@ -43,12 +45,12 @@ class PharmacyController extends Controller
                 return $this->returnValidationError($code, $validator);
             } else {
                 if ($request->image)
-                $pharmacy_image = $this->saveImage($request->image, 'images/pharmacies');
-            else $pharmacy_image = 0;
+                    $pharmacy_image = $this->saveImage($request->image, 'images/pharmacies');
+                else $pharmacy_image = 0;
                 $pharmacy = Pharmacy::create([
                     'center_id' => $request->center_id,
                     'name' => $request->name,
-                    'image_path'=>$pharmacy_image,
+                    'image_path' => 'images/pharmacies'.$pharmacy_image,
                     'username' => $request->username,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
@@ -69,9 +71,8 @@ class PharmacyController extends Controller
 
                 ]);
 
-                $token = auth('pharmacy')->login($pharmacy);
-
-                return $this->returnData('token', $token, 'Here Is Your Token');
+                $pharmacy->token = auth('pharmacy')->login($pharmacy);
+                return $this->returnData('Your Data', $pharmacy, 'Successfully register');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -84,6 +85,7 @@ class PharmacyController extends Controller
     }
     public function logout()
     {
+        auth('pharmacy')->refresh();
         auth('pharmacy')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
@@ -101,7 +103,7 @@ class PharmacyController extends Controller
         ]);
     }
 
-    public function edit(Request $request)
+    public function update(Request $request)
     {
         $pharmacy_id = auth('pharmacy')->user()->id;
         $pharmacy = Pharmacy::find($pharmacy_id);
@@ -126,10 +128,10 @@ class PharmacyController extends Controller
             'snapchat' => $request->snapchat,
             'youtube' => $request->youtube,
         ]);
-        return $this->returnSuccessMessage('Successfully Updated');
-
+        $pharmacy->token = auth('pha$pharmacy')->refresh();
+        return $this->returnData('Your Data', $pharmacy, 'Successfully edited');
     }
-    public function addProducts(Request $request)
+    public function addProduct(Request $request)
     {
         PharmacyProduct::create([
 
@@ -145,9 +147,9 @@ class PharmacyController extends Controller
         return $this->returnSuccessMessage('Successfully added');
     }
 
-    public function addProductImages(Request $request)
+    public function addProductImage(Request $request)
     {
-        $pharmacyProductImage = $this->saveImage($request->image_path,'images/PharmacyProductImages');
+        $pharmacyProductImage = $this->saveImage($request->image_path, 'images/PharmacyProductImages');
 
         PharmacyProductImage::create([
             'pharmacy_product_id' => $request->pharmacy_product_id,
@@ -162,16 +164,28 @@ class PharmacyController extends Controller
         $data = Pharmacy::find($pharmacy_id);
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
-    public function destroy($pharmacy_id)
+    public function destroy()
     {
-        $data = Pharmacy::find($pharmacy_id);
-
-        if ($data) {
-            $data->delete();
-            return $this->returnSuccessMessage('Successfully deleted');
-        } else {
-            return $this->returnError('401', 'Record not found');
+        try {
+            Pharmacy::destroy(auth('patient')->user()->id);
+            return $this->returnSuccessMessage('Your account successfully deleted');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
+    public function delete($id)
+    {
+        try {
+            $pharmacy = Pharmacy::find($id);
+            if ($pharmacy) {
+                Pharmacy::destroy($id);
+                return $this->returnSuccessMessage('Pharmacy successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested pharmacy does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 }

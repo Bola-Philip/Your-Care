@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('website')->nullable();
             $table->string('address')->nullable();
+            $table->string('country')->nullable();
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

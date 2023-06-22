@@ -2,8 +2,22 @@
 
 
 use Illuminate\Support\Facades\Route;
+// Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin'], function ($router) {
 
+//     Route::group(['middleware' => ['canAny:manger-permission,supervisor-permission'], 'prefix' => 'permission'],
+//         function (){
+//         Route::post('myData', 'App\Http\Controllers\Api\Admin\adminController@myData');
+//         Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@show');
+//         });
 
+//     Route::post('login', 'App\Http\Controllers\Api\Admin\adminController@login')->withoutMiddleware('auth:admin');
+//     Route::post('register', 'App\Http\Controllers\Api\Admin\adminController@register')->withoutMiddleware('auth:admin');
+//     Route::post('logout', 'App\Http\Controllers\Api\Admin\adminController@logout');
+//     Route::post('refresh', 'App\Http\Controllers\Api\Admin\adminController@refresh');
+//     Route::post('authorization', 'App\Http\Controllers\Api\Admin\adminController@authorization');
+//     Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@myData');
+
+// });
 
 Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center'], function ($router) {
     Route::post('save', '\App\Http\Controllers\Api\Admin\CenterController@store')->withoutMiddleware('checkToken:admin');

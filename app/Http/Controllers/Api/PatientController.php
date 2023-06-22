@@ -50,16 +50,17 @@ class PatientController extends Controller
         if (!$token = auth('patient')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-
-        return $this->returnData('token', $token, 'Here Is Your Token');
+        $patient = auth('patient')->user();
+        $patient->token = $token;
+        return $this->returnData('Your Data', $patient, 'Successfully logged in');
     }
     public function register(Request $request)
     {
-        $patient_image = $this->saveImage($request->image, 'images/patients');
         try {
             $rules = [
                 "email" => "required|string|unique:patients",
                 "password" => "required|string",
+                "country" => "required",
             ];
             $validator = Validator::make($request->all(), $rules);
 
@@ -73,7 +74,7 @@ class PatientController extends Controller
                 $patient = Patient::create([
                     'center_id' => $request->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image_path' => $patient_image,
+                    'image_path' => 'images/patients'.$patient_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -82,6 +83,7 @@ class PatientController extends Controller
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
                     'address' => $request->address,
+                    'country' => $request->country,
                     'length' => $request->length,
                     'weight' => $request->weight,
                     'bloodType' => $request->bloodType,
@@ -91,41 +93,60 @@ class PatientController extends Controller
 
                 $patient->token = auth('patient')->login($patient);
 
-                return $this->returnData('Patient', $patient, 'Here Is Your Token');
+                return $this->returnData('Patient', $patient, 'This is your data');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
-    public function edit(Request $request, $id)
+    public function update(Request $request)
     {
-        $patient_image = $this->saveImage($request->image, 'images/patients');
+        try {
+            $rules = [
+                "email" => "required|string|unique:patients",
+                "password" => "required|string",
+                "country" => "required",
+            ];
+            $validator = Validator::make($request->all(), $rules);
 
-
-        // $patient_id = auth('patient')->user()->id;
-        $patient = Patient::find($id);
-        $patient->update([
-            'center_id' => $request->center_id,
-            'insurance_company_id' => $request->insurance_company_id,
-            'image' => $patient_image,
-            'name' => $request->name,
-            'username' => $request->username,
-            'birth_date' => $request->birth_date,
-            'ssn' => $request->ssn,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'address' => $request->address,
-            'length' => $request->length,
-            'weight' => $request->weight,
-            'bloodType' => $request->bloodType,
-            'gender' => $request->gender,
-            'nationality' => $request->nationality,
-        ]);
-        $patient->token = auth('patient')->refresh();
-        return $this->returnData("patient", $patient, "Patient has been successfully edited");
+            if ($validator->fails()) {
+                $code = $this->returnCodeAccordingToInput($validator);
+                return $this->returnValidationError($code, $validator);
+            } else {
+                if ($request->image)
+                    $patient_image = $this->saveImage($request->image, 'images/patients');
+                else $patient_image = 0;
+                $patient_id = auth('patient')->user()->id;
+                $patient = Patient::find($patient_id);
+                $patient->update([
+                    'center_id' => $request->center_id,
+                    'insurance_company_id' => $request->insurance_company_id,
+                    'image' => 'images/patients'.$patient_image,
+                    'name' => $request->name,
+                    'username' => $request->username,
+                    'birth_date' => $request->birth_date,
+                    'ssn' => $request->ssn,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'address' => $request->address,
+                    'country' => $request->country,
+                    'length' => $request->length,
+                    'weight' => $request->weight,
+                    'bloodType' => $request->bloodType,
+                    'gender' => $request->gender,
+                    'nationality' => $request->nationality,
+                ]);
+                $patient->token = auth('patient')->refresh();
+                return $this->returnData("patient", $patient, "Patient successfully edited");
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
+
+    // ====================Diseases ========================
 
     public function addDisease(Request $request)
     {
@@ -156,6 +177,20 @@ class PatientController extends Controller
         }
     }
 
+    public function deleteDisease($id)
+    {
+        try {
+            if (PatientDisease::find($id)->destroy()) {
+
+                return $this->returnSuccessMessage('Disease successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested disease does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
     public function addDiseaseMedia($id, Request $request)
     {
         try {
@@ -165,6 +200,7 @@ class PatientController extends Controller
                     $media_file = $this->saveImage($request->media, 'images/patients/DiseaseMedia');
                 else $media_file = 0;
                 $disease_media = PatientDiseaseMedia::create([
+                    'disease_id' => $id,
                     'media_path' => $media_file,
                     'detection_date' => $request->detection_at,
                 ]);
@@ -178,30 +214,46 @@ class PatientController extends Controller
         }
     }
 
+    public function deleteDiseaseMedia($id)
+    {
+        try {
+            if (PatientDiseaseMedia::find($id)->destroy()) {
+
+                return $this->returnSuccessMessage('Media successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested media file does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
     public function myData()
     {
         $data = auth('patient')->user();
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
 
-    public function bookingRequest(Request $request, $doctor_id)
+    public function bookingRequest(Request $request, $patient_id)
     {
         $booking = BookingRequest::create([
-            'center_id' => auth('patient')->user()->center_id,
-            'patient_id' => auth('patient')->user()->id,
-            'doctor_id' => $doctor_id,
+            'center_id' => $request->center_id,
+            'patient_id' => $patient_id,
+            'doctor_id' => $request->doctor_id,
             'title' => $request->title,
+            'notes' => $request->notes,
+            'start_at' => $request->start,
+            'finish_at' => $request->finish,
             'service_description' => $request->service_description,
-            'rating' => $request->rating,
         ]);
         return $this->returnData('Your Booking', $booking, 'Your request successfully added');
     }
 
-    public function myReport($id)
+    public function myReports()
     {
         try {
-            $reports = Patient::find($id);
-            return $this->returnData('Your Reports', $reports->reports(), 'Here Is Your Data');
+            $reports = Patient::find(auth('patient')->user()->id);
+            return $this->returnData('Your Reports', $reports->reports(), 'These are your reports');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -212,6 +264,7 @@ class PatientController extends Controller
     }
     public function logout()
     {
+        auth('patient')->refresh();
         auth('patient')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
@@ -227,8 +280,12 @@ class PatientController extends Controller
 
     public function destroy()
     {
-        Patient::destroy(auth('patient')->user()->id);
-        return $this->returnSuccessMessage('Your account successfully deleted');
+        try {
+            Patient::destroy(auth('patient')->user()->id);
+            return $this->returnSuccessMessage('Your account successfully deleted');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 
     public function delete($id)
@@ -246,9 +303,20 @@ class PatientController extends Controller
         }
     }
 
- // =======================================Favorites==================================================
+    // =======================================Favorites==================================================
 
-     // ================Add Center To Favorite==========
+    // ================my Favorites =========
+
+    public function myFavorites()
+    {
+        try {
+            $reports = Patient::find(auth('patient')->user()->id);
+            return $this->returnData('Your Reports', $reports->favorites(), 'These are your reports');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    // ================Add Center To Favorite==========
 
     public function addCenterToFavorite($id)
     {
@@ -412,169 +480,181 @@ class PatientController extends Controller
         }
     }
 
-     // =======================================Rates=================================================
+    // =======================================Rates=================================================
 
-     // ================Add  Rate To Center =========
+    // ================my Rates =========
 
-     public function addRateToCenter($id, $rate)
-     {
-         try {
-             $center = Center::find($id);
-             if ($center) {
+    public function myRates()
+    {
+        try {
+            $reports = Patient::find(auth('patient')->user()->id);
+            return $this->returnData('Your Reports', $reports->rates(), 'These are your rates list');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    // ================Add  Rate To Center =========
+
+    public function addRateToCenter($id, $rate)
+    {
+        try {
+            $center = Center::find($id);
+            if ($center) {
                 Rate::create([
-                     'patient_id' => auth('patients')->user()->id,
-                     'center_id' => $id,
-                    'rate'=>$rate,
-                    ]);
-                 return $this->returnSuccessMessage('Center successfully added to your rated list');
-             } else {
-                 return $this->returnError(404, "The requested center does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'center_id' => $id,
+                    'rate' => $rate,
+                ]);
+                return $this->returnSuccessMessage('Center successfully added to your rated list');
+            } else {
+                return $this->returnError(404, "The requested center does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================Add Rate To Doctor =========
+    // ================Add Rate To Doctor =========
 
-     public function addRateToDoctor($id, $rate)
-     {
-         try {
-             $doctor = Doctor::find($id);
-             if ($doctor) {
+    public function addRateToDoctor($id, $rate)
+    {
+        try {
+            $doctor = Doctor::find($id);
+            if ($doctor) {
                 Rate::create([
-                     'patient_id' => auth('patients')->user()->id,
-                     'doctor_id' => $id,
-                    'rate'=>$rate,
-                    ]);
-                 return $this->returnSuccessMessage('Doctor successfully added to your rated list');
-             } else {
-                 return $this->returnError(404, "The requested doctor does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'doctor_id' => $id,
+                    'rate' => $rate,
+                ]);
+                return $this->returnSuccessMessage('Doctor successfully added to your rated list');
+            } else {
+                return $this->returnError(404, "The requested doctor does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================Add Rate To Pharmacy =========
+    // ================Add Rate To Pharmacy =========
 
-     public function addRateToPharmacy($id, $rate)
-     {
-         try {
-             $pharmacy = Pharmacy::find($id);
-             if ($pharmacy) {
+    public function addRateToPharmacy($id, $rate)
+    {
+        try {
+            $pharmacy = Pharmacy::find($id);
+            if ($pharmacy) {
                 Rate::create([
-                     'patient_id' => auth('patients')->user()->id,
-                     'pharmacy_id' => $id,
-                    'rate'=>$rate,
-                    ]);
-                 return $this->returnSuccessMessage('Pharmacy successfully added to your rated list');
-             } else {
-                 return $this->returnError(404, "The requested pharmacy does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'pharmacy_id' => $id,
+                    'rate' => $rate,
+                ]);
+                return $this->returnSuccessMessage('Pharmacy successfully added to your rated list');
+            } else {
+                return $this->returnError(404, "The requested pharmacy does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================Add Rate To Lab =========
+    // ================Add Rate To Lab =========
 
-     public function addRateToLab($id, $rate)
-     {
-         try {
-             $lab = Lab::find($id);
-             if ($lab) {
+    public function addRateToLab($id, $rate)
+    {
+        try {
+            $lab = Lab::find($id);
+            if ($lab) {
                 Rate::where([
-                     'patient_id' => auth('patients')->user()->id,
-                     'lab_id' => $id,
-                    'rate'=>$rate,
-                    ]);
-                 return $this->returnSuccessMessage('Lab successfully added to your rated list');
-             } else {
-                 return $this->returnError(404, "The requested lab does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'lab_id' => $id,
+                    'rate' => $rate,
+                ]);
+                return $this->returnSuccessMessage('Lab successfully added to your rated list');
+            } else {
+                return $this->returnError(404, "The requested lab does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================remove Rate From Center ===========
+    // ================remove Rate From Center ===========
 
-     public function removeRateFromCenter($id)
-     {
-         try {
-             $center = Center::find($id);
-             if ($center) {
+    public function removeRateFromCenter($id)
+    {
+        try {
+            $center = Center::find($id);
+            if ($center) {
                 Rate::where([
-                     'patient_id' => auth('patients')->user()->id,
-                     'center_id' => $id,
-                 ])->destroy();
-                 return $this->returnSuccessMessage('Center successfully removed from your rated list');
-             } else {
-                 return $this->returnError(404, "The requested center does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'center_id' => $id,
+                ])->destroy();
+                return $this->returnSuccessMessage('Center successfully removed from your rated list');
+            } else {
+                return $this->returnError(404, "The requested center does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================remove Rate From Doctor ===========
+    // ================remove Rate From Doctor ===========
 
-     public function removeRateFromDoctor($id)
-     {
-         try {
-             $doctor = Doctor::find($id);
-             if ($doctor) {
+    public function removeRateFromDoctor($id)
+    {
+        try {
+            $doctor = Doctor::find($id);
+            if ($doctor) {
                 Rate::where([
-                     'patient_id' => auth('patients')->user()->id,
-                     'doctor_id' => $id,
-                 ])->destroy();
-                 return $this->returnSuccessMessage('Doctor successfully removed from your rated list');
-             } else {
-                 return $this->returnError(404, "The requested doctor does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'doctor_id' => $id,
+                ])->destroy();
+                return $this->returnSuccessMessage('Doctor successfully removed from your rated list');
+            } else {
+                return $this->returnError(404, "The requested doctor does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================remove Rate From Pharmacy ===========
+    // ================remove Rate From Pharmacy ===========
 
-     public function removeRateFromPharmacy($id)
-     {
-         try {
-             $pharmacy = Pharmacy::find($id);
-             if ($pharmacy) {
+    public function removeRateFromPharmacy($id)
+    {
+        try {
+            $pharmacy = Pharmacy::find($id);
+            if ($pharmacy) {
                 Rate::where([
-                     'patient_id' => auth('patients')->user()->id,
-                     'pharmacy_id' => $id,
-                 ])->destroy();
-                 return $this->returnSuccessMessage('Pharmacy successfully removed from your rated list');
-             } else {
-                 return $this->returnError(404, "The requested pharmacy does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'pharmacy_id' => $id,
+                ])->destroy();
+                return $this->returnSuccessMessage('Pharmacy successfully removed from your rated list');
+            } else {
+                return $this->returnError(404, "The requested pharmacy does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 
-     // ================remove Rate From Lab ===========
+    // ================remove Rate From Lab ===========
 
-     public function removeRateFromLab($id)
-     {
-         try {
-             $lab = Lab::find($id);
-             if ($lab) {
+    public function removeRateFromLab($id)
+    {
+        try {
+            $lab = Lab::find($id);
+            if ($lab) {
                 Rate::where([
-                     'patient_id' => auth('patients')->user()->id,
-                     'lab_id' => $id,
-                 ])->destroy();
-                 return $this->returnSuccessMessage('Lab successfully removed from your rated list');
-             } else {
-                 return $this->returnError(404, "The requested lab does not exist !");
-             }
-         } catch (\Exception $ex) {
-             return $this->returnError($ex->getCode(), $ex->getMessage());
-         }
-     }
+                    'patient_id' => auth('patients')->user()->id,
+                    'lab_id' => $id,
+                ])->destroy();
+                return $this->returnSuccessMessage('Lab successfully removed from your rated list');
+            } else {
+                return $this->returnError(404, "The requested lab does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
 }

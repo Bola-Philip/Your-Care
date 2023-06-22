@@ -37,8 +37,9 @@ class AdminController extends Controller
         if (!$token = auth('admin')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-        return $this->returnData('token', $token, 'Here Is Your Token');
-
+        $admin = auth('admin')->user();
+        $admin->token = $token;
+        return $this->returnData('Admin', $admin, 'Here is your admin');
     }
     public function register(Request $request)
     {
@@ -55,13 +56,14 @@ class AdminController extends Controller
             } else {
 
                 $admin = Admin::create([
-                    'center_id' => $request->center_id,
+                    'center_id' => auth('admin')->user()->center_id,
                     'username' => $request->username,
                     'name' => $request->name,
                     'phone' => $request->phone,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
                     'permission' => $request->permission,
+                    'country' => auth('admin')->user()->country,
                 ]);
 
                 // $token = auth('admin')->user();
@@ -113,19 +115,23 @@ class AdminController extends Controller
 
     public function myData()
     {
-            $data = auth('admin')->user();
-            return $this->returnData('data', $data, 'Here Is Your Data');
+        $data = auth('admin')->user();
+        return $this->returnData('data', $data, 'Here Is Your Data');
     }
+
     public function logout()
     {
+        auth('admin')->refresh();
         auth('admin')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
     }
+
     public function refresh()
     {
         return $this->respondWithToken(auth('admin')->refresh());
     }
+
     protected function respondWithToken($token)
     {
         return response()->json([
@@ -148,6 +154,7 @@ class AdminController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
     protected function authorization()
     {
         $admin_id = auth('admin')->user()->id;
@@ -160,14 +167,13 @@ class AdminController extends Controller
         } elseif (Gate::allows('parser-permission')) {
             return 'You are parser';
         } else {
-            return 'You dont have any of the specified permissions';
+            return "You don't have any of the specified permissions";
         }
 
-        if(Gate::allows('manger-permission') || Gate::allows('supervisor-permission')){
+        if (Gate::allows('manger-permission') || Gate::allows('supervisor-permission')) {
             return 'You are manger';
-
-        }else {
-            return 'You dont have any of the specified permissions';
+        } else {
+            return "You don't have any of the specified permissions";
         }
     }
 }
