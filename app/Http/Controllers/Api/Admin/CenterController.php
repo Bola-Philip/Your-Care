@@ -345,13 +345,13 @@ class CenterController extends Controller
 
 /////////////add///////////////////
 
-public function addDoctor(AdddoctorRequest $request)
+public function addDoctor(Request $request)
 {
     $rules = [
         "email" => "required|string|unique:doctors",
         "password" => "required|string",
-
     ];
+
     $validator = Validator::make($request->all(), $rules);
 
     if ($validator->fails()) {
@@ -363,7 +363,7 @@ public function addDoctor(AdddoctorRequest $request)
                 $doctor_image = $this->saveImage($request->image, 'images/doctors');
             else $doctor_image = 0;
             $doctor = Doctor::create([
-                'center_id' => $request->center_id,
+                'center_id' => auth('admin')->user()->center_id,
                 'department_id' => $request->department_id,
                 'image_path' => $doctor_image,
                 'username' => $request->username,
@@ -387,8 +387,7 @@ public function addDoctor(AdddoctorRequest $request)
                 'nationality' => $request->nationality,
             ]);
 
-
-            return $this->returnData('Doctor', $doctor 'Doctor has been successfully added');
+            return $this->returnData('Doctor', $doctor, 'Doctor has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -397,7 +396,7 @@ public function addDoctor(AdddoctorRequest $request)
 
 
     ////////////////pation////////////////
-    public function addPatient(AddpatientRequest $request)
+    public function addPatient(Request $request)
     {
         $patient_image = $this->saveImage($request->image, 'images/patients');
         try {
@@ -415,7 +414,7 @@ public function addDoctor(AdddoctorRequest $request)
                     $patient_image = $this->saveImage($request->image, 'images/patients');
                 else $patient_image = 0;
                 $patient = Patient::create([
-                    'center_id' => $request->center_id,
+                    'center_id' => auth('admin')->user()->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
                     'image_path' => $patient_image,
                     'name' => $request->name,
@@ -432,10 +431,9 @@ public function addDoctor(AdddoctorRequest $request)
                     'gender' => $request->gender,
                     'nationality' => $request->nationality,
                 ]);
-
-
-                return $this->returnData('Patient', $patient 'patient has been successfully added');
             }
+
+            return $this->returnData('Patient', $patient, 'Patient has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -461,7 +459,7 @@ public function addDoctor(AdddoctorRequest $request)
                     $lab_image = $this->saveImage($request->image, 'images/labs');
                 else $lab_image = 0;
                 $lab = Lab::create([
-                    'center_id' => $request->center_id,
+                    'center_id' => auth('admin')->user()->center_id,
                     'image_path' => $lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
@@ -471,9 +469,8 @@ public function addDoctor(AdddoctorRequest $request)
                     'website' => $request->website,
                     'address' => $request->address,
                 ]);
-                dd('data');
-                return $this->returnData('Lab', $lab 'Lab has been successfully added');
             }
+            return $this->returnData('Lab', $lab, 'Lab has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -482,11 +479,13 @@ public function addDoctor(AdddoctorRequest $request)
 /////////////////////////addPharmacy//////////////////
 public function addPharmacy(AddPharmacyRequest $request)
 {
+    $rules = [
+        "email" => "required|string|unique:pharmacies",
+        "password" => "required|string",
+    ];
+
     try {
-        $rules = [
-            "email" => "required|string|unique:pharmacies",
-            "password" => "required|string",
-        ];
+        
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -497,7 +496,7 @@ public function addPharmacy(AddPharmacyRequest $request)
             $pharmacy_image = $this->saveImage($request->image, 'images/pharmacies');
         else $pharmacy_image = 0;
             $pharmacy = Pharmacy::create([
-                'center_id' => $request->center_id,
+                'center_id' => auth('admin')->user()->center_id,
                 'name' => $request->name,
                 'image_path'=>$pharmacy_image,
                 'username' => $request->username,
@@ -517,27 +516,22 @@ public function addPharmacy(AddPharmacyRequest $request)
                 'twitter' => $request->twitter,
                 'snapchat' => $request->snapchat,
                 'youtube' => $request->youtube,
-
             ]);
-
-
-            return $this->returnData('Pharmacy', $pharmacy 'Pharmacy has been successfully added');
         }
+        return $this->returnData('Pharmacy', $pharmacy, 'Pharmacy has been successfully added');
     } catch (\Throwable $ex) {
         return $this->returnError($ex->getCode(), $ex->getMessage());
     }
 }
 
-
-
     //////////remove//////////
 
-    public function removeDoctor()
+    public function removeDoctor($id)
     {
         try {
             $doctor = Doctor::findOrFail($id);
         if ($doctor) {
-            unset($doctor);
+            $doctor->destroy($id);
                 return $this->returnSuccessMessage('Doctor Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -547,12 +541,12 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-     public function removePatient()
+     public function removePatient($id)
     {
         try {
             $patient = Patient::findOrFail($id);
             if ($patient) {
-                unset($patient);
+                $patient->destroy($id);
                 return $this->returnSuccessMessage('Patient Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
@@ -562,13 +556,13 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-    public function removeLab()
+    public function removeLab($id)
     {
         try {
             $lab = Lab::findOrFail($id);
         if ($lab) {
-            unset($lab);
-                return $this->returnSuccessMessage('Lab Successfully deleted');
+            $lab->destroy($id);
+            return $this->returnSuccessMessage('Lab Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');
             }
@@ -577,12 +571,12 @@ public function addPharmacy(AddPharmacyRequest $request)
         }
     }
 
-    public function removePharmacy()
+    public function removePharmacy($id)
     {
         try {
             $pharmacy = Pharmacy::findOrFail($id);
         if ($pharmacy) {
-            unset($pharmacy);
+            $pharmacy->destroy($id);
                 return $this->returnSuccessMessage('Pharmacy Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');

@@ -55,7 +55,6 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('save', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@store');
             Route::post('addPatient', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@addPatient');
             Route::post('removePatient/{id}', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@removePatient');
-
         });
 
         Route::group(['middleware' => ['api'], 'prefix' => 'client'], function ($router) {
