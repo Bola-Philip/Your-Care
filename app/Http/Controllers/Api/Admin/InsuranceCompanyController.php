@@ -146,9 +146,6 @@ class InsuranceCompanyController extends Controller
         $patient->gender = $request->gender;
         $patient->nationality = $request->nationality;
         $patient->image_path =   $patient_image ;
-
-        // يمكنك إضافة المزيد من الحقول هنا
-
         $patient->save();
 
         return response()->json(['message' => 'تمت إضافة المريض بنجاح']);
@@ -163,7 +160,7 @@ class InsuranceCompanyController extends Controller
         try {
             $center = Patient::find($id);
             if ($center) {
-                Patient::destroy($id);
+                $center->destroy($id);
                 return $this->returnSuccessMessage('Patient Successfully deleted');
             }else{
                 return $this->returnError('0','this Id not found');

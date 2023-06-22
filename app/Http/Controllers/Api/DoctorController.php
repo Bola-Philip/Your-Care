@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\BookingRequest;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
-use App\Models\DoctorExperience;
 use App\Models\PatientTakeService;
 use App\Models\Report;
 use App\Traits\GeneralTrait;

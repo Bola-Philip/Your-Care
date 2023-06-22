@@ -415,8 +415,10 @@ class CenterController extends Controller
                     'gender' => $request->gender,
                     'nationality' => $request->nationality,
                 ]);
-                return $this->returnData('Patient', $patient, 'This is your data');
+                return $this->returnData('Patient', $patient, 'Patient successfully added');
             }
+
+            return $this->returnData('Patient', $patient, 'Patient has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -509,16 +511,14 @@ class CenterController extends Controller
         }
     }
 
-
-
     //////////remove//////////
 
-    public function removeDoctor(string $id)
+    public function removeDoctor($id)
     {
         try {
-            $center = Doctor::find($id);
-            if ($center) {
-                Doctor::destroy($id);
+            $doctor = Doctor::findOrFail($id);
+        if ($doctor) {
+            $doctor->destroy($id);
                 return $this->returnSuccessMessage('Doctor Successfully deleted');
             } else {
                 return $this->returnError('0', 'this Id not found');
@@ -528,12 +528,12 @@ class CenterController extends Controller
         }
     }
 
-    public function removePatient(string $id)
+     public function removePatient($id)
     {
         try {
-            $center = Patient::find($id);
-            if ($center) {
-                Patient::destroy($id);
+            $patient = Patient::findOrFail($id);
+            if ($patient) {
+                $patient->destroy($id);
                 return $this->returnSuccessMessage('Patient Successfully deleted');
             } else {
                 return $this->returnError('0', 'this Id not found');
@@ -543,27 +543,27 @@ class CenterController extends Controller
         }
     }
 
-    public function removeLab(string $id)
+    public function removeLab($id)
     {
         try {
-            $center = Lab::find($id);
-            if ($center) {
-                Lab::destroy($id);
-                return $this->returnSuccessMessage('Lab Successfully deleted');
-            } else {
-                return $this->returnError('0', 'this Id not found');
+            $lab = Lab::findOrFail($id);
+        if ($lab) {
+            $lab->destroy($id);
+            return $this->returnSuccessMessage('Lab Successfully deleted');
+            }else{
+                return $this->returnError('0','this Id not found');
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
-    public function removePharmacy(string $id)
+    public function removePharmacy($id)
     {
         try {
-            $center = Pharmacy::find($id);
-            if ($center) {
-                Pharmacy::destroy($id);
+            $pharmacy = Pharmacy::findOrFail($id);
+        if ($pharmacy) {
+            $pharmacy->destroy($id);
                 return $this->returnSuccessMessage('Pharmacy Successfully deleted');
             } else {
                 return $this->returnError('0', 'this Id not found');
@@ -572,4 +572,12 @@ class CenterController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
+
+
+
+
+
+
+
 }
