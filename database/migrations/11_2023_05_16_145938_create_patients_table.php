@@ -25,13 +25,14 @@ return new class extends Migration
             $table->string('password');
             $table->string('signature')->nullable();
             $table->string('address')->nullable();
+            $table->string('country')->nullable();
             $table->string('length')->nullable();
             $table->string('weight')->nullable();
             $table->string('bloodType')->nullable();
             $table->string('gender')->nullable();
             $table->string('nationality');
             $table->timestamps();
-            
+
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('set null');
             $table->foreign('insurance_company_id')->references('id')->on('insurance_companies')->onDelete('set null');
         });

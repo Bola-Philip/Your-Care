@@ -16,11 +16,13 @@ return new class extends Migration
             $table->unsignedBigInteger('center_id')->nullable();
             $table->unsignedBigInteger('patient_id')->nullable();
             $table->unsignedBigInteger('doctor_id')->nullable();
-            $table->string('title');
-            $table->string('service_description');
-            $table->timestamp('start_at');
+            $table->string('title')->nullable();
+            $table->string('service_description')->nullable();
+            $table->timestamp('start_at')->nullable();
             $table->timestamp('finish_at')->nullable();
             $table->integer('rating')->nullable();
+            $table->string('notes')->nullable();
+            $table->enum('status', ['succeed', 'waiting', 'canceled'])->default('waiting');
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

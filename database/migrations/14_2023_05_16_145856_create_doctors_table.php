@@ -33,6 +33,7 @@ return new class extends Migration
             $table->timestamp('birth_date')->nullable();
             $table->integer('experience_years')->nullable();
             $table->string('address')->nullable();
+            $table->string('country')->nullable();
             $table->double('salary')->nullable();
             $table->string('gender')->nullable();
             $table->string('nationality')->nullable();

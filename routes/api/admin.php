@@ -2,17 +2,31 @@
 
 
 use Illuminate\Support\Facades\Route;
+// Route::group(['middleware' => ['api','auth:admin'], 'prefix' => 'admin'], function ($router) {
 
+//     Route::group(['middleware' => ['canAny:manger-permission,supervisor-permission'], 'prefix' => 'permission'],
+//         function (){
+//         Route::post('myData', 'App\Http\Controllers\Api\Admin\adminController@myData');
+//         Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@show');
+//         });
 
+//     Route::post('login', 'App\Http\Controllers\Api\Admin\adminController@login')->withoutMiddleware('auth:admin');
+//     Route::post('register', 'App\Http\Controllers\Api\Admin\adminController@register')->withoutMiddleware('auth:admin');
+//     Route::post('logout', 'App\Http\Controllers\Api\Admin\adminController@logout');
+//     Route::post('refresh', 'App\Http\Controllers\Api\Admin\adminController@refresh');
+//     Route::post('authorization', 'App\Http\Controllers\Api\Admin\adminController@authorization');
+//     Route::post('doctorData/{doctor_id}', 'App\Http\Controllers\Api\DoctorController@myData');
 
-Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center'], function ($router) {
-    Route::post('save', '\App\Http\Controllers\Api\Admin\CenterController@store')->withoutMiddleware('checkToken:admin');
-    Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\CenterController@show');
-    Route::post('myAdmins/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myAdmins');
-    Route::post('myClients/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myClients');
-    Route::post('myEmployees/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myEmployees');
-    Route::post('myInsuranceCompanies/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myInsuranceCompanies');
-    Route::post('myReports/{id}', '\App\Http\Controllers\Api\Admin\CenterController@myReports');
+// });
+
+Route::group(['middleware' => ['api', 'auth:admin'], 'prefix' => 'center'], function ($router) {
+    Route::post('save', '\App\Http\Controllers\Api\Admin\CenterController@store')->withoutMiddleware('auth:admin');
+    Route::post('show/{id}', '\App\Http\Controllers\Api\Admin\CenterController@show')->withoutMiddleware('auth:admin');
+    Route::post('myAdmins', '\App\Http\Controllers\Api\Admin\CenterController@myAdmins');
+    Route::post('myClients', '\App\Http\Controllers\Api\Admin\CenterController@myClients');
+    Route::post('myEmployees', '\App\Http\Controllers\Api\Admin\CenterController@myEmployees');
+    Route::post('myInsuranceCompanies', '\App\Http\Controllers\Api\Admin\CenterController@myInsuranceCompanies');
+    Route::post('myReports', '\App\Http\Controllers\Api\Admin\CenterController@myReports');
     Route::post('update', '\App\Http\Controllers\Api\Admin\CenterController@update');
     Route::post('delete', '\App\Http\Controllers\Api\Admin\CenterController@delete');
     Route::post('myData', '\App\Http\Controllers\Api\Admin\CenterController@myData');
@@ -26,7 +40,7 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
     Route::post('removePharmacy/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removePharmacy');
 
     Route::group(['middleware' => ['api'], 'prefix' => 'admin'], function ($router) {
-        Route::post('login', 'App\Http\Controllers\Api\Admin\AdminController@login')->withoutMiddleware('checkToken:admin')->name('admin.login');
+        Route::post('login', 'App\Http\Controllers\Api\Admin\AdminController@login')->withoutMiddleware('auth:admin')->name('admin.login');
         Route::post('save', 'App\Http\Controllers\Api\Admin\AdminController@register');
         Route::post('logout', 'App\Http\Controllers\Api\Admin\AdminController@logout');
         Route::post('refresh', 'App\Http\Controllers\Api\Admin\AdminController@refresh');
@@ -60,7 +74,6 @@ Route::group(['middleware' => ['api', 'checkToken:admin'], 'prefix' => 'center']
             Route::post('save', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@store');
             Route::post('addPatient', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@addPatient');
             Route::post('removePatient/{id}', '\App\Http\Controllers\Api\Admin\InsuranceCompanyController@removePatient');
-
         });
 
         Route::group(['middleware' => ['api'], 'prefix' => 'client'], function ($router) {

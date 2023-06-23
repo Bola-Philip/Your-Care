@@ -26,8 +26,9 @@ class LabController extends Controller
         if (!$token = auth('lab')->attempt($credentials)) {
             return \response()->json($token);
         }
-
-        return $this->returnData('token', $token, 'Here Is Your Token');
+        $lab = auth('lab')->user();
+        $lab->token = $token;
+        return $this->returnData('Your Data', $lab, 'Successfully logged in');
     }
     public function register(Request $request)
     {
@@ -35,6 +36,7 @@ class LabController extends Controller
             $rules = [
                 "email" => "required|string|unique:labs",
                 "password" => "required|string",
+                "country" => "required",
             ];
             $validator = Validator::make($request->all(), $rules);
 
@@ -47,7 +49,7 @@ class LabController extends Controller
                 else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
-                    'image' => $lab_image,
+                    'image_path' => 'images/labs'.$lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -55,11 +57,11 @@ class LabController extends Controller
                     'phone' => $request->phone,
                     'website' => $request->website,
                     'address' => $request->address,
+                    'country' => $request->country,
                 ]);
 
-                $token = auth('lab')->login($lab);
-
-                return $this->returnData('token', $token, 'Here Is Your Token');
+                $lab->token = auth('lab')->login($lab);
+                return $this->returnData('Your Data', $lab, 'Successfully register');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -76,6 +78,7 @@ class LabController extends Controller
     }
     public function logout()
     {
+        auth('lab')->refresh();
         auth('lab')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
@@ -88,26 +91,44 @@ class LabController extends Controller
             'expires_in' => auth('lab')->factory()->getTTL() * 60
         ]);
     }
-    public function edit(Request $request)
+    public function update(Request $request)
     {
-        $lab_image = $this->saveImage($request->image, 'images/labs');
+        try {
+            $rules = [
+                "email" => "required|string|unique:labs",
+                "password" => "required|string",
+                "country" => "required",
+            ];
+            $validator = Validator::make($request->all(), $rules);
 
-        $lab_id = auth('lab')->user()->id;
-        $lab = Lab::find($lab_id);
-        $lab->update([
-            'center_id' => $request->center_id,
-            'image' => $lab_image,
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'website' => $request->website,
-            'address' => $request->address,
-        ]);
+            if ($validator->fails()) {
+                $code = $this->returnCodeAccordingToInput($validator);
+                return $this->returnValidationError($code, $validator);
+            } else {
+                if ($request->image)
+                    $lab_image = $this->saveImage($request->image, 'images/labs');
+                else $lab_image = 0;
 
-
-        return $this->returnSuccessMessage('Successfully Updated');
+                $lab_id = auth('lab')->user()->id;
+                $lab = Lab::find($lab_id);
+                $lab->update([
+                    'center_id' => $request->center_id,
+                    'image' => 'images/labs'.$lab_image,
+                    'name' => $request->name,
+                    'username' => $request->username,
+                    'email' => $request->email,
+                    'password' => Hash::make($request->password),
+                    'phone' => $request->phone,
+                    'website' => $request->website,
+                    'address' => $request->address,
+                    'country' => $request->country,
+                ]);
+                $lab->token = auth('lab')->refresh();
+                return $this->returnData('Your Data', $lab, 'Successfully edited');
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
     public function show($lab_id)
     {
@@ -118,20 +139,34 @@ class LabController extends Controller
     {
         Sample::create([
             'lab_id' => $request->lab_id,
-            'doctor_id' => $request->doctor_id	,
+            'doctor_id' => $request->doctor_id,
             'patient_id' => $request->patient_id,
             'reply_id' => $request->reply_id,
         ]);
         return $this->returnSuccessMessage('Successfully Added');
     }
-    public function destroy($lab_id)
+    public function destroy()
     {
-        $data = Lab::find($lab_id);
-        if ($data) {
-            $data->delete();
-            return $this->returnSuccessMessage('Successfully deleted');
-        } else {
-            return $this->returnError('401', 'Record not found');
+        try {
+            Lab::destroy(auth('lab')->user()->id);
+            return $this->returnSuccessMessage('Your account successfully deleted');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $lab = Lab::find($id);
+            if ($lab) {
+                Lab::destroy($id);
+                return $this->returnSuccessMessage('Lab successfully deleted');
+            } else {
+                return $this->returnError(404, "The requested lab does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
@@ -144,5 +179,4 @@ class LabController extends Controller
         ]);
         return $this->returnSuccessMessage('Successfully Added');
     }
-
 }
