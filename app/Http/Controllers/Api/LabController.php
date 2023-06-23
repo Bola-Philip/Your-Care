@@ -67,6 +67,12 @@ class LabController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
+    public function allLabs()
+    {
+        $labs = Lab::with(['rates','favorites'])->get();
+        return $this->returnData('data', $labs);
+    }
     public function myData()
     {
         $data = auth('lab')->user();
