@@ -49,7 +49,7 @@ class LabController extends Controller
                 else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
-                    'image' => 'images/labs'.$lab_image,
+                    'image_path' => 'images/labs'.$lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
