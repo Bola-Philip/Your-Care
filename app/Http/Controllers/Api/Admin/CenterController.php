@@ -39,41 +39,41 @@ class CenterController extends Controller
         }
     }
 
-    public function myAdmins($id)
+    public function myAdmins()
     {
-        $centerAdmins = Center::find($id);
+        $centerAdmins = Center::find(auth('admin')->user()->center_id);
         $admins = $centerAdmins->admins;
         return $this->returnData('center', $admins);
 
     }
 
-    public function myClients($id)
+    public function myClients()
     {
-        $centerClients = Center::find($id);
+        $centerClients = Center::find(auth('admin')->user()->center_id);
         $clients = $centerClients->clients;
         return $this->returnData('center', $clients);
 
     }
 
-    public function myEmployees($id)
+    public function myEmployees()
     {
-        $centerEmployees = Center::find($id);
+        $centerEmployees = Center::find(auth('admin')->user()->center_id);
         $employees = $centerEmployees->employees;
         return $this->returnData('center', $employees);
 
     }
 
-    public function myInsuranceCompanies($id)
+    public function myInsuranceCompanies()
     {
-        $centerInsuranceCompanies = Center::find($id);
+        $centerInsuranceCompanies = Center::find(auth('admin')->user()->center_id);
         $insuranceCompanies = $centerInsuranceCompanies->insuranceCompanies;
         return $this->returnData('center', $insuranceCompanies);
 
     }
 
-    public function myReports($id)
+    public function myReports()
     {
-        $centerReports = Center::find($id);
+        $centerReports = Center::find(auth('admin')->user()->center_id);
         $reports = $centerReports->reports;
         return $this->returnData('center', $reports);
 
@@ -502,9 +502,9 @@ class CenterController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-  
+
  ///////////////////////// ADD PHARMACY TO MY CENTER //////////////////
-  
+
   public function addPharmacy(Request $request)
     {
         try {
