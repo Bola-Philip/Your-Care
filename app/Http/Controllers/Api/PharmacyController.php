@@ -83,6 +83,12 @@ class PharmacyController extends Controller
         $data = auth('pharmacy')->user();
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
+
+    public function allPharmacies()
+    {
+        $pharmacies = Pharmacy::with(['rates','favorites'])->get();
+        return $this->returnData('data', $pharmacies);
+    }
     public function logout()
     {
         auth('pharmacy')->refresh();
