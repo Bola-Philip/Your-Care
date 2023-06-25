@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Doctor;
 use App\Models\Lab;
+use App\Models\Patient;
 use App\Models\Reply;
 use App\Models\Sample;
 use App\Traits\GeneralTrait;
@@ -24,12 +26,13 @@ class LabController extends Controller
         $credentials = request()->only('email', 'password');
 
         if (!$token = auth('lab')->attempt($credentials)) {
-            return \response()->json($token);
+            return $this->returnError('401', 'Unauthorized');
         }
         $lab = auth('lab')->user();
         $lab->token = $token;
         return $this->returnData('Your Data', $lab, 'Successfully logged in');
     }
+
     public function register(Request $request)
     {
         try {
@@ -49,7 +52,7 @@ class LabController extends Controller
                 else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
-                    'image_path' => 'images/labs'.$lab_image,
+                    'image_path' => 'images/labs' . $lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -67,30 +70,7 @@ class LabController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function myData()
-    {
-        $data = auth('lab')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
-    }
-    public function refresh()
-    {
-        return $this->respondWithToken(auth('lab')->refresh());
-    }
-    public function logout()
-    {
-        auth('lab')->refresh();
-        auth('lab')->logout();
 
-        return $this->returnSuccessMessage('Successfully logged out');
-    }
-
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'expires_in' => auth('lab')->factory()->getTTL() * 60
-        ]);
-    }
     public function update(Request $request)
     {
         try {
@@ -113,7 +93,7 @@ class LabController extends Controller
                 $lab = Lab::find($lab_id);
                 $lab->update([
                     'center_id' => $request->center_id,
-                    'image' => 'images/labs'.$lab_image,
+                    'image_path' => 'images/labs' . $lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -130,6 +110,33 @@ class LabController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
+    public function myData()
+    {
+        $data = auth('lab')->user();
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('lab')->refresh());
+    }
+    public function logout()
+    {
+        if (auth('lab')->user()) {
+            auth('lab')->logout();
+            // auth('lab')->refresh();
+            return $this->returnSuccessMessage('Successfully logged out');
+        } else
+            return $this->returnError('401', 'Unauthorized');
+    }
+
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'expires_in' => auth('lab')->factory()->getTTL() * 60
+        ]);
+    }
     public function show($lab_id)
     {
         $data = Lab::find($lab_id);
@@ -137,14 +144,49 @@ class LabController extends Controller
     }
     public function addSample(Request $request)
     {
-        Sample::create([
-            'lab_id' => $request->lab_id,
-            'doctor_id' => $request->doctor_id,
-            'patient_id' => $request->patient_id,
-            'reply_id' => $request->reply_id,
-        ]);
-        return $this->returnSuccessMessage('Successfully Added');
+        try {
+            $rules = [
+                "lab_id" => "required|string|exists:labs,id",
+                "doctor_id" => "required|string|exists:doctors,id",
+                "patient_id" => "required|string|exists:patients,id",
+            ];
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                $code = $this->returnCodeAccordingToInput($validator);
+                return $this->returnValidationError($code, $validator);
+            } else {
+                $sample = Sample::create([
+                    'lab_id' => $request->lab_id,
+                    'doctor_id' => $request->doctor_id,
+                    'patient_id' => $request->patient_id,
+                ]);
+                return $this->returnData('Sample', $sample, 'Sample successfully added');
+            }
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
+
+    public function addReply($sample_id, Request $request)
+    {
+        if (Sample::find($sample_id)) {
+            $lab_image = $this->saveImage($request->result, 'images/labs/replies');
+            Reply::create([
+                'sample_id' => $sample_id,
+                'result' => 'images/labs/replies' . $lab_image,
+            ]);
+            return $this->returnSuccessMessage('Successfully Added');
+        } else {
+            return $this->returnError(404, "The requested sample does not exist !");
+        }
+    }
+    public function ourReply()
+    {
+        $lab = Reply::with(['reply'])->find(auth('lab')->user()->id);
+        return $this->returnData('Sample', $lab, 'These are your replies');
+    }
+
     public function destroy()
     {
         try {
@@ -168,15 +210,5 @@ class LabController extends Controller
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
-    }
-
-    public function ourReply(Request $request)
-    {
-        $lab_image = $this->saveImage($request->result, 'images/replies');
-        Reply::create([
-            'sample_id' => $request->sample_id,
-            'result' => $lab_image,
-        ]);
-        return $this->returnSuccessMessage('Successfully Added');
     }
 }

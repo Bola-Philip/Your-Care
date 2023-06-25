@@ -23,6 +23,8 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->string('address')->nullable();
             $table->string('country')->nullable();
+            $table->boolean('is_rated')->default(false);
+            $table->boolean('is_favorite')->default(false);
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

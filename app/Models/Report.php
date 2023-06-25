@@ -13,6 +13,8 @@ class Report extends Model
 
     protected $guarded = [];
 
+    public $timestamps = false;
+
     public function center()
     {
         return $this->belongsTo(Center::class, 'center_id');

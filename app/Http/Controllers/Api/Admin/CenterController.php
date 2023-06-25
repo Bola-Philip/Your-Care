@@ -3,24 +3,19 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\AddDoctorRequest;
-use App\Http\Requests\AddLabRequest;
-use App\Http\Requests\AddpatientRequest;
-use App\Http\Requests\AddPharmacyRequest;
 use App\Models\Center;
 use App\Models\Admin;
 use App\Models\CenterService;
-use App\Traits\GeneralTrait;
-use App\Traits\ImageTrait;
-use Illuminate\Http\Request;
 use App\Models\Department;
 use App\Models\Doctor;
 use App\Models\Lab;
 use App\Models\Patient;
 use App\Models\Pharmacy;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\GeneralTrait;
+use App\Traits\ImageTrait;
+use Illuminate\Http\Request;
 
 class CenterController extends Controller
 {
@@ -30,7 +25,7 @@ class CenterController extends Controller
     public function show(string $id)
     {
         try {
-            $center = Center::with(['doctors','departments','rates','favorites'])->find($id);
+            $center = Center::with(['doctors', 'departments', 'rates', 'favorites'])->find($id);
             if ($center) {
                 return $this->returnData('center', $center);
             }
@@ -43,40 +38,35 @@ class CenterController extends Controller
     {
         $centerAdmins = Center::find(auth('admin')->user()->center_id);
         $admins = $centerAdmins->admins;
-        return $this->returnData('center', $admins);
-
+        return $this->returnData('Center Admins', $admins);
     }
 
     public function myClients()
     {
         $centerClients = Center::find(auth('admin')->user()->center_id);
         $clients = $centerClients->clients;
-        return $this->returnData('center', $clients);
-
+        return $this->returnData('Center Clients', $clients);
     }
 
     public function myEmployees()
     {
         $centerEmployees = Center::find(auth('admin')->user()->center_id);
         $employees = $centerEmployees->employees;
-        return $this->returnData('center', $employees);
-
+        return $this->returnData('Center Employee', $employees);
     }
 
     public function myInsuranceCompanies()
     {
         $centerInsuranceCompanies = Center::find(auth('admin')->user()->center_id);
         $insuranceCompanies = $centerInsuranceCompanies->insuranceCompanies;
-        return $this->returnData('center', $insuranceCompanies);
-
+        return $this->returnData('Center Insurance Companies', $insuranceCompanies);
     }
 
     public function myReports()
     {
         $centerReports = Center::find(auth('admin')->user()->center_id);
         $reports = $centerReports->reports;
-        return $this->returnData('center', $reports);
-
+        return $this->returnData('Center Reports', $reports);
     }
     public function store(Request $request)
     {
@@ -101,7 +91,7 @@ class CenterController extends Controller
                     $logo = $this->saveImage($request->logo, 'images/logos/centers');
                 else $logo = 0;
                 $center = Center::create([
-                    'logo_path' => $logo,
+                    'logo_path' => 'images/logos/centers'.$logo,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -117,7 +107,7 @@ class CenterController extends Controller
                     'address2' => $request->address2,
                     'state' => $request->state,
                     'province' => $request->province,
-                    'zipCod' => $request->zip_code,
+                    'zip_code' => $request->zip_code,
                     'facebook' => $request->facebook,
                     'instagram' => $request->instagram,
                     'twitter' => $request->twitter,
@@ -137,7 +127,7 @@ class CenterController extends Controller
 
                 //login
                 $center->token = auth('admin')->login($admin);
-                return $this->returnData('Center', $center, 'Here is your data');
+                return $this->returnData('Center', $center,$request->status , 'Here is your data');
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -151,7 +141,6 @@ class CenterController extends Controller
             $center = Center::find($id);
             if ($center) {
                 $admin = $center->admins()->where('permission', 'admin');
-                $admin = Admin::where('center_id', '=', $id)->get();
                 $rules = [
                     "name" => "required|string",
                     "username" => "required|string",
@@ -167,9 +156,9 @@ class CenterController extends Controller
                 } else {
                     if ($request->logo)
                         $logo = $this->saveImage($request->logo, 'images/logos/centers');
-                    else $logo = 0;
+                    else $logo = "";
                     $center->update([
-                        'logo_path' => $logo,
+                        'logo_path' => 'images/logos/centers' . $logo,
                         'name' => $request->name,
                         'username' => $request->username,
                         'email' => $request->email,
@@ -213,14 +202,14 @@ class CenterController extends Controller
     public function myData()
     {
         try {
-            $data = Center::with(['doctors','rates','favorites'])->findOrFail(auth('admin')->user()->center_id);
+            $data = Center::with(['doctors', 'rates', 'favorites'])->findOrFail(auth('admin')->user()->center_id);
             return $this->returnData('data', $data, 'Here Is Your Data');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
-    public function delete()
+    public function destroy()
     {
         try {
             Center::destroy(auth('admin')->user()->center_id);
@@ -252,11 +241,11 @@ class CenterController extends Controller
             $image = $this->saveImage($request->image, 'images/centers/departments');
             $department = Department::create([
                 'center_id' => auth('admin')->user()->center_id,
-                'name' => $image,
-                'image_path' => $request->image_path,
+                'name' => $request->name,
+                'image_path' => 'images/centers/departments' . $image,
                 'description' => $request->description,
             ]);
-            return $this->returnData('department', $department);
+            return $this->returnData('department', $department, 'Department successfully added');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -273,7 +262,7 @@ class CenterController extends Controller
                     'image_path' => $request->image_path,
                     'description' => $request->description,
                 ]);
-                return $this->returnData('department', $department);
+                return $this->returnData('department', $department, 'Department successfully edited');
             } else {
                 return $this->returnError(404, "The requested department does not exist !");
             }
@@ -305,7 +294,6 @@ class CenterController extends Controller
         try {
             $service = CenterService::find($id);
             if ($service) {
-                CenterService::destroy($id);
                 return $this->returnData('center service', $service);
             } else {
                 return $this->returnError(404, "The requested service does not exist !");
@@ -385,7 +373,7 @@ class CenterController extends Controller
                     $doctor_image = $this->saveImage($request->image, 'images/doctors');
                 else $doctor_image = 0;
                 $doctor = Doctor::create([
-                    'center_id' =>auth('admin')->user()->center_id,
+                    'center_id' => auth('admin')->user()->center_id,
                     'department_id' => $request->department_id,
                     'image_path' => 'images/doctors' . $doctor_image,
                     'username' => $request->username,
@@ -409,13 +397,12 @@ class CenterController extends Controller
                     'gender' => $request->gender,
                     'nationality' => $request->nationality,
                 ]);
-                return $this->returnData('Doctor', $doctor, 'Doctor has been successfully added');
+                return $this->returnData('Doctor', $doctor, 'Doctor successfully added');
             } catch (\Throwable $ex) {
                 return $this->returnError($ex->getCode(), $ex->getMessage());
             }
         }
     }
-
 
     ////////////////ADD PATIENT TO MY CENTER////////////////
     public function addPatient(Request $request)
@@ -434,11 +421,11 @@ class CenterController extends Controller
             } else {
                 if ($request->image)
                     $patient_image = $this->saveImage($request->image, 'images/patients');
-                else $patient_image = 0;
+                else $patient_image = "";
                 $patient = Patient::create([
-                    'center_id' =>auth('admin')->user()->center_id,
+                    'center_id' => auth('admin')->user()->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image_path' => 'images/patients'.$patient_image,
+                    'image_path' => 'images/patients' . $patient_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -483,7 +470,7 @@ class CenterController extends Controller
                 else $lab_image = 0;
                 $lab = Lab::create([
                     'center_id' => $request->center_id,
-                    'image' => 'images/labs'.$lab_image,
+                    'image_path' => 'images/labs' . $lab_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'email' => $request->email,
@@ -501,9 +488,9 @@ class CenterController extends Controller
         }
     }
 
- ///////////////////////// ADD PHARMACY TO MY CENTER //////////////////
+    ///////////////////////// ADD PHARMACY TO MY CENTER //////////////////
 
-  public function addPharmacy(Request $request)
+    public function addPharmacy(Request $request)
     {
         try {
             $rules = [
@@ -552,30 +539,29 @@ class CenterController extends Controller
     //////////remove//////////
 
     public function removeDoctor($id)
-
     {
         try {
             $doctor = Doctor::findOrFail($id);
-        if ($doctor) {
-            $doctor->destroy($id);
-                return $this->returnSuccessMessage('Doctor Successfully deleted');
+            if ($doctor) {
+                $doctor->center_id = "";
+                return $this->returnSuccessMessage('Doctor Successfully removed from this Center');
             } else {
-                return $this->returnError('0', 'this Id not found');
+                return $this->returnError(404, "The requested doctor does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
 
-     public function removePatient($id)
+    public function removePatient($id)
     {
         try {
-            $patient = Patient::findOrFail($id);
+            $patient = Patient::find($id);
             if ($patient) {
-                $patient->destroy($id);
-                return $this->returnSuccessMessage('Patient Successfully deleted');
+                $patient->center_id = "";
+                return $this->returnSuccessMessage('Patient Successfully removed from this Center');
             } else {
-                return $this->returnError('0', 'this Id not found');
+                return $this->returnError(404, "The requested patient does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -586,11 +572,12 @@ class CenterController extends Controller
     {
         try {
             $lab = Lab::findOrFail($id);
-        if ($lab) {
-            $lab->destroy($id);
-            return $this->returnSuccessMessage('Lab Successfully deleted');
-            }else{
-                return $this->returnError('0','this Id not found');
+            if ($lab) {
+                $lab->destroy($id);
+                $lab->center_id = "";
+                return $this->returnSuccessMessage('Lab Successfully removed from this Center');
+            } else {
+                return $this->returnError(404, "The requested lab does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -601,17 +588,14 @@ class CenterController extends Controller
     {
         try {
             $pharmacy = Pharmacy::findOrFail($id);
-        if ($pharmacy) {
-            $pharmacy->destroy($id);
-                return $this->returnSuccessMessage('Pharmacy Successfully deleted');
+            if ($pharmacy) {
+                $pharmacy->center_id = "";
+                return $this->returnSuccessMessage('Pharmacy Successfully removed from this Center');
             } else {
-                return $this->returnError('0', 'this Id not found');
+                return $this->returnError(404, "The requested pharmacy does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-
-
-
 }

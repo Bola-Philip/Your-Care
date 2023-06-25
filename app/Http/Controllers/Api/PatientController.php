@@ -72,9 +72,8 @@ class PatientController extends Controller
                     $patient_image = $this->saveImage($request->image, 'images/patients');
                 else $patient_image = 0;
                 $patient = Patient::create([
-                    'center_id' => $request->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image_path' => 'images/patients'.$patient_image,
+                    'image_path' => 'images/patients' . $patient_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -93,7 +92,7 @@ class PatientController extends Controller
 
                 $patient->token = auth('patient')->login($patient);
 
-                return $this->returnData('Patient', $patient, 'This is your data');
+                return $this->returnData('Patient', $patient, 'Patient successfully registered');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -120,9 +119,8 @@ class PatientController extends Controller
                 $patient_id = auth('patient')->user()->id;
                 $patient = Patient::find($patient_id);
                 $patient->update([
-                    'center_id' => $request->center_id,
                     'insurance_company_id' => $request->insurance_company_id,
-                    'image' => 'images/patients'.$patient_image,
+                    'image_path' => 'images/patients' . $patient_image,
                     'name' => $request->name,
                     'username' => $request->username,
                     'birth_date' => $request->birth_date,
@@ -146,88 +144,6 @@ class PatientController extends Controller
         }
     }
 
-    // ====================Diseases ========================
-
-    public function addDisease(Request $request)
-    {
-        try {
-            $patient_id = auth('patient')->user()->id;
-            $patient = Patient::find($patient_id);
-            if ($patient) {
-                $disease = PatientDisease::create([
-                    'patient_id' => $patient_id,
-                    'disease_title' => $request->title,
-                    'disease_description' => $request->description
-                ]);
-                if ($request->media)
-                    $media_file = $this->saveImage($request->media, 'images/patients/DiseaseMedia');
-                else $media_file = 0;
-                $disease_media = PatientDiseaseMedia::create([
-                    'disease_id' => $patient_id,
-                    'media_path' => $media_file,
-                    'detection_date' => $request->detection_at,
-                ]);
-
-                return $this->returnData('disease', [$disease, $disease_media], 'Disease successfully added');
-            } else {
-                return $this->returnError(404, "The requested patient does not exist !");
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-
-    public function deleteDisease($id)
-    {
-        try {
-            if (PatientDisease::find($id)->destroy()) {
-
-                return $this->returnSuccessMessage('Disease successfully deleted');
-            } else {
-                return $this->returnError(404, "The requested disease does not exist !");
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-
-    public function addDiseaseMedia($id, Request $request)
-    {
-        try {
-            $disease = PatientDisease::find($id);
-            if ($disease) {
-                if ($request->media)
-                    $media_file = $this->saveImage($request->media, 'images/patients/DiseaseMedia');
-                else $media_file = 0;
-                $disease_media = PatientDiseaseMedia::create([
-                    'disease_id' => $id,
-                    'media_path' => $media_file,
-                    'detection_date' => $request->detection_at,
-                ]);
-
-                return $this->returnData('disease', $disease_media, 'Media successfully added');
-            } else {
-                return $this->returnError(404, "The requested disease does not exist !");
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-
-    public function deleteDiseaseMedia($id)
-    {
-        try {
-            if (PatientDiseaseMedia::find($id)->destroy()) {
-
-                return $this->returnSuccessMessage('Media successfully deleted');
-            } else {
-                return $this->returnError(404, "The requested media file does not exist !");
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-
     public function myData()
     {
         $data = auth('patient')->user();
@@ -236,17 +152,36 @@ class PatientController extends Controller
 
     public function bookingRequest(Request $request, $patient_id)
     {
-        $booking = BookingRequest::create([
-            'center_id' => $request->center_id,
-            'patient_id' => $patient_id,
-            'doctor_id' => $request->doctor_id,
-            'title' => $request->title,
-            'notes' => $request->notes,
-            'start_at' => $request->start,
-            'finish_at' => $request->finish,
-            'service_description' => $request->service_description,
-        ]);
-        return $this->returnData('Your Booking', $booking, 'Your request successfully added');
+        try {
+            if (Patient::find($patient_id)) {
+                $rules = [
+                    "doctor_id" => "required|string|exists:doctors,id",
+                    "start_at" => "required",
+                    "country" => "required",
+                ];
+                $validator = Validator::make($request->all(), $rules);
+
+                if ($validator->fails()) {
+                    $code = $this->returnCodeAccordingToInput($validator);
+                    return $this->returnValidationError($code, $validator);
+                } else {
+                    $booking = BookingRequest::create([
+                        'center_id' => $request->center_id,
+                        'patient_id' => $patient_id,
+                        'doctor_id' => $request->doctor_id,
+                        'title' => $request->title,
+                        'notes' => $request->notes,
+                        'service_description' => $request->service_description,
+                        'start_at' => $request->start,
+                        'finish_at' => $request->finish,
+                    ]);
+                    return $this->returnData('Your Booking', $booking, 'Your request successfully added');
+                }
+            } else
+                return $this->returnError(404, "The requested patient does not exist !");
+        } catch (\Throwable $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 
     public function myReports()
@@ -258,10 +193,12 @@ class PatientController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+
     public function refresh()
     {
         return $this->respondWithToken(auth('patient')->refresh());
     }
+
     public function logout()
     {
         auth('patient')->refresh();
@@ -303,6 +240,100 @@ class PatientController extends Controller
         }
     }
 
+
+    // ========================Diseases ===================================================
+
+        public function addDisease(Request $request)
+        {
+            try {
+                $rules = [
+                    "title" => "required|string",
+                    "description" => "required|string",
+                ];
+                $validator = Validator::make($request->all(), $rules);
+
+                if ($validator->fails()) {
+                    $code = $this->returnCodeAccordingToInput($validator);
+                    return $this->returnValidationError($code, $validator);
+                } else {
+                $patient_id = auth('patient')->user()->id;
+                $patient = Patient::find($patient_id);
+                if ($patient) {
+                    $disease = PatientDisease::create([
+                        'patient_id' => $patient_id,
+                        'disease_title' => $request->title,
+                        'disease_description' => $request->description
+                    ]);
+                    if ($request->media)
+                        $media_file = $this->saveImage($request->result_file, 'images/patients/DiseaseMedia');
+                    else $media_file = 0;
+                    $disease_media = PatientDiseaseMedia::create([
+                        'disease_id' => $disease->id,
+                        'media_path' => 'images/patients/DiseaseMedia'.$media_file,
+                        'detection_date' => $request->detection_at,
+                    ]);
+
+                    return $this->returnData('disease', [$disease, $disease_media], 'Disease successfully added');
+                } else {
+                    return $this->returnError(404, "The requested patient does not exist !");
+                }}
+            } catch (\Exception $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+
+        public function deleteDisease($id)
+        {
+            try {
+                if (PatientDisease::find($id)) {
+                    PatientDisease::find($id)->destroy();
+                    return $this->returnSuccessMessage('Disease successfully deleted');
+                } else {
+                    return $this->returnError(404, "The requested disease does not exist !");
+                }
+            } catch (\Exception $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+
+        public function addDiseaseMedia($id, Request $request)
+        {
+            try {
+                $disease = PatientDisease::find($id);
+                if ($disease) {
+                    if ($request->media)
+                        $media_file = $this->saveImage($request->result_file, 'images/patients/DiseaseMedia');
+                    else $media_file = 0;
+                    $disease_media = PatientDiseaseMedia::create([
+                        'disease_id' => $id,
+                        'media_path' => 'images/patients/DiseaseMedia'.$media_file,
+                        'detection_date' => $request->detection_at,
+                    ]);
+
+                    return $this->returnData('disease', $disease_media, 'Media successfully added');
+                } else {
+                    return $this->returnError(404, "The requested disease does not exist !");
+                }
+            } catch (\Exception $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+
+        public function deleteDiseaseMedia($id)
+        {
+            try {
+                if (PatientDiseaseMedia::find($id)) {
+                    PatientDiseaseMedia::find($id)->destroy();
+                    return $this->returnSuccessMessage('Media successfully deleted');
+                } else {
+                    return $this->returnError(404, "The requested media file does not exist !");
+                }
+            } catch (\Exception $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+
+
     // =======================================Favorites==================================================
 
     // ================my Favorites =========
@@ -324,10 +355,12 @@ class PatientController extends Controller
             $center = Center::find($id);
             if ($center) {
                 Favorite::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'center_id' => $id,
-                    'favorite' => true,
+                    // 'favorite' => true,
                 ]);
+                if(! $center->is_favorite)
+                $center->update(['is_favorite'=>true]);
                 return $this->returnSuccessMessage('Center successfully added to favorite');
             } else {
                 return $this->returnError(404, "The requested center does not exist !");
@@ -345,10 +378,13 @@ class PatientController extends Controller
             $doctor = Doctor::find($id);
             if ($doctor) {
                 Favorite::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'doctor_id' => $id,
-                    'favorite' => true,
+                    // 'favorite' => true,
                 ]);
+                if(! $doctor->is_favorite)
+                $doctor->update(['is_favorite'=>true]);
+
                 return $this->returnSuccessMessage('Doctor successfully added to favorite');
             } else {
                 return $this->returnError(404, "The requested doctor does not exist !");
@@ -366,10 +402,13 @@ class PatientController extends Controller
             $pharmacy = Pharmacy::find($id);
             if ($pharmacy) {
                 Favorite::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'pharmacy_id' => $id,
-                    'favorite' => true,
+                    // 'favorite' => true,
                 ]);
+                if(! $pharmacy->is_favorite)
+                $pharmacy->update(['is_favorite'=>true]);
+
                 return $this->returnSuccessMessage('Pharmacy successfully added to favorite');
             } else {
                 return $this->returnError(404, "The requested pharmacy does not exist !");
@@ -387,10 +426,13 @@ class PatientController extends Controller
             $lab = Lab::find($id);
             if ($lab) {
                 Favorite::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'lab_id' => $id,
-                    'favorite' => true,
+                    // 'favorite' => true,
                 ]);
+                if(! $lab->is_favorite)
+                $lab->update(['is_favorite'=>true]);
+
                 return $this->returnSuccessMessage('Lab successfully added to favorite');
             } else {
                 return $this->returnError(404, "The requested lab does not exist !");
@@ -408,12 +450,12 @@ class PatientController extends Controller
             $center = Center::find($id);
             if ($center) {
                 Favorite::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'center_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Center successfully removed from favorite');
             } else {
-                return $this->returnError(404, "The requested center does not exist !");
+                return $this->returnError(404, "The requested center does not exist in your favorites !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -428,12 +470,12 @@ class PatientController extends Controller
             $doctor = Doctor::find($id);
             if ($doctor) {
                 Favorite::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'doctor_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Doctor successfully removed from favorite');
             } else {
-                return $this->returnError(404, "The requested doctor does not exist !");
+                return $this->returnError(404, "The requested doctor does not exist in your favorites !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -448,12 +490,12 @@ class PatientController extends Controller
             $pharmacy = Pharmacy::find($id);
             if ($pharmacy) {
                 Favorite::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'pharmacy_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Pharmacy successfully removed from favorite');
             } else {
-                return $this->returnError(404, "The requested pharmacy does not exist !");
+                return $this->returnError(404, "The requested pharmacy does not exist in your favorites !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -468,12 +510,12 @@ class PatientController extends Controller
             $lab = Lab::find($id);
             if ($lab) {
                 Favorite::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'lab_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Lab successfully removed from favorite');
             } else {
-                return $this->returnError(404, "The requested lab does not exist !");
+                return $this->returnError(404, "The requested lab does not exist in your favorites !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -496,16 +538,19 @@ class PatientController extends Controller
 
     // ================Add  Rate To Center =========
 
-    public function addRateToCenter($id, $rate)
+    public function addRateToCenter($id, Request $request)
     {
         try {
             $center = Center::find($id);
             if ($center) {
                 Rate::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'center_id' => $id,
-                    'rate' => $rate,
+                    'rate' => $request->rating,
                 ]);
+                if(! $center->is_rated)
+                $center->update(['is_rated'=>true]);
+
                 return $this->returnSuccessMessage('Center successfully added to your rated list');
             } else {
                 return $this->returnError(404, "The requested center does not exist !");
@@ -517,16 +562,19 @@ class PatientController extends Controller
 
     // ================Add Rate To Doctor =========
 
-    public function addRateToDoctor($id, $rate)
+    public function addRateToDoctor($id, Request $request)
     {
         try {
             $doctor = Doctor::find($id);
             if ($doctor) {
                 Rate::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'doctor_id' => $id,
-                    'rate' => $rate,
+                    'rate' => $request->rating,
                 ]);
+                if(! $doctor->is_rated)
+                $doctor->update(['is_rated'=>true]);
+
                 return $this->returnSuccessMessage('Doctor successfully added to your rated list');
             } else {
                 return $this->returnError(404, "The requested doctor does not exist !");
@@ -536,42 +584,48 @@ class PatientController extends Controller
         }
     }
 
+        // ================Add Rate To Lab =========
+
+        public function addRateToLab($id, Request $request)
+        {
+            try {
+                $lab = Lab::find($id);
+                if ($lab) {
+                    Rate::where([
+                        'patient_id' => auth('patient')->user()->id,
+                        'lab_id' => $id,
+                        'rate' => $request->rating,
+                    ]);
+                    if(! $lab->is_rated)
+                    $lab->update(['is_rated'=>true]);
+
+                    return $this->returnSuccessMessage('Lab successfully added to your rated list');
+                } else {
+                    return $this->returnError(404, "The requested lab does not exist !");
+                }
+            } catch (\Exception $ex) {
+                return $this->returnError($ex->getCode(), $ex->getMessage());
+            }
+        }
+
     // ================Add Rate To Pharmacy =========
 
-    public function addRateToPharmacy($id, $rate)
+    public function addRateToPharmacy($id, Request $request)
     {
         try {
             $pharmacy = Pharmacy::find($id);
             if ($pharmacy) {
                 Rate::create([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'pharmacy_id' => $id,
-                    'rate' => $rate,
+                    'rate' => $request->rating,
                 ]);
+                if(! $pharmacy->is_rated)
+                $pharmacy->update(['is_rated'=>true]);
+
                 return $this->returnSuccessMessage('Pharmacy successfully added to your rated list');
             } else {
                 return $this->returnError(404, "The requested pharmacy does not exist !");
-            }
-        } catch (\Exception $ex) {
-            return $this->returnError($ex->getCode(), $ex->getMessage());
-        }
-    }
-
-    // ================Add Rate To Lab =========
-
-    public function addRateToLab($id, $rate)
-    {
-        try {
-            $lab = Lab::find($id);
-            if ($lab) {
-                Rate::where([
-                    'patient_id' => auth('patients')->user()->id,
-                    'lab_id' => $id,
-                    'rate' => $rate,
-                ]);
-                return $this->returnSuccessMessage('Lab successfully added to your rated list');
-            } else {
-                return $this->returnError(404, "The requested lab does not exist !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -586,12 +640,12 @@ class PatientController extends Controller
             $center = Center::find($id);
             if ($center) {
                 Rate::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'center_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Center successfully removed from your rated list');
             } else {
-                return $this->returnError(404, "The requested center does not exist !");
+                return $this->returnError(404, "The requested center does not exist in your ratings list !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -606,12 +660,12 @@ class PatientController extends Controller
             $doctor = Doctor::find($id);
             if ($doctor) {
                 Rate::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'doctor_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Doctor successfully removed from your rated list');
             } else {
-                return $this->returnError(404, "The requested doctor does not exist !");
+                return $this->returnError(404, "The requested doctor does not exist in your ratings list !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -626,12 +680,12 @@ class PatientController extends Controller
             $pharmacy = Pharmacy::find($id);
             if ($pharmacy) {
                 Rate::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'pharmacy_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Pharmacy successfully removed from your rated list');
             } else {
-                return $this->returnError(404, "The requested pharmacy does not exist !");
+                return $this->returnError(404, "The requested pharmacy does not exist in your ratings list !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -646,12 +700,12 @@ class PatientController extends Controller
             $lab = Lab::find($id);
             if ($lab) {
                 Rate::where([
-                    'patient_id' => auth('patients')->user()->id,
+                    'patient_id' => auth('patient')->user()->id,
                     'lab_id' => $id,
                 ])->destroy();
                 return $this->returnSuccessMessage('Lab successfully removed from your rated list');
             } else {
-                return $this->returnError(404, "The requested lab does not exist !");
+                return $this->returnError(404, "The requested lab does not exist in your ratings list !");
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());

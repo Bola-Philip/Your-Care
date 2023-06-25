@@ -30,6 +30,8 @@ return new class extends Migration
             $table->string('twitter')->nullable();
             $table->string('snapchat')->nullable();
             $table->string('youtube')->nullable();
+            $table->boolean('is_rated')->default(false);
+            $table->boolean('is_favorite')->default(false);
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

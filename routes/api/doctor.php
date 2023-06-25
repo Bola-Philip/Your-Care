@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['api', 'auth:doctor'], 'prefix' => 'doctor'], function ($router) {
 
-    Route::get('categories', 'App\Http\Controllers\Api\DoctorController@doctorCategories');
-    Route::post('new', 'App\Http\Controllers\Api\DoctorController@newRequest')->withoutMiddleware('auth:doctor');
+    Route::get('categories', 'App\Http\Controllers\Api\DoctorController@doctorCategories')->withoutMiddleware('auth:doctor');
+    Route::get('new', 'App\Http\Controllers\Api\DoctorController@newRequest')->withoutMiddleware('auth:doctor');
 
     Route::post('login', 'App\Http\Controllers\Api\DoctorController@login')->withoutMiddleware('auth:doctor')->name('doctor.login');
     Route::post('register', 'App\Http\Controllers\Api\DoctorController@register')->withoutMiddleware('auth:doctor');
