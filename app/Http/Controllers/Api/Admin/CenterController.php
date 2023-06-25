@@ -456,8 +456,6 @@ class CenterController extends Controller
                 ]);
                 return $this->returnData('Patient', $patient, 'Patient successfully added');
             }
-
-            return $this->returnData('Patient', $patient, 'Patient has been successfully added');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
