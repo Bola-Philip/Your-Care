@@ -19,6 +19,13 @@ class PharmacyController extends Controller
     public function __construct()
     {
     }
+
+    public function allPharmacies()
+    {
+        $pharmacies = Pharmacy::with(['rates','favorites'])->get();
+        return $this->returnData('data', $pharmacies);
+    }
+
     public function login()
     {
         $credentials = request()->only('email', 'password');
