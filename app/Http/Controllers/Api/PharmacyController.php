@@ -110,7 +110,7 @@ class PharmacyController extends Controller
             'snapchat' => $request->snapchat,
             'youtube' => $request->youtube,
         ]);
-        $pharmacy->token = auth('pha$pharmacy')->refresh();
+        $pharmacy->token = auth('pharmacy')->refresh();
         return $this->returnData('Your Data', $pharmacy, 'Successfully edited');
     }
     public function myData()
@@ -141,7 +141,6 @@ class PharmacyController extends Controller
     public function addProduct(Request $request)
     {
         PharmacyProduct::create([
-
             'pharmacy_id' => auth('pharmacy')->user()->id,
             'name' => $request->name,
             'description' => $request->description,

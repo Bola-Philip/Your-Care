@@ -18,7 +18,7 @@ Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], 
 
     Route::post('login', 'App\Http\Controllers\Api\PharmacyController@login')->withoutMiddleware('auth:pharmacy');
     Route::post('register', 'App\Http\Controllers\Api\PharmacyController@register')->withoutMiddleware('auth:pharmacy');
-    Route::post('show/{pharmacy_id}', 'App\Http\Controllers\Api\PharmacyController@show');
+    Route::post('show/{pharmacy_id}', 'App\Http\Controllers\Api\PharmacyController@show')->withoutMiddleware('auth:pharmacy');
     Route::post('logout', 'App\Http\Controllers\Api\PharmacyController@logout');
     Route::post('refresh', 'App\Http\Controllers\Api\PharmacyController@refresh');
     Route::post('myData', 'App\Http\Controllers\Api\PharmacyController@myData');
