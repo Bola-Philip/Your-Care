@@ -21,11 +21,7 @@ class LabController extends Controller
     public function __construct()
     {
     }
-      public function allLabs()
-    {
-        $labs = Lab::with(['rates','favorites'])->get();
-        return $this->returnData('data', $labs);
-    }
+     
     public function allLabs()
     {
         $labs = Lab::with(['rates','favorites'])->get();
