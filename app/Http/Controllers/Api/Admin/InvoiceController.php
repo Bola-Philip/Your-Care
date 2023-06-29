@@ -7,8 +7,6 @@ use App\Http\Requests\InvoiceRequest;
 use App\Models\Invoice;
 use App\Traits\GeneralTrait;
 
-use Illuminate\Http\Request;
-
 class InvoiceController extends Controller
 {
     use GeneralTrait;

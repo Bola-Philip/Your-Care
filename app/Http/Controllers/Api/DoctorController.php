@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\BookingRequest;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
@@ -25,25 +26,34 @@ class DoctorController extends Controller
 
     public function show($doctor_id)
     {
-        $data = Doctor::with([
-            'center',
-            'department',
-            'doctorExperiences',
-            'workTimes',
-            'rates',
-            'favorites'
-        ])->find($doctor_id);
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        try {
+            $data = Doctor::with([
+                'center',
+                'department',
+                'doctorExperiences',
+                'workTimes',
+                'rates',
+                'favorites'
+            ])->find($doctor_id);
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function doctorCategories()
     {
-        $category = [
-            'Dentistry', 'Osteopath', 'Cardiology', 'Dermatology', 'Endocrinology', 'Hematology',
-            'Gastroenterology', 'Infectious', 'Ophthalmologist', 'Nephrology', 'Neurology', 'Pediatrics',
-            'Obstetrics & Gynecology', 'Oncology', 'Ophthalmology', 'Orthopedics', 'Otolaryngology',
-        ];
-        return $this->returnData('Doctor Categories', $category);
+        try {
+
+            $category = [
+                'Dentistry', 'Osteopath', 'Cardiology', 'Dermatology', 'Endocrinology', 'Hematology',
+                'Gastroenterology', 'Infectious', 'Ophthalmologist', 'Nephrology', 'Neurology', 'Pediatrics',
+                'Obstetrics & Gynecology', 'Oncology', 'Ophthalmology', 'Orthopedics', 'Otolaryngology',
+            ];
+            return $this->returnData('Doctor Categories', $category);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function allDoctors()
     {
@@ -230,12 +240,17 @@ class DoctorController extends Controller
 
     public function newRequest()
     {
-        $specialty = [
-            'Dentistry', 'Osteopath', 'Cardiology', 'Dermatology', 'Endocrinology', 'Hematology',
-            'Gastroenterology', 'Infectious', 'Ophthalmologist', 'Nephrology', 'Neurology', 'Pediatrics',
-            'Obstetrics & Gynecology', 'Oncology', 'Ophthalmology', 'Orthopedics', 'Otolaryngology',
-        ];
-        return $this->returnData('Doctor Specialties', $specialty);
+        try {
+
+            $specialty = [
+                'Dentistry', 'Osteopath', 'Cardiology', 'Dermatology', 'Endocrinology', 'Hematology',
+                'Gastroenterology', 'Infectious', 'Ophthalmologist', 'Nephrology', 'Neurology', 'Pediatrics',
+                'Obstetrics & Gynecology', 'Oncology', 'Ophthalmology', 'Orthopedics', 'Otolaryngology',
+            ];
+            return $this->returnData('Doctor Specialties', $specialty);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function register(Request $request)
     {
@@ -290,26 +305,31 @@ class DoctorController extends Controller
     }
     public function login()
     {
-        $credentials = request()->only('email', 'password');
+        try {
 
-        if (!$token = auth('doctor')->attempt($credentials)) {
-            return $this->returnError('401', 'Unauthorized');
+            $credentials = request()->only('email', 'password');
+
+            if (!$token = auth('doctor')->attempt($credentials)) {
+                return $this->returnError('401', 'Unauthorized');
+            }
+            $doctor = Doctor::with([
+                'center',
+                'department',
+                'doctorExperiences',
+                'workTimes',
+                'patients',
+                'bookingRequests',
+                'samples',
+                'reports',
+                'invoices',
+                'rates',
+                'favorites',
+            ])->find(auth('doctor')->user()->id);
+            $doctor->token = $token;
+            return $this->returnData('Doctor', $doctor, 'Here Is Your Token');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
-        $doctor = Doctor::with([
-            'center',
-            'department',
-            'doctorExperiences',
-            'workTimes',
-            'patients',
-            'bookingRequests',
-            'samples',
-            'reports',
-            'invoices',
-            'rates',
-            'favorites',
-        ])->find(auth('doctor')->user()->id);
-        $doctor->token = $token;
-        return $this->returnData('Doctor', $doctor, 'Here Is Your Token');
     }
 
     public function update(Request $request)
@@ -400,10 +420,15 @@ class DoctorController extends Controller
 
     public function logout()
     {
-        auth('doctor')->refresh();
-        auth('doctor')->logout();
+        try {
 
-        return $this->returnSuccessMessage('Successfully logged out');
+            auth('doctor')->refresh();
+            auth('doctor')->logout();
+
+            return $this->returnSuccessMessage('Successfully logged out');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function refresh()
     {
@@ -412,49 +437,74 @@ class DoctorController extends Controller
 
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'expires_in' => auth('doctor')->factory()->getTTL() * 60
-        ]);
+        try {
+
+            return response()->json([
+                'access_token' => $token,
+                'expires_in' => auth('doctor')->factory()->getTTL() * 60
+            ]);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function addReport(Request $request)
     {
-        $report_file = $this->saveImage($request->file, 'files/reports');
+        try {
 
-        $report = Report::create([
-            'center_id' => auth('doctor')->user()->center_id,
-            'doctor_id' => auth('doctor')->user()->id,
-            'patient_id' => $request->patient_id,
-            'file_path' => 'files/reports' . $report_file,
-            'created_at' => now()
-        ]);
-        return $this->returnData("report", $report, 'Report has been successfully added.');
+            $report_file = $this->saveImage($request->file, 'files/reports');
+
+            $report = Report::create([
+                'center_id' => auth('doctor')->user()->center_id,
+                'doctor_id' => auth('doctor')->user()->id,
+                'patient_id' => $request->patient_id,
+                'file_path' => 'files/reports' . $report_file,
+                'created_at' => now()
+            ]);
+            return $this->returnData("report", $report, 'Report has been successfully added.');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myReports()
     {
-        $doctor =  Doctor::find(auth('doctor')->user()->id)->first();
-        return $this->returnData("Reports", $doctor->reports());
+        try {
+
+            $doctor = Doctor::find(auth('doctor')->user()->id)->first();
+            return $this->returnData("Reports", $doctor->reports());
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myBooks()
     {
-        $doctor =  Doctor::find(auth('doctor')->user()->id)->first();
-        return $this->returnData("Reports", $doctor->bookingRequests());
+        try {
+
+            $doctor = Doctor::find(auth('doctor')->user()->id)->first();
+            return $this->returnData("Reports", $doctor->bookingRequests());
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function patientTakeService(Request $request)
     {
-        $scout = PatientTakeService::create([
-            'booking_id' => $request->booking_id,
-            'service_id' => $request->service_id,
-            'detection_recommendations' => $request->notes,
-            'cost' => $request->cost,
-            'date' => $request->date,
-        ]);
-        $scout->doctor_id = auth('doctor')->user()->id;
-        return $this->returnData('Scout', $scout);
+        try {
+
+            $scout = PatientTakeService::create([
+                'booking_id' => $request->booking_id,
+                'service_id' => $request->service_id,
+                'detection_recommendations' => $request->notes,
+                'cost' => $request->cost,
+                'date' => $request->date,
+            ]);
+            $scout->doctor_id = auth('doctor')->user()->id;
+            return $this->returnData('Scout', $scout);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function rateBooking($booking_id, Request $request)
@@ -473,16 +523,21 @@ class DoctorController extends Controller
 
     public function experience(Request $request, $id)
     {
-        $experience = DoctorExperience::create([
-            'doctor_id' => $id,
-            'experience_name' => $request->name,
-            'work_place_name' => $request->place_name,
-            'work_place_country' => $request->place_country,
-            'started_at' => $request->started_at,
-            'finished_at' => $request->finished_at,
-            'still_works' => $request->still_in,
-        ]);
-        return $this->returnData("Experience", $experience, 'Experience successfully added');
+        try {
+
+            $experience = DoctorExperience::create([
+                'doctor_id' => $id,
+                'experience_name' => $request->name,
+                'work_place_name' => $request->place_name,
+                'work_place_country' => $request->place_country,
+                'started_at' => $request->started_at,
+                'finished_at' => $request->finished_at,
+                'still_works' => $request->still_in,
+            ]);
+            return $this->returnData("Experience", $experience, 'Experience successfully added');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function destroy()
@@ -507,6 +562,25 @@ class DoctorController extends Controller
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function addAds(Request $request)
+    {
+        try {
+
+            $adImage = $this->saveImage($request->image, 'files/ads');
+
+            $report = Ad::create([
+                'doctor_id' => auth('doctor')->user()->id,
+                'doctor_name' => $request->doctor_name,
+                'specialty' => $request->specialty,
+                'details' => $request->details,
+                'image' => $adImage,
+
+            ]);
+            return $this->returnData("report", $report, 'Report has been successfully added.');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
     }
 }

@@ -36,37 +36,62 @@ class CenterController extends Controller
 
     public function myAdmins()
     {
-        $centerAdmins = Center::find(auth('admin')->user()->center_id);
-        $admins = $centerAdmins->admins;
-        return $this->returnData('Center Admins', $admins);
+        try {
+
+            $centerAdmins = Center::find(auth('admin')->user()->center_id);
+            $admins = $centerAdmins->admins;
+            return $this->returnData('Center Admins', $admins);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myClients()
     {
-        $centerClients = Center::find(auth('admin')->user()->center_id);
-        $clients = $centerClients->clients;
-        return $this->returnData('Center Clients', $clients);
+        try {
+
+            $centerClients = Center::find(auth('admin')->user()->center_id);
+            $clients = $centerClients->clients;
+            return $this->returnData('Center Clients', $clients);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myEmployees()
     {
-        $centerEmployees = Center::find(auth('admin')->user()->center_id);
-        $employees = $centerEmployees->employees;
-        return $this->returnData('Center Employee', $employees);
+        try {
+
+            $centerEmployees = Center::find(auth('admin')->user()->center_id);
+            $employees = $centerEmployees->employees;
+            return $this->returnData('Center Employee', $employees);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myInsuranceCompanies()
     {
-        $centerInsuranceCompanies = Center::find(auth('admin')->user()->center_id);
-        $insuranceCompanies = $centerInsuranceCompanies->insuranceCompanies;
-        return $this->returnData('Center Insurance Companies', $insuranceCompanies);
+        try {
+
+            $centerInsuranceCompanies = Center::find(auth('admin')->user()->center_id);
+            $insuranceCompanies = $centerInsuranceCompanies->insuranceCompanies;
+            return $this->returnData('Center Insurance Companies', $insuranceCompanies);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function myReports()
     {
-        $centerReports = Center::find(auth('admin')->user()->center_id);
-        $reports = $centerReports->reports;
-        return $this->returnData('Center Reports', $reports);
+        try {
+
+            $centerReports = Center::find(auth('admin')->user()->center_id);
+            $reports = $centerReports->reports;
+            return $this->returnData('Center Reports', $reports);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function store(Request $request)
     {

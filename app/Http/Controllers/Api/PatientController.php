@@ -15,10 +15,7 @@ use App\Models\Pharmacy;
 use App\Models\Rate;
 use App\Traits\GeneralTrait;
 use App\Traits\ImageTrait;
-use Dotenv\Store\File\Paths;
-use Dotenv\Util\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,14 +42,19 @@ class PatientController extends Controller
 
     public function login()
     {
-        $credentials = request()->only('email', 'password');
+        try {
 
-        if (!$token = auth('patient')->attempt($credentials)) {
-            return $this->returnError('401', 'Unauthorized');
+            $credentials = request()->only('email', 'password');
+
+            if (!$token = auth('patient')->attempt($credentials)) {
+                return $this->returnError('401', 'Unauthorized');
+            }
+            $patient = auth('patient')->user();
+            $patient->token = $token;
+            return $this->returnData('Your Data', $patient, 'Successfully logged in');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
-        $patient = auth('patient')->user();
-        $patient->token = $token;
-        return $this->returnData('Your Data', $patient, 'Successfully logged in');
     }
     public function register(Request $request)
     {
@@ -146,8 +148,13 @@ class PatientController extends Controller
 
     public function myData()
     {
-        $data = auth('patient')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        try {
+
+            $data = auth('patient')->user();
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function bookingRequest(Request $request, $patient_id)
@@ -201,18 +208,27 @@ class PatientController extends Controller
 
     public function logout()
     {
-        auth('patient')->refresh();
-        auth('patient')->logout();
+        try {
 
-        return $this->returnSuccessMessage('Successfully logged out');
+            auth('patient')->refresh();
+            auth('patient')->logout();
+
+            return $this->returnSuccessMessage('Successfully logged out');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'expires_in' => auth('patient')->factory()->getTTL() * 60
-        ]);
+        try {
+            return response()->json([
+                'access_token' => $token,
+                'expires_in' => auth('patient')->factory()->getTTL() * 60
+            ]);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function destroy()

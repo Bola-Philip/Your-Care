@@ -24,20 +24,30 @@ class LabController extends Controller
 
     public function allLabs()
     {
-        $labs = Lab::with(['rates','favorites'])->get();
-        return $this->returnData('data', $labs);
+        try {
+
+            $labs = Lab::with(['rates', 'favorites'])->get();
+            return $this->returnData('data', $labs);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function login()
     {
-        $credentials = request()->only('email', 'password');
+        try {
 
-        if (!$token = auth('lab')->attempt($credentials)) {
-            return $this->returnError('401', 'Unauthorized');
+            $credentials = request()->only('email', 'password');
+
+            if (!$token = auth('lab')->attempt($credentials)) {
+                return $this->returnError('401', 'Unauthorized');
+            }
+            $lab = auth('lab')->user();
+            $lab->token = $token;
+            return $this->returnData('Your Data', $lab, 'Successfully logged in');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
-        $lab = auth('lab')->user();
-        $lab->token = $token;
-        return $this->returnData('Your Data', $lab, 'Successfully logged in');
     }
 
     public function register(Request $request)
@@ -120,8 +130,13 @@ class LabController extends Controller
 
     public function myData()
     {
-        $data = auth('lab')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        try {
+
+            $data = auth('lab')->user();
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function refresh()
     {
@@ -129,25 +144,40 @@ class LabController extends Controller
     }
     public function logout()
     {
-        if (auth('lab')->user()) {
-            auth('lab')->logout();
-            // auth('lab')->refresh();
-            return $this->returnSuccessMessage('Successfully logged out');
-        } else
-            return $this->returnError('401', 'Unauthorized');
+        try {
+
+            if (auth('lab')->user()) {
+                auth('lab')->logout();
+                // auth('lab')->refresh();
+                return $this->returnSuccessMessage('Successfully logged out');
+            } else
+                return $this->returnError('401', 'Unauthorized');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'expires_in' => auth('lab')->factory()->getTTL() * 60
-        ]);
+        try {
+
+            return response()->json([
+                'access_token' => $token,
+                'expires_in' => auth('lab')->factory()->getTTL() * 60
+            ]);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function show($lab_id)
     {
-        $data = Lab::find($lab_id);
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        try {
+
+            $data = Lab::find($lab_id);
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
     public function addSample(Request $request)
     {
@@ -177,21 +207,30 @@ class LabController extends Controller
 
     public function addReply($sample_id, Request $request)
     {
-        if (Sample::find($sample_id)) {
-            $lab_image = $this->saveImage($request->result, 'images/labs/replies');
-            Reply::create([
-                'sample_id' => $sample_id,
-                'result' => 'images/labs/replies' . $lab_image,
-            ]);
-            return $this->returnSuccessMessage('Successfully Added');
-        } else {
-            return $this->returnError(404, "The requested sample does not exist !");
+        try {
+            if (Sample::find($sample_id)) {
+                $lab_image = $this->saveImage($request->result, 'images/labs/replies');
+                Reply::create([
+                    'sample_id' => $sample_id,
+                    'result' => 'images/labs/replies' . $lab_image,
+                ]);
+                return $this->returnSuccessMessage('Successfully Added');
+            } else {
+                return $this->returnError(404, "The requested sample does not exist !");
+            }
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
     }
     public function ourReply()
     {
-        $lab = Reply::with(['reply'])->find(auth('lab')->user()->id);
-        return $this->returnData('Sample', $lab, 'These are your replies');
+        try {
+
+            $lab = Reply::with(['reply'])->find(auth('lab')->user()->id);
+            return $this->returnData('Sample', $lab, 'These are your replies');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function destroy()

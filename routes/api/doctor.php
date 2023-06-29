@@ -34,6 +34,7 @@ Route::group(['middleware' => ['api', 'auth:doctor'], 'prefix' => 'doctor'], fun
     Route::post('addBookingRate/{id}', 'App\Http\Controllers\Api\DoctorController@rateBooking');
     Route::post('delete/{id}', 'App\Http\Controllers\Api\DoctorController@delete');
     Route::post('deleteMyAccount', 'App\Http\Controllers\Api\DoctorController@destroy');
+    Route::post('addAds', 'App\Http\Controllers\Api\DoctorController@addAds');
 });
 
 

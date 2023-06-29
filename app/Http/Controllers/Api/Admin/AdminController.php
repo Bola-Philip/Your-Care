@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -32,14 +31,19 @@ class AdminController extends Controller
     }
     public function login()
     {
-        $credentials = request()->only('email', 'password');
+        try {
 
-        if (!$token = auth('admin')->attempt($credentials)) {
-            return $this->returnError('401', 'Unauthorized');
+            $credentials = request()->only('email', 'password');
+
+            if (!$token = auth('admin')->attempt($credentials)) {
+                return $this->returnError('401', 'Unauthorized');
+            }
+            $admin = auth('admin')->user();
+            $admin->token = $token;
+            return $this->returnData('Admin', $admin, 'Here is your admin');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
-        $admin = auth('admin')->user();
-        $admin->token = $token;
-        return $this->returnData('Admin', $admin, 'Here is your admin');
     }
     public function register(Request $request)
     {
@@ -115,16 +119,26 @@ class AdminController extends Controller
 
     public function myData()
     {
-        $data = auth('admin')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
+        try {
+
+            $data = auth('admin')->user();
+            return $this->returnData('data', $data, 'Here Is Your Data');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function logout()
     {
-        auth('admin')->refresh();
-        auth('admin')->logout();
+        try {
 
-        return $this->returnSuccessMessage('Successfully logged out');
+            auth('admin')->refresh();
+            auth('admin')->logout();
+
+            return $this->returnSuccessMessage('Successfully logged out');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function refresh()
@@ -134,10 +148,15 @@ class AdminController extends Controller
 
     protected function respondWithToken($token)
     {
-        return response()->json([
-            'access_token' => $token,
-            'expires_in' => auth('admin')->factory()->getTTL() * 60
-        ]);
+        try {
+
+            return response()->json([
+                'access_token' => $token,
+                'expires_in' => auth('admin')->factory()->getTTL() * 60
+            ]);
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
+        }
     }
 
     public function delete($id)
@@ -155,25 +174,4 @@ class AdminController extends Controller
         }
     }
 
-    protected function authorization()
-    {
-        $admin_id = auth('admin')->user()->id;
-        $admin = Admin::find($admin_id);
-
-        if (Gate::allows('manger-permission')) {
-            return 'You are manger';
-        } elseif (Gate::allows('supervisor-permission')) {
-            return 'You are supervisor';
-        } elseif (Gate::allows('parser-permission')) {
-            return 'You are parser';
-        } else {
-            return "You don't have any of the specified permissions";
-        }
-
-        if (Gate::allows('manger-permission') || Gate::allows('supervisor-permission')) {
-            return 'You are manger';
-        } else {
-            return "You don't have any of the specified permissions";
-        }
-    }
 }

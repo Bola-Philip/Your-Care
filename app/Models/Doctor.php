@@ -72,6 +72,10 @@ class Doctor extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Favorite::class, 'doctor_id');
     }
+    public function ads()
+    {
+        return $this->hasMany(Ad::class, 'doctor_id');
+    }
     public function getJWTIdentifier()
     {
         return $this->getKey();

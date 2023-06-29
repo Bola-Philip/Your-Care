@@ -135,7 +135,7 @@ class InsuranceCompanyController extends Controller
     }
 
 
-
+    
 
 
     public function removePatient($id)
