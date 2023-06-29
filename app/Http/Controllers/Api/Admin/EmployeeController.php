@@ -41,7 +41,7 @@ class EmployeeController extends Controller
             $employee = Employee::create([
                 'center_id' =>auth('admin')->user()->center_id,
                 'department_id' => $request->department_id,
-                'image_path' => $emp_image,
+                'image_path' => 'images/employees'.$emp_image,
                 'username' => $request->username,
                 'name' => $request->name,
                 'email' => $request->email,
@@ -74,7 +74,7 @@ class EmployeeController extends Controller
                 else $emp_image = 0;
                 $employee->update([
                     'department_id' => $request->department_id,
-                    'image_path' => $emp_image,
+                    'image_path' => 'images/employees'.$emp_image,
                     'username' => $request->username,
                     'name' => $request->name,
                     'email' => $request->email,
@@ -100,7 +100,7 @@ class EmployeeController extends Controller
         }
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         try {
             $employee = Employee::find($id);

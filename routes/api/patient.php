@@ -29,8 +29,8 @@ Route::group(['middleware' => ['api', 'auth:patient'], 'prefix' => 'patient'], f
     Route::group(['prefix'=>'disease'], function($router){
         Route::post('add', 'App\Http\Controllers\Api\PatientController@addDisease');
         Route::post('addMedia/{id}', 'App\Http\Controllers\Api\PatientController@addDiseaseMedia');
-        Route::post('delete/{id}', 'App\Http\Controllers\Api\PatientController@addDisease');
-        Route::post('deleteMedia/{id}', 'App\Http\Controllers\Api\PatientController@addDiseaseMedia');
+        Route::post('delete/{id}', 'App\Http\Controllers\Api\PatientController@deleteDisease');
+        Route::post('deleteMedia/{id}', 'App\Http\Controllers\Api\PatientController@deleteDiseaseMedia');
     });
 
     Route::group(['prefix'=>'favorites'], function($router){
@@ -46,9 +46,10 @@ Route::group(['middleware' => ['api', 'auth:patient'], 'prefix' => 'patient'], f
     });
 
         Route::post('myRatings', 'App\Http\Controllers\Api\PatientController@myRates');
-        Route::post('rateDoctor/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToDoctor');
-        Route::post('ratePharmacy/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToPharmacy');
-        Route::post('rateLab/{id}/{rete}', 'App\Http\Controllers\Api\PatientController@addRateToLab');
+        Route::post('rateCenter/{id}', 'App\Http\Controllers\Api\PatientController@addRateToCenter');
+        Route::post('rateDoctor/{id}', 'App\Http\Controllers\Api\PatientController@addRateToDoctor');
+        Route::post('ratePharmacy/{id}', 'App\Http\Controllers\Api\PatientController@addRateToPharmacy');
+        Route::post('rateLab/{id}', 'App\Http\Controllers\Api\PatientController@addRateToLab');
         Route::post('removeCenterRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromCenter');
         Route::post('removeDoctorRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromDoctor');
         Route::post('removePharmacyRating/{id}', 'App\Http\Controllers\Api\PatientController@removeRateFromPharmacy');

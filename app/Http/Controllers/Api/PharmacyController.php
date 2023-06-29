@@ -19,6 +19,13 @@ class PharmacyController extends Controller
     public function __construct()
     {
     }
+
+    public function allPharmacies()
+    {
+        $pharmacies = Pharmacy::with(['rates','favorites'])->get();
+        return $this->returnData('data', $pharmacies);
+    }
+
     public function login()
     {
         $credentials = request()->only('email', 'password');
@@ -26,7 +33,7 @@ class PharmacyController extends Controller
         if (!$token = auth('pharmacy')->attempt($credentials)) {
             return $this->returnError('401', 'Unauthorized');
         }
-        $pharmacy = auth('pharmacy')->user();
+        $pharmacy = Pharmacy::find(auth('pharmacy')->user()->id);
         $pharmacy->token = $token;
         return $this->returnData('Your Data', $pharmacy, 'Successfully logged in');
     }
@@ -50,7 +57,7 @@ class PharmacyController extends Controller
                 $pharmacy = Pharmacy::create([
                     'center_id' => $request->center_id,
                     'name' => $request->name,
-                    'image_path' => 'images/pharmacies'.$pharmacy_image,
+                    'image_path' => 'images/pharmacies' . $pharmacy_image,
                     'username' => $request->username,
                     'email' => $request->email,
                     'password' => Hash::make($request->password),
@@ -72,43 +79,12 @@ class PharmacyController extends Controller
                 ]);
 
                 $pharmacy->token = auth('pharmacy')->login($pharmacy);
-                return $this->returnData('Your Data', $pharmacy, 'Successfully register');
+                return $this->returnData('Your Data', $pharmacy, 'Pharmacy successfully register');
             }
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
-    public function myData()
-    {
-        $data = auth('pharmacy')->user();
-        return $this->returnData('data', $data, 'Here Is Your Data');
-    }
-
-    public function allPharmacies()
-    {
-        $pharmacies = Pharmacy::with(['rates','favorites'])->get();
-        return $this->returnData('data', $pharmacies);
-    }
-    public function logout()
-    {
-        auth('pharmacy')->refresh();
-        auth('pharmacy')->logout();
-
-        return $this->returnSuccessMessage('Successfully logged out');
-    }
-    public function refresh()
-    {
-        return $this->respondWithToken(auth('pharmacy')->refresh());
-    }
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-
-            'expires_in' => auth('pharmacy')->factory()->getTTL() * 60
-        ]);
-    }
-
     public function update(Request $request)
     {
         $pharmacy_id = auth('pharmacy')->user()->id;
@@ -134,14 +110,38 @@ class PharmacyController extends Controller
             'snapchat' => $request->snapchat,
             'youtube' => $request->youtube,
         ]);
-        $pharmacy->token = auth('pha$pharmacy')->refresh();
+        $pharmacy->token = auth('pharmacy')->refresh();
         return $this->returnData('Your Data', $pharmacy, 'Successfully edited');
     }
+    public function myData()
+    {
+        $data = auth('pharmacy')->user();
+        return $this->returnData('data', $data, 'Here Is Your Data');
+    }
+    public function logout()
+    {
+        auth('pharmacy')->refresh();
+        auth('pharmacy')->logout();
+
+        return $this->returnSuccessMessage('Successfully logged out');
+    }
+    public function refresh()
+    {
+        return $this->respondWithToken(auth('pharmacy')->refresh());
+    }
+    protected function respondWithToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+
+            'expires_in' => auth('pharmacy')->factory()->getTTL() * 60
+        ]);
+    }
+
     public function addProduct(Request $request)
     {
         PharmacyProduct::create([
-
-            'pharmacy_id' => $request->pharmacy_id,
+            'pharmacy_id' => auth('pharmacy')->user()->id,
             'name' => $request->name,
             'description' => $request->description,
             'details' => $request->details,
@@ -153,17 +153,17 @@ class PharmacyController extends Controller
         return $this->returnSuccessMessage('Successfully added');
     }
 
-    public function addProductImage(Request $request)
+    public function addProductImage($id, Request $request)
     {
-        $pharmacyProductImage = $this->saveImage($request->image_path, 'images/PharmacyProductImages');
+        $pharmacyProductImage = $this->saveImage($request->image, 'images/Pharmacies/ProductImages');
 
         PharmacyProductImage::create([
-            'pharmacy_product_id' => $request->pharmacy_product_id,
-            'image_path' => $pharmacyProductImage,
+            'pharmacy_product_id' => $id,
+            'image_path' =>  'images/Pharmacies/ProductImages'.$pharmacyProductImage,
 
         ]);
 
-        return $this->returnSuccessMessage('Successfully added');
+        return $this->returnSuccessMessage('Image successfully added');
     }
     public function show($pharmacy_id)
     {
@@ -173,7 +173,7 @@ class PharmacyController extends Controller
     public function destroy()
     {
         try {
-            Pharmacy::destroy(auth('patient')->user()->id);
+            Pharmacy::destroy(auth('pharmacy')->user()->id);
             return $this->returnSuccessMessage('Your account successfully deleted');
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());

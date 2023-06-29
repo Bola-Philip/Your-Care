@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BookingRequest;
 use Illuminate\Http\Request;
 use App\Models\Doctor;
+use App\Models\DoctorExperience;
 use App\Models\PatientTakeService;
 use App\Models\Report;
 use App\Traits\GeneralTrait;
@@ -34,6 +35,7 @@ class DoctorController extends Controller
         ])->find($doctor_id);
         return $this->returnData('data', $data, 'Here Is Your Data');
     }
+
     public function doctorCategories()
     {
         $category = [
@@ -46,11 +48,24 @@ class DoctorController extends Controller
     public function allDoctors()
     {
         try {
-            $country = auth()->user()->country;
-            $doctors = Doctor::where('country', $country)
+            $country = auth('patient')->user()->country;
+            $doctors = Doctor::where('country',  $country)
                 ->with(['rates', 'favorites'])
-                ->makeHidden('password')
-                ->all()->get();
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years'
+                )
+                ->get();
             return $this->returnData('All Doctors', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -60,14 +75,29 @@ class DoctorController extends Controller
     public function favoriteDoctors()
     {
         try {
-            $country = auth()->user()->country;
+            $country = auth('patient')->user()->country;
             $doctors = Doctor::with(['favorites'])
                 ->where('country', $country)
-                ->orderBy(function ($doctor) {
-                    return $doctor->favorites->count();
-                }, 'desc')
-                ->makeHidden('password')->get();
-            return $this->returnData('All Doctors "sort by favorite"', $doctors, '');
+                ->where('is_favorite')
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years',
+                    DB::raw('(SELECT COUNT(*) FROM favorites WHERE favorites.doctor_id = doctors.id) as favorite_count')
+                )
+                ->orderBy('favorite_count', 'desc')
+                ->get();
+
+            return $this->returnData('All Doctors `sort by favorite`', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -76,12 +106,28 @@ class DoctorController extends Controller
     public function ratedDoctors()
     {
         try {
-            $country = auth()->user()->country;
+            $country = auth('patient')->user()->country;
             $doctors = Doctor::with(['rates'])
                 ->where('country', $country)
-                ->orderBy(DB::raw('SUM(rates.rate)'), 'desc')
-                ->makeHidden('password')->get();
-            return $this->returnData('All Doctors "sort by rating"', $doctors, '');
+                ->where('is_rated')
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years',
+                    DB::raw('(SELECT  IF(SUM(rate) > 0, SUM(rate), null) FROM rates WHERE rates.doctor_id = doctors.id) as total_rate')
+                    )
+                    ->orderBy('total_rate', 'desc')
+                ->get();
+            return $this->returnData('All Doctors `sort by rating`', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -92,12 +138,25 @@ class DoctorController extends Controller
     public function doctorsByCategory($category)
     {
         try {
-            $country = auth()->user()->country;
+            $country = auth('patient')->user()->country;
             $doctors = Doctor::where('country', $country)
                 ->with(['rates', 'favorites'])
                 ->where('specialty', $category)
-                ->makeHidden('password')
-                ->all()->get();
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years'
+                )
+                ->get();
             return $this->returnData('All Doctors', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -107,15 +166,29 @@ class DoctorController extends Controller
     public function favoriteDoctorsByCategories($category)
     {
         try {
-            $country = auth()->user()->country;
+            $country = auth('patient')->user()->country;
             $doctors = Doctor::with(['favorites'])
                 ->where('country', $country)
                 ->where('specialty', $category)
-                ->orderBy(function ($doctor) {
-                    return $doctor->favorites->count();
-                }, 'desc')
-                ->makeHidden('password')->get();
-            return $this->returnData('All Doctors "sort by favorite"', $doctors, '');
+                ->where('is_favorite')
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years',
+                    DB::raw('(SELECT COUNT(*) FROM favorites WHERE favorites.doctor_id = doctors.id) as favorite_count')
+                )
+                ->orderBy('favorite_count', 'desc')
+                ->get();
+            return $this->returnData('All Doctors `sort by favorite`', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -125,13 +198,29 @@ class DoctorController extends Controller
     public function ratedDoctorsByCategory($category)
     {
         try {
-            $country = auth()->user()->country;
+            $country = auth('patient')->user()->country;
             $doctors = Doctor::with(['rates'])
                 ->where('country', $country)
                 ->where('specialty', $category)
-                ->orderBy(DB::raw('SUM(rates.rate)'), 'desc')
-                ->makeHidden('password')->get();
-            return $this->returnData('All Doctors "sort by rating"', $doctors, '');
+                ->where('is_rated')
+                ->select(
+                    'id',
+                    'center_id',
+                    'department_id',
+                    'image_path',
+                    'username',
+                    'name',
+                    'work_phone',
+                    'specialty',
+                    'work_email',
+                    'job_description',
+                    'abstract',
+                    'experience_years',
+                    DB::raw('(SELECT  IF(SUM(rate) > 0, SUM(rate), null) FROM rates WHERE rates.doctor_id = doctors.id) as total_rate')
+                    )
+                    ->orderBy('total_rate', 'desc')
+                ->get();
+            return $this->returnData('All Doctors `sort by rating in this category`', $doctors, '');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
@@ -220,7 +309,7 @@ class DoctorController extends Controller
             'favorites',
         ])->find(auth('doctor')->user()->id);
         $doctor->token = $token;
-        return $this->returnData('token', $doctor, 'Here Is Your Token');
+        return $this->returnData('Doctor', $doctor, 'Here Is Your Token');
     }
 
     public function update(Request $request)
@@ -290,7 +379,7 @@ class DoctorController extends Controller
     public function myData()
     {
         try {
-            $data = auth('doctor')->user()->with([
+            $data = Doctor::with([
                 'center',
                 'department',
                 'doctorExperiences',
@@ -302,7 +391,7 @@ class DoctorController extends Controller
                 'invoices',
                 'rates',
                 'favorites',
-            ]);
+            ])->find(auth('doctor')->user()->id);
             return $this->returnData('My Data', $data, 'Here Is Your Data');
         } catch (\Throwable $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
@@ -331,13 +420,14 @@ class DoctorController extends Controller
 
     public function addReport(Request $request)
     {
-        $report_file = $this->saveImage($request->report, 'files/reports');
+        $report_file = $this->saveImage($request->file, 'files/reports');
 
         $report = Report::create([
             'center_id' => auth('doctor')->user()->center_id,
             'doctor_id' => auth('doctor')->user()->id,
             'patient_id' => $request->patient_id,
-            'file_path' => $report_file,
+            'file_path' => 'files/reports' . $report_file,
+            'created_at' => now()
         ]);
         return $this->returnData("report", $report, 'Report has been successfully added.');
     }
@@ -364,16 +454,21 @@ class DoctorController extends Controller
             'date' => $request->date,
         ]);
         $scout->doctor_id = auth('doctor')->user()->id;
-        return $this->returnData('Scout', $scout, "");
+        return $this->returnData('Scout', $scout);
     }
 
     public function rateBooking($booking_id, Request $request)
     {
-        $booking = BookingRequest::findOrFail($booking_id);
-        $booking->update([
-            'rating' => $request->rate,
-            'notes' => $request->notes,
-        ]);
+        try {
+            $booking = BookingRequest::findOrFail($booking_id);
+            $booking->update([
+                'rating' => $request->rate,
+                'notes' => $request->notes,
+            ]);
+            return $this->returnData('Book Session', $booking, 'Rating successfully added to this session');
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
     }
 
     public function experience(Request $request, $id)
@@ -387,7 +482,7 @@ class DoctorController extends Controller
             'finished_at' => $request->finished_at,
             'still_works' => $request->still_in,
         ]);
-        return $this->returnData("Experience", $experience, 'Experience has been successfully added');
+        return $this->returnData("Experience", $experience, 'Experience successfully added');
     }
 
     public function destroy()

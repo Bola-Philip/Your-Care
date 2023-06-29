@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('reports', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('center_id')->nullable();
             $table->unsignedBigInteger('doctor_id')->nullable();
             $table->unsignedBigInteger('patient_id')->nullable();
-            $table->unsignedBigInteger('file_path');
+            $table->string('file_path');
             $table->timestamp('created_at');
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');

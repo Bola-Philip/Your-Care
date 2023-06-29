@@ -10,7 +10,7 @@ class PatientTakeService extends Model
     protected $primaryKey = 'id';
 
     protected $guarded = [];
-
+    public $timestamps=false;
     public function bookingRequest()
     {
         return $this->belongsTo(BookingRequest::class, 'booking_id', 'id');

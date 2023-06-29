@@ -37,6 +37,8 @@ return new class extends Migration
             $table->double('salary')->nullable();
             $table->string('gender')->nullable();
             $table->string('nationality')->nullable();
+            $table->boolean('is_rated')->default(false);
+            $table->boolean('is_favorite')->default(false);
             $table->timestamps();
 
             $table->foreign('center_id')->references('id')->on('centers')->onDelete('cascade');
