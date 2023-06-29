@@ -568,7 +568,7 @@ class DoctorController extends Controller
     {
         try {
 
-            $adImage = $this->saveImage($request->image, 'files/ads');
+            $adImage = $this->saveImage($request->image, 'images/ads');
 
             $report = Ad::create([
                 'doctor_id' => auth('doctor')->user()->id,

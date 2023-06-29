@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\BookingRequest;
 use App\Models\Center;
 use App\Models\Doctor;
@@ -727,4 +728,18 @@ class PatientController extends Controller
             return $this->returnError($ex->getCode(), $ex->getMessage());
         }
     }
+    public function displayAds(Request $request)
+    {
+        try {
+            $ads = Ad::all();
+            if ($ads) {
+                return $this->returnData('ads', $ads);
+            } else {
+                return $this->returnError(404, "The requested record does not exist !");
+            }
+        } catch (\Exception $ex) {
+            return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+
 }
