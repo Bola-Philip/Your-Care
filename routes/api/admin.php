@@ -42,6 +42,7 @@ Route::group(['middleware' => ['api', 'auth:admin'], 'prefix' => 'center'], func
     Route::post('patients/remove/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removePatient');
     Route::post('labs/remove/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removeLab');
     Route::post('pharmacies/remove/{id}', '\App\Http\Controllers\Api\Admin\CenterController@removePharmacy');
+    Route::post('addAds', '\App\Http\Controllers\Api\Admin\CenterController@addAds');
 
     Route::group(['middleware' => ['api'], 'prefix' => 'admin'], function ($router) {
         Route::post('add', 'App\Http\Controllers\Api\Admin\AdminController@register');

@@ -27,5 +27,5 @@ Route::group(['middleware' => ['api','auth:pharmacy'], 'prefix' => 'pharmacy'], 
     Route::post('addProductImage/{product_id}', 'App\Http\Controllers\Api\PharmacyController@addProductImage');
     Route::post('deleteMyAccount', 'App\Http\Controllers\Api\PharmacyController@destroy');
     Route::post('delete/{pharmacy_id}', 'App\Http\Controllers\Api\PharmacyController@destroy');
-
+    Route::post('addAds', 'App\Http\Controllers\Api\PharmacyController@addAds');
 });

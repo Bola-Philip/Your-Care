@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ad;
 use App\Models\Center;
 use App\Models\Admin;
 use App\Models\CenterService;
@@ -621,6 +622,25 @@ class CenterController extends Controller
             }
         } catch (\Exception $ex) {
             return $this->returnError($ex->getCode(), $ex->getMessage());
+        }
+    }
+    public function addAds(Request $request)
+    {
+        try {
+
+            $adImage = $this->saveImage($request->image, 'images/ads');
+
+            $report = Ad::create([
+                'doctor_id' => auth('doctor')->user()->id,
+                'doctor_name' => $request->doctor_name,
+                'specialty' => $request->specialty,
+                'details' => $request->details,
+                'image' => $adImage,
+
+            ]);
+            return $this->returnData("report", $report, 'Report has been successfully added.');
+        }catch (\Exception $ex){
+            return $this->returnError($ex->getCode(),$ex->getMessage());
         }
     }
 }

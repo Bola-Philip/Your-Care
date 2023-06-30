@@ -26,6 +26,8 @@ Route::group(['middleware' => ['api', 'auth:patient'], 'prefix' => 'patient'], f
     Route::post('myReports', 'App\Http\Controllers\Api\PatientController@myReports');
     Route::post('delete/{id}', 'App\Http\Controllers\Api\PatientController@delete');
     Route::post('deleteMyAccount', 'App\Http\Controllers\Api\PatientController@destroy');
+    Route::post('displayAds', 'App\Http\Controllers\Api\PatientController@displayAds');
+
     Route::group(['prefix'=>'disease'], function($router){
         Route::post('add', 'App\Http\Controllers\Api\PatientController@addDisease');
         Route::post('addMedia/{id}', 'App\Http\Controllers\Api\PatientController@addDiseaseMedia');

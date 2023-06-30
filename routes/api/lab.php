@@ -28,6 +28,7 @@ Route::group(['middleware' => ['api','auth:lab'], 'prefix' => 'lab'], function (
     Route::post('ourReply', 'App\Http\Controllers\Api\LabController@ourReply');
     Route::post('delete/{lab_id}', 'App\Http\Controllers\Api\LabController@delete');
     Route::post('deleteMyAccount', 'App\Http\Controllers\Api\LabController@destroy');
+    Route::post('addAds', 'App\Http\Controllers\Api\LabController@addAds');
 
 });
 Route::post('labs/all', 'App\Http\Controllers\Api\LabController@allLabs');
