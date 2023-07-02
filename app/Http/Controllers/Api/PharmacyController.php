@@ -140,13 +140,20 @@ class PharmacyController extends Controller
 
     public function addProduct(Request $request)
     {
-        PharmacyProduct::create([
+        $product= PharmacyProduct::create([
             'pharmacy_id' => auth('pharmacy')->user()->id,
             'name' => $request->name,
             'description' => $request->description,
             'details' => $request->details,
             'price' => $request->price,
             'amount' => $request->amount,
+
+        ]);
+        $pharmacyProductImage = $this->saveImage($request->image, 'images/Pharmacies/ProductImages');
+
+        PharmacyProductImage::create([
+            'pharmacy_product_id' => $product->id,
+            'image_path' =>  'images/Pharmacies/ProductImages'.$pharmacyProductImage,
 
         ]);
 

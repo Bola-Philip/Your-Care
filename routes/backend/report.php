@@ -12,14 +12,7 @@ use App\Http\Controllers\ClientController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('login', 'App\Http\Controllers\Controller@login');
-Route::post('check', 'App\Http\Controllers\Api\Admin\AdminController@login')->name('login');
-Route::get('newForm', 'App\Http\Controllers\Controller@newForm');
-
-
-Route::get('show-pdf', function () {
-    $path = public_path('images/forms/pdf/1686758810.docx');
-    return response()->file($path);
-});
+Route::post('report/create', 'App\Http\Controllers\ReportController@create')->name('report.create');
+Route::post('report/store', 'App\Http\Controllers\ReportController@store')->name('report.store');
 
 
