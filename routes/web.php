@@ -22,4 +22,3 @@ Route::get('show-pdf', function () {
     return response()->file($path);
 });
 
-
