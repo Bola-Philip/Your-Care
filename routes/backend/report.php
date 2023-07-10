@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ReportController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,6 +13,7 @@ use App\Http\Controllers\ClientController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::post('report/create', 'App\Http\Controllers\ReportController@create')->name('report.create');
 Route::post('report/store', 'App\Http\Controllers\ReportController@store')->name('report.store');
 

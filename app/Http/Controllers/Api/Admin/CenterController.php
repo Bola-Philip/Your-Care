@@ -528,7 +528,6 @@ class CenterController extends Controller
                     'snapchat' => $request->snapchat,
                     'youtube' => $request->youtube,
                 ]);
-
                 return $this->returnData('Your Data', $pharmacy, '  Pharmacy successfully added');
             }
         } catch (\Throwable $ex) {
