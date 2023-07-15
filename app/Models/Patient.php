@@ -89,4 +89,8 @@ class Patient extends Authenticatable implements JWTSubject
     {
         return [];
     }
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

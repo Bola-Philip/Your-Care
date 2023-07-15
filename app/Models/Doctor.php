@@ -88,4 +88,9 @@ class Doctor extends Authenticatable implements JWTSubject
     //     return $this->belongsToMany(Patient::class)->withPivot('bookingRequests');
     // }
 
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
+
 }
